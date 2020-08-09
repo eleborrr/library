@@ -13,6 +13,7 @@ class AppTests(unittest.TestCase):
         session = db_session.create_session()
         roles = {x.name for x in session.query(role.Role).all()}
         self.assertEqual(roles, {'Student', 'Librarian'})
+        session.close()
 
     def tearDown(self):
         os.remove('db/tests.sqlite3')
