@@ -9,7 +9,7 @@ SqlAlchemyBase = dec.declarative_base()
 __factory = None
 
 
-def global_init(db_file, test_init=False):
+def global_init(db_file):
     global __factory
 
     if __factory:

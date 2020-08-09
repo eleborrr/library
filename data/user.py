@@ -12,5 +12,5 @@ class User(SqlAlchemyBase):
     library_id = Cl(sql.Integer, ForeignKey('libraries.id'))
     library = orm.relation('Library')
     books = orm.relation('Book', back_populates='owner')
-    role_id = Cl(sql.Integer, ForeignKey('role.id'), nullable=False)
+    role_id = Cl(sql.Integer, ForeignKey('roles.id'), nullable=False)
     role = orm.relation('Role')
