@@ -33,6 +33,17 @@ def lend_book(user_id, book_id):
     session.close()
 
 
+def return_book(user_id, book_id):
+    session = db_session.create_session()
+    try:
+        session.delete(session.query(UserToBook).filter(UserToBook.user_id == user_id,
+                                                        UserToBook.book_id == book_id).first())
+    except Exception:
+        pass
+    session.commit()
+    session.close()
+
+
 if __name__ == '__main__':
     db_session.global_init('db/library.sqlite3')
     app.run()
