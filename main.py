@@ -1,10 +1,10 @@
 from flask import Flask
 from data import db_session
 from data.book import Book
+from data.edition import Edition
 from data.library import Library
 from data.user import User
 from data.role import Role
-from data.user_to_book import UserToBook
 
 app = Flask(__name__)
 
@@ -23,23 +23,39 @@ def create_roles():
     session.close()
 
 
-def lend_book(user_id, book_id):
+def create_library(school_name, **librarian_data):
     session = db_session.create_session()
-    user: User = session.query(User).get(user_id)
-    book: Book = session.query(Book).get(book_id)
-    if book.count > len(book.owners):
-        user.books.append(book)
+    lib = Library(school_name=school_name)
+    session.add(lib)
+    session.commit()
+    session.add(User(**librarian_data, role_id=2, library_id=lib.id))
     session.commit()
     session.close()
 
 
-def return_book(user_id, book_id):
+def add_edition(library_id, count, **edition_data):
     session = db_session.create_session()
-    try:
-        session.delete(session.query(UserToBook).filter(UserToBook.user_id == user_id,
-                                                        UserToBook.book_id == book_id).first())
-    except Exception:
-        pass
+    edition = Edition(**edition_data, library_id=library_id)
+    session.add(edition)
+    session.commit()
+    for i in range(count):
+        session.add(Book(edition_id=edition.id))
+    session.commit()
+
+
+def lend_book(user_id, book_id):
+    session = db_session.create_session()
+    book = session.query(Book).get(book_id)
+    if not book.owner:
+        book.owner_id = user_id
+    session.commit()
+    session.close()
+
+
+def return_book(book_id):
+    session = db_session.create_session()
+    book = session.query(Book).get(book_id)
+    book.owner_id = None
     session.commit()
     session.close()
 

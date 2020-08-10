@@ -1,0 +1,16 @@
+from .db_session import SqlAlchemyBase
+from sqlalchemy import Column as Cl
+from sqlalchemy import ForeignKey
+from sqlalchemy import orm
+import sqlalchemy as sql
+
+
+class Edition(SqlAlchemyBase):
+    __tablename__ = 'editions'
+    id = Cl(sql.Integer, autoincrement=True, primary_key=True, nullable=False)
+    name = Cl(sql.String(64), nullable=False)
+    author = Cl(sql.String(64), nullable=False)
+    publication_year = Cl(sql.Integer, nullable=False)
+    library_id = Cl(sql.Integer, ForeignKey('libraries.id'), nullable=False)
+    library = orm.relation('Library')
+    books = orm.relation('Book', back_populates='edition')

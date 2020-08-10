@@ -9,4 +9,4 @@ class Library(SqlAlchemyBase):
     id = Cl(sql.Integer, autoincrement=True, primary_key=True, nullable=False)
     school_name = Cl(sql.String(64), unique=True, nullable=False)
     users = orm.relation('User', back_populates='library')
-    books = orm.relation('Book', back_populates='library')
+    editions = orm.relation('Edition', back_populates='library')
