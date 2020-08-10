@@ -27,10 +27,11 @@ def _create_qr_list(ids):
         for x in range(5):
             for y in range(3):
                 try:
-                    book_id = ids[i * 15 + x * 5 + y]
+                    book_id = ids[i * 15 + x * 3 + y]
                 except IndexError:
                     break
                 offset = 165 * y, 165 * x
+                print(i, *offset)
                 cur.paste(_create_qrcode(book_id), offset)
         res.append(cur)
     return res
