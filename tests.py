@@ -1,4 +1,4 @@
-from main import create_roles, lend_book, return_book, register_user, create_library, add_edition, add_book, remove_book
+from main import create_roles, lend_book, return_book, register_student, create_library, add_edition, add_book, remove_book
 from data import db_session, role, user, edition, library, book
 import unittest
 import os
@@ -18,14 +18,14 @@ class AppTests(unittest.TestCase):
         session.commit()
         session.close()
 
-    def test_register_user(self):
+    def test_register_student(self):
         create_roles()
         session = db_session.create_session()
         lib = library.Library(school_name='1')
         session.add(lib)
         session.commit()
-        register_user('name', 'surname', 'login', 'password', 1, lib.id, 7)
-        register_user('name', 'surname', 'login', 'password', 1, lib.id, 7)
+        register_student('name', 'surname', 'login', 'password', lib.id, 7)
+        register_student('name', 'surname', 'login', 'password', lib.id, 7)
         self.assertEqual(len(session.query(user.User).all()), 1)
         session.close()
 
@@ -75,8 +75,8 @@ class AppTests(unittest.TestCase):
                     name='name',
                     author='author',
                     publication_year=1984)
-        register_user('name', 'surname', 'login', 'password', 1, lib.id, 7)
-        register_user('name', 'surname', 'login1', 'password', 1, lib.id, 7)
+        register_student('name', 'surname', 'login', 'password', lib.id, 7)
+        register_student('name', 'surname', 'login1', 'password', lib.id, 7)
         user1 = session.query(user.User).get(1)
         user2 = session.query(user.User).get(2)
         self.assertIsNotNone(user1)
@@ -109,8 +109,8 @@ class AppTests(unittest.TestCase):
                     name='name',
                     author='author',
                     publication_year=1984)
-        register_user('name', 'surname', 'login', 'password', 1, lib.id, 7)
-        register_user('name', 'surname', 'login1', 'password', 1, lib.id, 7)
+        register_student('name', 'surname', 'login', 'password', lib.id, 7)
+        register_student('name', 'surname', 'login1', 'password', lib.id, 7)
         user1 = session.query(user.User).get(1)
         user2 = session.query(user.User).get(2)
         lend_book(user1.id, 1)
