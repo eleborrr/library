@@ -5,8 +5,10 @@ from data.edition import Edition
 from data.library import Library
 from data.user import User
 from data.role import Role
+from config import AppConfig
 
 app = Flask(__name__)
+app.config.from_object(AppConfig)
 
 
 @app.before_first_request
