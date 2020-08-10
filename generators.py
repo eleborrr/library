@@ -31,7 +31,6 @@ def _create_qr_list(ids):
                 except IndexError:
                     break
                 offset = 165 * y, 165 * x
-                print(i, *offset)
                 cur.paste(_create_qrcode(book_id), offset)
         res.append(cur)
     return res
