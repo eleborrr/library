@@ -44,6 +44,16 @@ def return_book(user_id, book_id):
     session.close()
 
 
+def register_user(name, surname, login, password, role_id, library_id, class_num):
+    session = db_session.create_session()
+    ex_user = session.query(User).filter(User.login == login).first()
+    if not ex_user:
+        session.add(User(name=name, surname=surname, password=password, role_id=role_id, library_id=library_id,
+                         class_num=class_num, login=login))
+    session.commit()
+    session.close()
+
+
 if __name__ == '__main__':
     db_session.global_init('db/library.sqlite3')
     app.run()

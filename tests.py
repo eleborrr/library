@@ -1,4 +1,4 @@
-from main import create_roles, lend_book, return_book
+from main import create_roles, lend_book, return_book, register_user
 from data import db_session, role, user, book, user_to_book, library
 import unittest
 import os
@@ -120,6 +120,17 @@ class AppTests(unittest.TestCase):
         return_book(new_user1.id, new_book.id)
 
         self.assertEqual(len(session.query(user_to_book.UserToBook).all()), 0)
+        session.close()
+
+    def test_register_user(self):
+        create_roles()
+        session = db_session.create_session()
+        lib = library.Library(school_name='1')
+        session.add(lib)
+        session.commit()
+        register_user('name', 'surname', 'login', 'password', 1, lib.id, 7)
+        register_user('name', 'surname', 'login', 'password', 1, lib.id, 7)
+        self.assertEqual(len(session.query(user.User).all()), 1)
         session.close()
 
     def tearDown(self) -> None:
