@@ -4,6 +4,7 @@ from data.book import Book
 from data.library import Library
 from data.user import User
 from data.role import Role
+from data.user_to_book import UserToBook
 
 app = Flask(__name__)
 
@@ -19,6 +20,17 @@ def create_roles():
         role.name = i
         session.add(role)
     session.commit()
+    session.close()
+
+
+def lend_book(user_id, book_id):
+    session = db_session.create_session()
+    user: User = session.query(User).get(user_id)
+    book: Book = session.query(Book).get(book_id)
+    if book.count > len(book.owners):
+        user.books.append(book)
+    session.commit()
+    session.close()
 
 
 if __name__ == '__main__':
