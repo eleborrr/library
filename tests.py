@@ -49,8 +49,7 @@ class AppTests(unittest.TestCase):
                        login='login',
                        name='name',
                        surname='surname',
-                       password='password',
-                       class_num=None)
+                       password='password')
         session = db_session.create_session()
         lib = session.query(library.Library).first()
         add_edition(lib.id, 4,

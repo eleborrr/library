@@ -23,17 +23,18 @@ def create_roles():
     session.close()
 
 
-def create_library(school_name, **librarian_data):
+def create_library(school_name, **librarian_data):  # login, name, surname, password
     session = db_session.create_session()
     lib = Library(school_name=school_name)
     session.add(lib)
     session.commit()
-    session.add(User(**librarian_data, role_id=2, library_id=lib.id))
+    session.add(User(**librarian_data, role_id=2, library_id=lib.id,
+                     class_num=None))
     session.commit()
     session.close()
 
 
-def add_edition(library_id, count, **edition_data):
+def add_edition(library_id, count, **edition_data):  # name, author, publication_year
     session = db_session.create_session()
     edition = Edition(**edition_data, library_id=library_id)
     session.add(edition)
