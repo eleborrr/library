@@ -12,6 +12,7 @@ class User(SqlAlchemyBase):
     surname = Cl(sql.String(32), nullable=False)
     name = Cl(sql.String(32), nullable=False)
     password = Cl(sql.String(128), nullable=False)
+    class_num = Cl(sql.Integer)
     library_id = Cl(sql.Integer, ForeignKey('libraries.id'))
     library = orm.relation('Library')
     books = orm.relation('Book', secondary='user_to_book')
