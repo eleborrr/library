@@ -7,6 +7,8 @@ import sqlalchemy as sql
 class User(SqlAlchemyBase):
     __tablename__ = 'users'
     id = Cl(sql.Integer, autoincrement=True, primary_key=True, nullable=False)
+    login = Cl(sql.String(32), nullable=False)
+    # password
     surname = Cl(sql.String(32), nullable=False)
     name = Cl(sql.String(32), nullable=False)
     library_id = Cl(sql.Integer, ForeignKey('libraries.id'))
