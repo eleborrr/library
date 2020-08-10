@@ -44,6 +44,20 @@ def add_edition(library_id, count, **edition_data):  # name, author, publication
     session.commit()
 
 
+def add_book(edition_id):
+    session = db_session.create_session()
+    session.add(Book(edition_id=edition_id))
+    session.commit()
+    session.close()
+
+
+def remove_book(book_id):
+    session = db_session.create_session()
+    session.delete(session.query(Book).get(book_id))
+    session.commit()
+    session.close()
+
+
 def lend_book(user_id, book_id):
     session = db_session.create_session()
     book = session.query(Book).get(book_id)

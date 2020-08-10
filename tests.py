@@ -1,4 +1,4 @@
-from main import create_roles, lend_book, return_book, register_user, create_library, add_edition
+from main import create_roles, lend_book, return_book, register_user, create_library, add_edition, add_book, remove_book
 from data import db_session, role, user, edition, library, book
 import unittest
 import os
@@ -34,8 +34,7 @@ class AppTests(unittest.TestCase):
                        login='login',
                        name='name',
                        surname='surname',
-                       password='password',
-                       class_num=None)
+                       password='password')
         session = db_session.create_session()
         librarian = session.query(user.User).first()
         self.assertIsNotNone(librarian)
@@ -69,8 +68,7 @@ class AppTests(unittest.TestCase):
                        login='login',
                        name='name',
                        surname='surname',
-                       password='password',
-                       class_num=None)
+                       password='password')
         session = db_session.create_session()
         lib = session.query(library.Library).first()
         add_edition(lib.id, 4,
@@ -104,8 +102,7 @@ class AppTests(unittest.TestCase):
                        login='login',
                        name='name',
                        surname='surname',
-                       password='password',
-                       class_num=None)
+                       password='password')
         session = db_session.create_session()
         lib = session.query(library.Library).first()
         add_edition(lib.id, 4,
@@ -123,6 +120,45 @@ class AppTests(unittest.TestCase):
         for i in session.query(book.Book).all():
             self.assertIsNone(i.owner_id)
         session.close()
+
+    def test_add_book(self):
+        create_library('School Name',
+                       login='login',
+                       name='name',
+                       surname='surname',
+                       password='password')
+        session = db_session.create_session()
+        lib = session.query(library.Library).first()
+        add_edition(lib.id, 4,
+                    name='name',
+                    author='author',
+                    publication_year=1984)
+        ed = session.query(edition.Edition).first()
+
+        add_book(ed.id)
+
+        new_book = session.query(book.Book).get(5)
+        self.assertIsNotNone(new_book)
+        self.assertEqual(new_book.edition_id, ed.id)
+        session.close()
+
+    def test_remove_book(self):
+        create_library('School Name',
+                       login='login',
+                       name='name',
+                       surname='surname',
+                       password='password')
+        session = db_session.create_session()
+        lib = session.query(library.Library).first()
+        add_edition(lib.id, 4,
+                    name='name',
+                    author='author',
+                    publication_year=1984)
+
+        remove_book(2)
+        self.assertEqual(len(session.query(book.Book).all()), 3)
+        session.close()
+
 
     def tearDown(self) -> None:
         session = db_session.create_session()
