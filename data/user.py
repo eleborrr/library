@@ -8,7 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 class User(SqlAlchemyBase):
     __tablename__ = 'users'
     id = Cl(sql.Integer, autoincrement=True, primary_key=True, nullable=False)
-    login = Cl(sql.String(32), nullable=False)
+    login = Cl(sql.String(64), nullable=False, unique=True)
     surname = Cl(sql.String(32), nullable=False)
     name = Cl(sql.String(32), nullable=False)
     password = Cl(sql.String(128), nullable=False)
