@@ -6,6 +6,7 @@ from data.library import Library
 from data.user import User
 from data.role import Role
 from config import AppConfig
+from generators import create_qr_list
 
 app = Flask(__name__)
 app.config.from_object(AppConfig)
@@ -85,6 +86,11 @@ def register_student(name, surname, login, password, library_id, class_num):
                          class_num=class_num, login=login))
     session.commit()
     session.close()
+
+
+def generate_edition_qr(edition_id):
+    session = db_session.create_session()
+    create_qr_list([x.id for x in session.query(Edition).get(edition_id).books])
 
 
 if __name__ == '__main__':
