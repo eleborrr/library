@@ -151,7 +151,7 @@ def sign_in():
                        password=library_form.password.data)
         return redirect('/library')
     if login_form.validate_on_submit():
-        us: User = session.query(User).filter(User.login == login_form.email.data).first()
+        us = session.query(User).filter(User.login == login_form.email.data).first()
         if not us:
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=3, msg3="Неверный адрес электронной почты")
