@@ -94,6 +94,11 @@ def generate_edition_qr(edition_id):
     create_qr_list([x.id for x in session.query(Edition).get(edition_id).books])
 
 
+@app.errorhandler(403)
+def error_403():
+    return redirect('/sign_in#tab_03')
+
+
 @login_manager.user_loader
 def load_user(user_id):
     session = db_session.create_session()
