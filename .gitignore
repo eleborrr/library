@@ -1,0 +1,5 @@
+/db
+/.pytest_cache
+/qr_lists
+/*.png
+/*.jp?g
