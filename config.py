@@ -1,2 +1,2 @@
 class AppConfig:
-    pass
+    SECRET_KEY = 'TestSecretKey'
