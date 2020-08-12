@@ -168,7 +168,10 @@ def sign_in():
         if register_form.password.data != register_form.repeat.data:
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=2, msg2="Пароли не совпадают")
-        if not session.query(Library).get(register_form.library_id.data):  # Здесь должна быть проверка идентификаора
+        for i in session.query(Library).all():
+            if i.check_id(register_form.library_id.data):
+                break
+        else:
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=2, msg2="Неверный идентификатор библиотеки")
         register_student(register_form.name.data, register_form.surname.data, register_form.email.data, register_form.password.data, register_form.library_id.data,
