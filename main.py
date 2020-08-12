@@ -123,58 +123,51 @@ def create_roles():
     session.close()
 
 
-@app.route('/create_library')
-def register_library():
-    form = CreateLibraryForm()
+@app.route('/')
+def index():
+    return render_template('main.html')
+
+
+@app.route('sign_in')
+def sign_in():
+    if current_user.is_authenticated:
+        return redirect('/library')
     session = db_session.create_session()
-    if form.validate_on_submit():
-        ex = session.query(User).filter(User.login == form.email.data).first()
+    library_form = CreateLibraryForm()
+    login_form = LoginForm()
+    register_form = RegisterStudentForm()
+    if library_form.validate_on_submit():
+        ex = session.query(User).filter(User.login == library_form.email.data).first()
         if ex:
             pass  # Если почта использована
-        if form.password.data != form.repeat.data:
+        if library_form.password.data != library_form.repeat.data:
             pass  # Если пароли не совпадают
-        create_library(form.library_school_name.data,
-                       login=form.email.data,
-                       name=form.name.data,
-                       surname=form.surname.data,
-                       password=form.password.data)
+        create_library(library_form.library_school_name.data,
+                       login=library_form.email.data,
+                       name=library_form.name.data,
+                       surname=library_form.surname.data,
+                       password=library_form.password.data)
         return redirect('/library')
-    session.close()
-    return render_template('create_library.jinja2', form=form)
-
-
-@app.route('/register_student')
-def create_student():
-    form = RegisterStudentForm()
-    session = db_session.create_session()
-    if form.validate_on_submit():
-        ex = session.query(User).filter(User.login == form.email.data).first()
-        if ex:
-            pass  # Если почта использована
-        if form.password.data != form.repeat.data:
-            pass  # Если пароли не совпадают
-        if not session.query(Library).get(form.library_id.data):
-            pass  # Если задан неправильный номер библиотеки
-        register_student(form.name.data, form.surname.data, form.email.data, form.password.data, form.library_id.data,
-                         form.class_num.data)
-        return redirect('/library')
-    session.close()
-    return render_template('register_student.jinja2', form=form)
-
-
-@app.route('/login')
-def login():
-    form = LoginForm()
-    session = db_session.create_session()
-    if form.validate_on_submit():
-        us: User = session.query(User).filter(User.login == form.email.data).first()
+    if login_form.validate_on_submit():
+        us: User = session.query(User).filter(User.login == login_form.email.data).first()
         if not us:
             pass  # Если такой адрес не зарегестрирован
-        if not us.check_password(form.password.data):
+        if not us.check_password(login_form.password.data):
             pass  # Если введён неверный пароль
-        login_user(us, remember=form.remember_me.data)
+        login_user(us, remember=login_form.remember_me.data)
         return redirect('/library')
-    return render_template('login.jinja2', form=form)
+    if register_form.validate_on_submit():
+        ex = session.query(User).filter(User.login == register_form.email.data).first()
+        if ex:
+            pass  # Если почта использована
+        if register_form.password.data != register_form.repeat.data:
+            pass  # Если пароли не совпадают
+        if not session.query(Library).get(register_form.library_id.data):
+            pass  # Если задан неправильный номер библиотеки
+        register_student(register_form.name.data, register_form.surname.data, register_form.email.data, register_form.password.data, register_form.library_id.data,
+                         register_form.class_num.data)
+        return redirect('/library')
+    return render_template('sign_in.html')
 
 
 class LibraryView(FlaskView):
@@ -309,7 +302,10 @@ class LibraryView(FlaskView):
         # Нажав на неё, роль юзера меняется на student
 
 
+LibraryView.register(app, route_base='/library')
+
+
 if __name__ == '__main__':
     db_session.global_init('db/library.sqlite3')
-    app.run()
+    app.run(debug=True)
 
