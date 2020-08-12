@@ -31,20 +31,73 @@
                 <div id="tab_01" class="tabs__block">
 
 
-                    <form class="decor">
+                    <form class="decor" method="post">
                         <div class="form-left-decoration"></div>
                         <div class="form-right-decoration"></div>
                         <div class="circle"></div>
                         <div class="form-inner">
                             <h3>Заполните форму</h3>
+                            {% if msg1 %}
+                                <p class="alert alert-danger">{{ msg1 }}</p>
+                            {% endif %}
+                            {{ library_form.hidden_tag() }}
+                            {{ library_form.crsf_token }}
 
+                            {{ library_form.name.label }}<br>
+                            {{ library_form.name(placeholder="Иван", style="margin-top: 15px; margin-bottom: 25px") }}<br>
+                            {% for error in library_form.name.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
 
-                            <label>Введите название</label>
-                            <input type="text" placeholder="Введите тут" style="margin-top: 15px; margin-bottom: 25px">
+                            {{ library_form.surname.label }}<br>
+                            {{ library_form.surname(placeholder="Иванов", style="margin-top: 15px; margin-bottom: 25px") }}<br>
+                            {% for error in library_form.surname.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
 
+                            {{ library_form.email.label }}<br>
+                            {{ library_form.email(placeholder="test_mail@test.test", style="margin-top: 15px; margin-bottom: 25px") }}<br>
+                            {% for error in library_form.email.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
 
-                            <textarea placeholder="Сообщение..." rows="3"></textarea>
-                            <input type="submit" value="Регистрация">
+                            {{ library_form.password.label }}<br>
+                            {{ library_form.password(style="margin-top: 15px; margin-bottom: 25px") }}<br>
+                            {% for error in library_form.password.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+
+                            {{ library_form.repeat.label }}<br>
+                            {{ library_form.repeat(style="margin-top: 15px; margin-bottom: 25px") }}<br>
+                            {% for error in library_form.repeat.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+
+                            {{ library_form.library_school_name.label }}<br>
+                            {{ library_form.library_school_name(placeholder="МАОУ ФМЛ №131 г. Казани", style="margin-top: 15px; margin-bottom: 25px") }}<br>
+                            {% for error in library_form.library_school_name.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+
+                            {{ library_form.submit() }}<br>
+                            {% for error in library_form.submit.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+
                         </div>
                     </form>
 
@@ -58,14 +111,75 @@
                         <div class="circle"></div>
                         <div class="form-inner">
                             <h3>Заполните форму</h3>
+                            {% if msg2 %}
+                                <p class="alert alert-danger">{{ msg2 }}</p>
+                            {% endif %}
 
+                            {{ register_form.hidden_tag() }}
+                            {{ register_form.crsf_token }}
 
-                            <label>Имя ученика</label>
-                            <input type="text" placeholder="Введите тут" style="margin-top: 15px; margin-bottom: 25px">
+                            {{ register_form.name.label }}<br>
+                            {{ register_form.name(placeholder="Иван", style="margin-top: 15px; margin-bottom: 25px") }}
+                            {% for error in register_form.name.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
 
+                            {{ register_form.surname.label }}<br>
+                            {{ register_form.surname(placeholder="Иванов", style="margin-top: 15px; margin-bottom: 25px") }}
+                            {% for error in register_form.surname.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
 
-                            <textarea placeholder="Сообщение..." rows="3"></textarea>
-                            <input type="submit" value="Зарегистрировать" style="background: #9278aa">
+                            {{ register_form.email.label }}<br>
+                            {{ register_form.email(placeholder="test_mail@test.test", style="margin-top: 15px; margin-bottom: 25px") }}
+                            {% for error in register_form.email.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+
+                            {{ register_form.password.label }}<br>
+                            {{ register_form.password(style="margin-top: 15px; margin-bottom: 25px") }}
+                            {% for error in register_form.password.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+
+                            {{ register_form.repeat.label }}<br>
+                            {{ register_form.repeat(style="margin-top: 15px; margin-bottom: 25px") }}
+                            {% for error in register_form.repeat.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+
+                            {{ register_form.library_id.label }}<br>
+                            {{ register_form.library_id(style="margin-top: 15px; margin-bottom: 25px") }}
+                            {% for error in register_form.library_id.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+
+                            {{ register_form.class_num.label }}<br>
+                            {{ register_form.class_num(placeholder="7", style="margin-top: 15px; margin-bottom: 25px") }}
+                            {% for error in register_form.class_num.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+
+                            {{ register_form.submit() }}
+                            {% for error in register_form.email.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
                         </div>
                     </form>
 
@@ -80,15 +194,35 @@
                         <div class="circle"></div>
                         <div class="form-inner">
                             <h3>Заполните форму</h3>
+                            {% if msg3 %}
+                                <p class="alert alert-danger">{{ msg3 }}</p>
+                            {% endif %}
 
+                            {{ login_form.hidden_tag() }}
+                            {{ login_form.crsf_token }}
 
-                            <label>Ваш логин</label>
-                            <input type="text" placeholder="Введите тут" style="margin-top: 15px; margin-bottom: 25px">
-                            <label>Пароль</label>
-                            <input type="text" placeholder="Введите тут" style="margin-top: 15px; margin-bottom: 25px">
+                            {{ login_form.email.label }}<br>
+                            {{ login_form.email(placeholder="test_mail@test.test", style="margin-top: 15px; margin-bottom: 25px") }}
+                            {% for error in login_form.email.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
 
+                            {{ login_form.password.label }}<br>
+                            {{ login_form.password(style="margin-top: 15px; margin-bottom: 25px") }}
+                            {% for error in login_form.password.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
 
-                            <input type="submit" value="Войти" style="background: #97c67d">
+                            {{ login_form.submit() }}
+                            {% for error in login_form.email.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
                         </div>
                     </form>
 
@@ -100,5 +234,8 @@
         </div>
     </div>
 </div>
+<script>
+    document.location.href = document.location.href.split('#')[0] + '#tab_0{{ tab_num }}'
+</script>
 </body>
 </html>

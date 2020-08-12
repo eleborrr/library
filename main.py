@@ -139,9 +139,11 @@ def sign_in():
     if library_form.validate_on_submit():
         ex = session.query(User).filter(User.login == library_form.email.data).first()
         if ex:
-            pass  # Если почта использована
+            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                                   login_form=login_form, tab_num=1, msg1="Этот адрес электронной почты уже занят")
         if library_form.password.data != library_form.repeat.data:
-            pass  # Если пароли не совпадают
+            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                                   login_form=login_form, tab_num=1, msg1="Пароли не совпадают")
         create_library(library_form.library_school_name.data,
                        login=library_form.email.data,
                        name=library_form.name.data,
@@ -151,23 +153,29 @@ def sign_in():
     if login_form.validate_on_submit():
         us: User = session.query(User).filter(User.login == login_form.email.data).first()
         if not us:
-            pass  # Если такой адрес не зарегестрирован
+            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                                   login_form=login_form, tab_num=3, msg3="Неверный адрес электронной почты")
         if not us.check_password(login_form.password.data):
-            pass  # Если введён неверный пароль
+            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                                   login_form=login_form, tab_num=3, msg3="Неверный пароль")
         login_user(us, remember=login_form.remember_me.data)
         return redirect('/library')
     if register_form.validate_on_submit():
         ex = session.query(User).filter(User.login == register_form.email.data).first()
         if ex:
-            pass  # Если почта использована
+            render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                            login_form=login_form, tab_num=2, msg2="Этот адрес электронной почты уже занят")
         if register_form.password.data != register_form.repeat.data:
-            pass  # Если пароли не совпадают
-        if not session.query(Library).get(register_form.library_id.data):
-            pass  # Если задан неправильный номер библиотеки
+            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                                   login_form=login_form, tab_num=2, msg2="Пароли не совпадают")
+        if not session.query(Library).get(register_form.library_id.data):  # Здесь должна быть проверка идентификаора
+            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                                   login_form=login_form, tab_num=2, msg2="Неверный идентификатор библиотеки")
         register_student(register_form.name.data, register_form.surname.data, register_form.email.data, register_form.password.data, register_form.library_id.data,
                          register_form.class_num.data)
         return redirect('/library')
-    return render_template('tabs-page.html')
+    return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                           login_form=login_form, tab_num=3)
 
 
 class LibraryView(FlaskView):
