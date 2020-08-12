@@ -128,7 +128,7 @@ def index():
     return render_template('main.html')
 
 
-@app.route('sign_in')
+@app.route('/sign_in')
 def sign_in():
     if current_user.is_authenticated:
         return redirect('/library')
@@ -167,7 +167,7 @@ def sign_in():
         register_student(register_form.name.data, register_form.surname.data, register_form.email.data, register_form.password.data, register_form.library_id.data,
                          register_form.class_num.data)
         return redirect('/library')
-    return render_template('sign_in.html')
+    return render_template('tabs-page.html')
 
 
 class LibraryView(FlaskView):
