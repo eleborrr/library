@@ -128,7 +128,7 @@ def index():
     return render_template('main.html')
 
 
-@app.route('/sign_in')
+@app.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
     if current_user.is_authenticated:
         return redirect('/library')
