@@ -222,13 +222,16 @@ def borrow_book(code):
             break
     else:
         return abort(404, messagge='Неверный идентификатор книги')  # Шаблон с сообщением в центре экрана
-    if cur_book.owner:
+    if not cur_book.owner:
         cur_book.owner_id = current_user.id
         session.commit()
-        try:
-            return render_template('message.html', msg='Книга добавлена в ваш формуляр')
-        finally:
+        form = BorrowBookForm()
+        if form.validate_on_submit():
+            cur_book.owner_id = current_user.id
+            session.commit()
             session.close()
+            return render_template('message.html', msg='Книга добавлена в ваш формуляр')
+        return render_template('message.html', msg='У этой книги нет владельца', form=form)
     else:
         return render_template('message.html', msg=f'Эта книга принадлежит {cur_book.owner}')
 
