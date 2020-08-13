@@ -13,7 +13,7 @@ class Library(SqlAlchemyBase):
     editions = orm.relation('Edition', back_populates='library')
 
     def generate_id(self):
-        return hashlib.shake_128(str(self.id).encode()).hexdigest(4)
+        return hashlib.shake_128(str(self.id).encode()).hexdigest(5)
 
     def check_id(self, other):
-        return hashlib.shake_128(other.encode()).hexdigest(4) == self.generate_id()
+        return other == self.generate_id()

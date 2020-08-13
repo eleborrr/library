@@ -202,6 +202,37 @@ def sign_in():
                            login_form=login_form, tab_num=3)
 
 
+@app.route('/borrow_book/<string:code>')
+def borrow_book(code):
+    session = db_session.create_session()
+    if not current_user.is_authenticated:
+        form = LoginForm()
+        if form.validate_on_submit():
+            us = session.query(User).filter(User.login == form.email.data).first()
+            if not us:
+                return render_template('alone_login.html', form=form, msg="Неверный адрес электронной почты")  # Шаблон только с логином
+            if not us.check_password(form.password.data):
+                return render_template('alone_login.html', form=form, msg="Неверный пароль")
+            login_user(us, remember=form.remember_me.data)
+            return redirect(f'/borrow_book/{code}')
+        return render_template('alone_login.html', form=form)
+    for i in session.query(Book).all():
+        if i.check_id(code):
+            cur_book = i
+            break
+    else:
+        return abort(404, messagge='Неверный идентификатор книги')  # Шаблон с сообщением в центре экрана
+    if cur_book.owner:
+        cur_book.owner_id = current_user.id
+        session.commit()
+        try:
+            return render_template('message.html', msg='Книга добавлена в ваш формуляр')
+        finally:
+            session.close()
+    else:
+        return render_template('message.html', msg=f'Эта книга принадлежит {cur_book.owner}')
+
+
 class LibraryView(FlaskView):
     @route('/')
     @login_required
