@@ -217,6 +217,14 @@
                                 </p>
                             {% endfor %}
 
+                            {{ login_form.remember_me.label }}<br>
+                            {{ login_form.remember_me(style="margin-top: 15px; margin-bottom: 25px") }}
+                            {% for error in login_form.remember_me.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+
                             {{ login_form.submit() }}
                             {% for error in login_form.email.errors %}
                                 <p class="alert alert-danger" role="alert">
