@@ -260,7 +260,7 @@ class LibraryView(FlaskView):
             new_filter = {}
             if new_mode == 'edition':
                 for i in filter_seed:
-                    attr, val = i.split('_')
+                    attr, val = i.rsplit('_', 1)
                     if attr == 'id':
                         continue
                     elif attr == 'owner_id':
@@ -271,7 +271,7 @@ class LibraryView(FlaskView):
                         new_filter[attr] = val
             else:
                 for i in filter_seed:
-                    attr, val = i.split('_')
+                    attr, val = i.rsplit('_', 1)
                     if attr == 'id':
                         new_filter['edition_id'] = val
                     else:
@@ -282,7 +282,7 @@ class LibraryView(FlaskView):
         else:
             query = session.query(Edition).filter(Edition.library_id == current_user.library_id)
         for i in filter_seed.split(','):
-            attr, val = i.split('_')
+            attr, val = i.rsplit('_', 1)
             if attr == 'id':
                 try:
                     val = int(val)
@@ -326,6 +326,14 @@ class LibraryView(FlaskView):
         result = query.all()
         return render_template('smt.html', change_mode=change_mode, result=result)  # Нужно добавить форму поиска,
         #  А также к каждой модели добавить метод render, который будет возвращать html
+
+    @route('/edition/<int:edition_id>')
+    def edition(self, edition_id):
+        pass  # Здесь будет инфо об издании и список qr-кодов всех его книг
+
+    @route('/book/<int:book_id>')
+    def book(self, book_id):
+        pass  # Здесь будет инфо о книге и его qr-код
 
 
 if __name__ == '__main__':

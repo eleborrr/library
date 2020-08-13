@@ -4,6 +4,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import orm
 import sqlalchemy as sql
 import hashlib
+from flask import Markup
 
 
 class Book(SqlAlchemyBase):
@@ -19,3 +20,22 @@ class Book(SqlAlchemyBase):
 
     def check_id(self, other):
         return other == self.generate_id()
+
+    def render(self, is_librarian):
+        lib_content = f'''<a href="/library/delete_book/{self.generate_id()}">Удалить книгу из библиотеки</a><br>
+<a href="/library/give_book/{self.generate_id()}">Выдать книгу</a>''' if not self.owner \
+            else f'<a href="/library/return_book/{self.generate_id()}">Вернуть книгу</a>'
+        html = f"""<p>id:{self.id}</p><br>
+<p>Текущий владелец: {"Книга в библиотеке" if self.owner else self.owner.surname + ' ' + self.owner.name}</p><br>
+<p>Информация об издании:</p><br>
+<div>
+    <p>Название книги: {self.edition.name}</p><br>
+    <p>Автор: {self.edition.author}</p><br>
+    <p>Год публикации: {self.edition.publication_year}</p><br>
+</div>
+<div>
+    <a href="/library/book/{self.id}">Открыть информацию о книге</a><br>
+    {lib_content if is_librarian else ''}
+</div>
+"""
+        return Markup(html)
