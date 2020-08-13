@@ -190,11 +190,12 @@ def sign_in():
                                    login_form=login_form, tab_num=2, msg2="Пароли не совпадают")
         for i in session.query(Library).all():
             if i.check_id(register_form.library_id.data):
+                lib_id = i.id
                 break
         else:
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=2, msg2="Неверный идентификатор библиотеки")
-        register_student(register_form.name.data, register_form.surname.data, register_form.email.data, register_form.password.data, register_form.library_id.data,
+        register_student(register_form.name.data, register_form.surname.data, register_form.email.data, register_form.password.data, lib_id,
                          register_form.class_num.data)
         return redirect('/library')
     return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
