@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, abort
+from flask import Flask, redirect, render_template, abort, request
 from data import db_session
 from data.book import Book
 from data.edition import Edition
@@ -94,6 +94,11 @@ def generate_edition_qr(edition_id):
     create_qr_list([x.id for x in session.query(Edition).get(edition_id).books])
 
 
+@app.errorhandler(400)
+def error_400(er):
+    return render_template('плохой_запрос.html')
+
+
 @app.errorhandler(401)
 def error_401(er):
     return redirect('/sign_in#tab_03'), 401
@@ -101,17 +106,17 @@ def error_401(er):
 
 @app.errorhandler(403)
 def error_403(er):
-    return render_template('тебе_сюда_нельзя.html', msg=er.message), 403
+    return render_template('тебе_сюда_нельзя.html'), 403
 
 
 @app.errorhandler(404)
 def error_404(er):
-    return render_template('не_найдено.html', msg=er.message), 404
+    return render_template('не_найдено.html'), 404
 
 
 @app.errorhandler(500)
 def error_500(er):
-    return render_template('разрабы_тупые_криворученки.html', msg=er.message), 404
+    return render_template('разрабы_тупые_криворученки.html'), 404
 
 
 @login_manager.user_loader
@@ -240,121 +245,87 @@ class LibraryView(FlaskView):
     @route('/')
     @login_required
     def index(self):
-        # Я решил не делать /<int:library_id>, потому что человек не сможет посмотреть какую-либо библиотеку,
-        # кроме своей
-        # Мы просто определим его библиотеку и покажем её без доп. аргументов
         session = db_session.create_session()
-        books = []
-        if current_user.role_id == session.query(Role).filter(Role.name == 'Librarian').id:
-            for i in session.query(Book).all():
-                if i.edition.library_id == current_user.library_id and i.owner:
-                    books.append(i)
+        mode = request.args.get('mode')
+        bool_mode = False if mode == 'book' else True
+        filter_seed = request.args.get('filter')
+        if filter_seed is None:
+            filter_seed = ''
+        change_mode = change_mode_form(bool_mode)
+        if change_mode.validate_on_submit():
+            if bool_mode:
+                new_mode = 'book'
+            else:
+                new_mode = 'edition'
+            new_filter = {}
+            if new_mode == 'edition':
+                for i in filter_seed:
+                    attr, val = i.split('_')
+                    if attr == 'id':
+                        continue
+                    elif attr == 'owner_id':
+                        continue
+                    elif attr == 'edition_id':
+                        new_filter['id'] = val
+                    else:
+                        new_filter[attr] = val
+            else:
+                for i in filter_seed:
+                    attr, val = i.split('_')
+                    if attr == 'id':
+                        new_filter['edition_id'] = val
+                    else:
+                        new_filter[attr] = val
+            return redirect(f'/library?mode={new_mode}&filter={",".join([f"{x}={new_filter[x]}" for x in new_filter])}')
+        if mode == 'book':
+            query = session.query(Book).join(User).join(Edition).filter(Edition.library_id == current_user.libray_id)
         else:
-            for i in session.query(Book).all():
-                if i.edition.library_id == current_user.library_id and i.owner_id == current_user.id:
-                    books.append(i)
-        #  Что здесь будет:
-        #  Если user имеет роль "Candidate", на странице будет написано
-        #  Вы подали заявку в библиотеку #{id библиотеки}
-        #  Дождитесь когда заявка будет принята
-        #  Под надписью будет маленькая ссылка:
-        #  Ошиблись библиотекой? <a href="ещё не придумал">Сменить номер библиотеки</a>
+            query = session.query(Edition).filter(Edition.library_id == current_user.library_id)
+        for i in filter_seed.split(','):
+            attr, val = i.split('_')
+            if attr == 'id':
+                try:
+                    val = int(val)
+                except ValueError:
+                    return abort(400)
+                if mode == 'book':
+                    query = query.filter(Book.id == val)
+                else:
+                    query = query.filter(Edition.id == val)
+            elif attr == 'edition_id':
+                if mode == 'edition':
+                    return abort(400)
+                try:
+                    val = int(val)
+                except ValueError:
+                    return abort(400)
+                query = query.filter(Book.edition_id == val)
+            elif attr == 'owner_id':
+                if mode == 'edition':
+                    return abort(400)
+                try:
+                    val = int(val)
+                except ValueError:
+                    return abort(400)
+                query = query.filter(Book.owner_id == val)
+            elif attr == 'book_name':
+                query = query.filter(Edition.name == val)
+            elif attr == 'book_author':
+                query = query.filter(Edition.author == val)
+            elif attr == 'book_publication_year':
+                try:
+                    val = int(val)
+                except ValueError:
+                    return abort(400)
+                query = query.filter(Edition.publication_year == val)
+            elif attr == 'owner_surname':
+                if mode == 'edition':
+                    return abort(400)
+                query = query.filter(User.name == val)
 
-        #  Если user имеет роль "Student", на сайте будет написано
-        #  Вы причислены к библиотек #{id библиотеки}
-        #  Под надписью будет маленькая ссылка:
-        #  Ошиблись библиотекой? <a href="ещё не придумал">Сменить номер библиотеки</a>
-        #  (Здесь ссылка на случай, если библиотекарь по ошибке принял чужого ребенка)
-        #  Под этой подписью список всех книг, которые он взял (с поиском)
-
-        #  Если user - "Librarian", на сайте будет написано
-        #  Вы управляете библиотекой #{id библиотеки}
-        #  (Регистрация устроена так, что ошибиться с номером библиотеки не получится)
-        #  Ниже будет список всех книг, которые взяли из библиотеки (с поиском)
-        #  Рядом с каждой книгой кнопка "Вернуть в библиотеку"
-
-        #  У каждого есть возможность изменить свой профиль
-        #  А у библиотекаря так же имя школы
-
-        #  Под списком книг понимается список ссылкок на library/books/{book_id}
-
-    @route('/editions')
-    @login_required
-    def editions(self):
-        session = db_session.create_session()
-        editions = session.query(Edition).filter(Edition.library_id == current_user.library_id).all()
-
-        #  Эта вкладка доступна всем членам библиотеки
-        #  Здесь будет находиться список всех изданий (editions)
-        #  Под списком изданий понимается список ссылок на library/edition/{edition_id}
-        #  У библиотекаря должна быть кнопка "Добавить книгу" (не "Добавить издание", слишком непонятно),
-        #  добавляющее новое издание
-
-    @route('/editions/<int:edition_id>')
-    @login_required
-    def edition(self, edition_id):
-        session = db_session.create_session()
-        edition = session.query(Edition).get(edition_id)
-        if not edition:
-            return abort(404, message='Книга не найдена')
-        if edition.library_id != current_user.library_id:
-            return abort(403, 'Эта книга приписана к другой библиотеке')
-            #  Стоит отметить, что хоть одна и таже книга (одно и тоже издание) может быть в нескольких библиотеках,
-            #  Каждое издание привязано к конкретной библиотеке
-        books = session.query(Book).filter(Book.edition_id == edition_id).all()
-        # Сдесь будет список книг данного издания с их текущими владельцами
-        # У библиотекаря рядом с каждой книгой есть кнопка "Вернуть в библиотеку" или "Одолжить книгу"
-        # (Я думаю у библиотекаря должна быть возможность одалживать книгу вручную),
-        # А так эе кнопка "Удалить" (Вдруг случайно лишнюю создала") P.s кнопка недоступна, если книга не в библиотеке
-        # Так же библиотекарю доступна кнопка "Добавить книгу", добавляющая новую книгу этого издания,
-        # и кнопка "список qr-кодов"
-
-    @route('/books/<int:book_id>')
-    @login_required
-    def book(self, book_id):
-        session = db_session.create_session()
-        book = session.query(Book).get(book_id)
-        if not book:
-            return abort(404, message='Книга не найдена')
-        if book.edition.library_id != current_user.library_id:
-            return abort(403, 'Эта книга приписана к другой библиотеке')
-        #  Здесь будут находиться
-        #  id книги (именно книги, не издания)
-        #  Информация об ИЗДАНИИ (тип название, автор, год издания и тд.)
-        #  У библиотекаря есть такие же кнопки, как и рядом с каждой книгой в списке,
-        #  А так же кнопка "Получить qr-код"
-
-    @route('/students')
-    @login_required
-    def students(self):
-        session = db_session.create_session()
-        librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
-        if current_user.role_id != librarian_role.id:
-            return abort(403, message='Сюда можно только библиотекарю')
-        students = session.query(User).filter(User.role_id != librarian_role.id, User.library_id == current_user.library_id)
-        # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
-        # Список учащихся - спичок ссылок на library/students/{student_id}
-
-    @route('/students/<int:user_id>')
-    @login_required
-    def student(self, user_id):
-        session = db_session.create_session()
-        librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
-        if current_user.role_id != librarian_role.id:
-            return abort(403, message='Сюда можно только библиотекарю')
-        student = session.query(User).get(user_id)
-        if not student:
-            return abort(404, message='Данный пользователь не найден')
-        student_role = session.query(Role).filter(Role.name == 'Student').first()
-        if student.role_id != student_role.id:
-            return abort(403, message='Этот ученик из другой школы')
-
-        #  Здесь библиотекарь видит Фамилию и Имя ученика
-        #  И список всех книг, которые у него сейчас находятся
-        #  P.S. это не профиль студента (я думаю, профили других людей будут недоступны)
-
-
-LibraryView.register(app, route_base='/library')
+        result = query.all()
+        return render_template('smt.html', change_mode=change_mode, result=result)  # Нужно добавить форму поиска,
+        #  А также к каждой модели добавить метод render, который будет возвращать html
 
 
 if __name__ == '__main__':

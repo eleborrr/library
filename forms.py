@@ -39,3 +39,12 @@ class BorrowBookForm(FlaskForm):
     submit = SubmitField('Взять книгу')
 
 
+def change_mode_form(mode):
+    class ChangeModeForm(FlaskForm):
+        if mode:
+            submit = SubmitField('Показать все книги')
+        else:
+            submit = SubmitField('Показать все издания')
+    return ChangeModeForm()
+
+
