@@ -10,6 +10,7 @@ from generators import create_qr_list
 from flask_login import LoginManager, logout_user, login_user, login_required, current_user
 from flask_classy import route, FlaskView
 from forms import *
+from difflib import SequenceMatcher
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
@@ -242,45 +243,14 @@ def borrow_book(code):
 
 
 class LibraryView(FlaskView):
-    @route('/')
+    @route('/books')
     @login_required
-    def index(self):
+    def books(self):
         session = db_session.create_session()
-        mode = request.args.get('mode')
-        bool_mode = False if mode == 'book' else True
         filter_seed = request.args.get('filter')
         if filter_seed is None:
             filter_seed = ''
-        change_mode = change_mode_form(bool_mode)
-        if change_mode.validate_on_submit():
-            if bool_mode:
-                new_mode = 'book'
-            else:
-                new_mode = 'edition'
-            new_filter = {}
-            if new_mode == 'edition':
-                for i in filter_seed:
-                    attr, val = i.rsplit('_', 1)
-                    if attr == 'id':
-                        continue
-                    elif attr == 'owner_id':
-                        continue
-                    elif attr == 'edition_id':
-                        new_filter['id'] = val
-                    else:
-                        new_filter[attr] = val
-            else:
-                for i in filter_seed:
-                    attr, val = i.rsplit('_', 1)
-                    if attr == 'id':
-                        new_filter['edition_id'] = val
-                    else:
-                        new_filter[attr] = val
-            return redirect(f'/library?mode={new_mode}&filter={",".join([f"{x}={new_filter[x]}" for x in new_filter])}')
-        if mode == 'book':
-            query = session.query(Book).join(User).join(Edition).filter(Edition.library_id == current_user.libray_id)
-        else:
-            query = session.query(Edition).filter(Edition.library_id == current_user.library_id)
+        query = session.query(Book).join(User).join(Edition).filter(Edition.library_id == current_user.libray_id)
         for i in filter_seed.split(','):
             attr, val = i.rsplit('_', 1)
             if attr == 'id':
@@ -288,44 +258,97 @@ class LibraryView(FlaskView):
                     val = int(val)
                 except ValueError:
                     return abort(400)
-                if mode == 'book':
-                    query = query.filter(Book.id == val)
-                else:
-                    query = query.filter(Edition.id == val)
+                query = query.filter(Book.id == val)
             elif attr == 'edition_id':
-                if mode == 'edition':
-                    return abort(400)
                 try:
                     val = int(val)
                 except ValueError:
                     return abort(400)
                 query = query.filter(Book.edition_id == val)
             elif attr == 'owner_id':
-                if mode == 'edition':
-                    return abort(400)
                 try:
                     val = int(val)
                 except ValueError:
                     return abort(400)
                 query = query.filter(Book.owner_id == val)
-            elif attr == 'book_name':
-                query = query.filter(Edition.name == val)
-            elif attr == 'book_author':
-                query = query.filter(Edition.author == val)
-            elif attr == 'book_publication_year':
+            elif attr == 'name':
+                query = query.filter(SequenceMatcher(None, Edition.name, val.lower().capitalize()).ratio() >= 0.6)
+            elif attr == 'author':
+                query = query.filter(SequenceMatcher(None, Edition.author, val.lower().capitalize()).ratio() >= 0.6)
+            elif attr == 'publication_year':
                 try:
                     val = int(val)
                 except ValueError:
                     return abort(400)
                 query = query.filter(Edition.publication_year == val)
             elif attr == 'owner_surname':
-                if mode == 'edition':
-                    return abort(400)
-                query = query.filter(User.name == val)
+                query = query.filter(SequenceMatcher(None, User.surname, val.lower().capitalize()).ratio() >= 0.6)
+            else:
+                return abort(400)
 
         result = query.all()
-        return render_template('smt.html', change_mode=change_mode, result=result)  # Нужно добавить форму поиска,
-        #  А также к каждой модели добавить метод render, который будет возвращать html
+        return render_template('smt.html', result=result, mode='book')  # mode говорит о том, какой тип элементов в result
+
+    @route('/editions')
+    def editions(self):
+        session = db_session.create_session()
+        filter_seed = request.args.get('filter')
+        if filter_seed is None:
+            filter_seed = ''
+        query = session.query(Edition).filter(Edition.library_id == current_user.library_id)
+        for i in filter_seed.split(','):
+            attr, val = i.rsplit('_', 1)
+            if attr == 'id':
+                try:
+                    val = int(val)
+                except ValueError:
+                    return abort(400)
+                query = query.filter(Edition.id == val)
+            elif attr == 'name':
+                query = query.filter(SequenceMatcher(None, Edition.name, val.lower().capitalize()).ratio() >= 0.6)
+            elif attr == 'author':
+                query = query.filter(SequenceMatcher(None, Edition.author, val.lower().capitalize()).ratio() >= 0.6)
+            elif attr == 'publication_year':
+                try:
+                    val = int(val)
+                except ValueError:
+                    return abort(400)
+                query = query.filter(Edition.publication_year == val)
+            else:
+                return abort(400)
+            result = query.all()
+            return render_template('smt.html', result=result, mode='edition')
+
+    @route('/students')
+    def students(self):
+        session = db_session.create_session()
+        filter_seed = request.args.get('filter')
+        if filter_seed is None:
+            filter_seed = ''
+        query = session.query(User).join(Role).filter(User.library_id == current_user.library_id, Role.name == 'Student')
+        for i in filter_seed.split(','):
+            attr, val = i.rsplit('_', 1)
+            if attr == 'id':
+                try:
+                    val = int(val)
+                except ValueError:
+                    return abort(400)
+                query = query.filter(User.id == val)
+            elif attr == 'name':
+                query = query.filter(SequenceMatcher(None, User.name, val.lower().capitalize()).ratio() >= 0.6)
+            elif attr == 'surname':
+                query = query.filter(SequenceMatcher(None, User.surname, val.lower().capitalize()).ratio() >= 0.6)
+            elif attr == 'class_num':
+                try:
+                    val = int(val)
+                except ValueError:
+                    return abort(400)
+                query = query.filter(User.class_num == val)
+            else:
+                return abort(400)
+
+            result = query.all()
+            return render_template('smt.html', result=result, mode='user')
 
     @route('/edition/<int:edition_id>')
     def edition(self, edition_id):
