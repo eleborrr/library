@@ -15,6 +15,7 @@ from difflib import SequenceMatcher
 app = Flask(__name__)
 login_manager = LoginManager(app)
 app.config.from_object(AppConfig)
+db_session.global_init('db/library.sqlite3')
 
 
 def create_library(school_name, **librarian_data):  # login, name, surname, password
@@ -95,29 +96,25 @@ def generate_edition_qr(edition_id):
     create_qr_list([x.id for x in session.query(Edition).get(edition_id).books])
 
 
-@app.errorhandler(400)
-def error_400(er):
-    return render_template('плохой_запрос.html')
 
-
-@app.errorhandler(401)
-def error_401(er):
-    return redirect('/sign_in#tab_03'), 401
-
-
-@app.errorhandler(403)
-def error_403(er):
-    return render_template('тебе_сюда_нельзя.html'), 403
-
-
-@app.errorhandler(404)
-def error_404(er):
-    return render_template('не_найдено.html'), 404
-
-
-@app.errorhandler(500)
-def error_500(er):
-    return render_template('разрабы_тупые_криворученки.html'), 404
+# @app.errorhandler(401)
+# def error_401(er):
+#     return redirect('/sign_in#tab_03'), 401
+#
+#
+# @app.errorhandler(403)
+# def error_403(er):
+#     return render_template('тебе_сюда_нельзя.html', msg=er.message), 403
+#
+#
+# @app.errorhandler(404)
+# def error_404(er):
+#     return render_template('не_найдено.html', msg=er.message), 404
+#
+#
+# @app.errorhandler(500)
+# def error_500(er):
+#     return render_template('разрабы_тупые_криворученки.html', msg=er.message), 404
 
 
 @login_manager.user_loader
@@ -138,7 +135,7 @@ def logout():
 @app.before_first_request
 def create_roles():
     session = db_session.create_session()
-    roles = {'Student', 'Librarian', 'Candidate'}
+    roles = {'Student', 'Librarian'}
     for i in session.query(Role).all():
         roles.discard(i.name)
     for i in roles:
@@ -151,7 +148,7 @@ def create_roles():
 
 @app.route('/')
 def index():
-    return render_template('main.html')
+    return render_template('index.html')
 
 
 @app.route('/sign_in', methods=['GET', 'POST'])
@@ -229,8 +226,6 @@ def borrow_book(code):
     else:
         return abort(404, messagge='Неверный идентификатор книги')  # Шаблон с сообщением в центре экрана
     if not cur_book.owner:
-        cur_book.owner_id = current_user.id
-        session.commit()
         form = BorrowBookForm()
         if form.validate_on_submit():
             cur_book.owner_id = current_user.id
@@ -309,6 +304,7 @@ class LibraryView(FlaskView):
             return redirect(final)
         result = query.all()
         return render_template('smt.html', result=result, mode='book', form=form)  # mode говорит о том, какой тип элементов в result
+      
 
     @route('/editions')
     def editions(self):
@@ -417,6 +413,5 @@ class LibraryView(FlaskView):
 
 
 if __name__ == '__main__':
-    db_session.global_init('db/library.sqlite3')
     app.run(debug=True)
 
