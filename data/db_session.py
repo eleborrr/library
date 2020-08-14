@@ -38,7 +38,3 @@ def create_scoped_session() -> scoped_session:
 def create_session() -> Session:
     global __factory
     return __factory()
-
-
-if __name__ == '__main__':
-    global_init('db/edu.sqlite')

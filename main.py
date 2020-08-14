@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, abort
+from flask import Flask, redirect, render_template, abort, request
 from data import db_session
 from data.book import Book
 from data.edition import Edition
@@ -14,6 +14,7 @@ from forms import *
 app = Flask(__name__)
 login_manager = LoginManager(app)
 app.config.from_object(AppConfig)
+db_session.global_init('db/library.sqlite3')
 
 
 def create_library(school_name, **librarian_data):  # login, name, surname, password
@@ -94,24 +95,24 @@ def generate_edition_qr(edition_id):
     create_qr_list([x.id for x in session.query(Edition).get(edition_id).books])
 
 
-@app.errorhandler(401)
-def error_401(er):
-    return redirect('/sign_in#tab_03'), 401
-
-
-@app.errorhandler(403)
-def error_403(er):
-    return render_template('тебе_сюда_нельзя.html', msg=er.message), 403
-
-
-@app.errorhandler(404)
-def error_404(er):
-    return render_template('не_найдено.html', msg=er.message), 404
-
-
-@app.errorhandler(500)
-def error_500(er):
-    return render_template('разрабы_тупые_криворученки.html', msg=er.message), 404
+# @app.errorhandler(401)
+# def error_401(er):
+#     return redirect('/sign_in#tab_03'), 401
+#
+#
+# @app.errorhandler(403)
+# def error_403(er):
+#     return render_template('тебе_сюда_нельзя.html', msg=er.message), 403
+#
+#
+# @app.errorhandler(404)
+# def error_404(er):
+#     return render_template('не_найдено.html', msg=er.message), 404
+#
+#
+# @app.errorhandler(500)
+# def error_500(er):
+#     return render_template('разрабы_тупые_криворученки.html', msg=er.message), 404
 
 
 @login_manager.user_loader
@@ -132,7 +133,7 @@ def logout():
 @app.before_first_request
 def create_roles():
     session = db_session.create_session()
-    roles = {'Student', 'Librarian', 'Candidate'}
+    roles = {'Student', 'Librarian'}
     for i in session.query(Role).all():
         roles.discard(i.name)
     for i in roles:
@@ -145,7 +146,7 @@ def create_roles():
 
 @app.route('/')
 def index():
-    return render_template('main.html')
+    return render_template('index.html')
 
 
 @app.route('/sign_in', methods=['GET', 'POST'])
@@ -223,8 +224,6 @@ def borrow_book(code):
     else:
         return abort(404, messagge='Неверный идентификатор книги')  # Шаблон с сообщением в центре экрана
     if not cur_book.owner:
-        cur_book.owner_id = current_user.id
-        session.commit()
         form = BorrowBookForm()
         if form.validate_on_submit():
             cur_book.owner_id = current_user.id
@@ -240,10 +239,9 @@ class LibraryView(FlaskView):
     @route('/')
     @login_required
     def index(self):
-        # Я решил не делать /<int:library_id>, потому что человек не сможет посмотреть какую-либо библиотеку,
-        # кроме своей
-        # Мы просто определим его библиотеку и покажем её без доп. аргументов
+        # юзер может смотреть только свою библиотеку
         session = db_session.create_session()
+        library = session.query(Library).get(current_user.library_id)
         books = []
         if current_user.role_id == session.query(Role).filter(Role.name == 'Librarian').id:
             for i in session.query(Book).all():
@@ -253,12 +251,7 @@ class LibraryView(FlaskView):
             for i in session.query(Book).all():
                 if i.edition.library_id == current_user.library_id and i.owner_id == current_user.id:
                     books.append(i)
-        #  Что здесь будет:
-        #  Если user имеет роль "Candidate", на странице будет написано
-        #  Вы подали заявку в библиотеку #{id библиотеки}
-        #  Дождитесь когда заявка будет принята
-        #  Под надписью будет маленькая ссылка:
-        #  Ошиблись библиотекой? <a href="ещё не придумал">Сменить номер библиотеки</a>
+        return render_template('library.html')
 
         #  Если user имеет роль "Student", на сайте будет написано
         #  Вы причислены к библиотек #{id библиотеки}
@@ -302,7 +295,7 @@ class LibraryView(FlaskView):
             #  Стоит отметить, что хоть одна и таже книга (одно и тоже издание) может быть в нескольких библиотеках,
             #  Каждое издание привязано к конкретной библиотеке
         books = session.query(Book).filter(Book.edition_id == edition_id).all()
-        # Сдесь будет список книг данного издания с их текущими владельцами
+        # Здесь будет список книг данного издания с их текущими владельцами
         # У библиотекаря рядом с каждой книгой есть кнопка "Вернуть в библиотеку" или "Одолжить книгу"
         # (Я думаю у библиотекаря должна быть возможность одалживать книгу вручную),
         # А так эе кнопка "Удалить" (Вдруг случайно лишнюю создала") P.s кнопка недоступна, если книга не в библиотеке
@@ -358,6 +351,5 @@ LibraryView.register(app, route_base='/library')
 
 
 if __name__ == '__main__':
-    db_session.global_init('db/library.sqlite3')
     app.run(debug=True)
 
