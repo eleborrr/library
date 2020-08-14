@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, RadioField, BooleanField, TextAreaField, DateTimeField, \
     DateField, TimeField, FileField, IntegerField, SelectField
 from wtforms.fields.html5 import EmailField, DateTimeLocalField
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, Length, NumberRange
 from flask_wtf.recaptcha import RecaptchaField
 from datetime import datetime
 
@@ -23,7 +23,8 @@ class RegisterStudentForm(FlaskForm):
     email = EmailField('Адрес электронной почты', validators=[DataRequired(), Length(max=64)])
     password = PasswordField('Пароль', validators=[DataRequired(), Length(max=128)])
     repeat = PasswordField('Повторите пароль', validators=[DataRequired(), Length(max=128)])
-    library_id = StringField('Идентификатор библтотеки (спросите у библиотекаря)', validators=[DataRequired()])
+    library_id = StringField('Идентификатор библтотеки (спросите у библиотекаря)', validators=[DataRequired(),
+                                                                                               NumberRange(min=1, max=11)])
     class_num = IntegerField('Номер класса, в котором вы учитесь', validators=[DataRequired()])
     submit = SubmitField('Зарегистрироваться')
 
@@ -60,5 +61,14 @@ def edition_filter_form(**kwargs):
         publication_year = IntegerField('Год публиукации', default=kwargs['publication_year'])
 
     return EditionFilterForm()
+
+
+def student_filter_form(**kwargs):
+    class StudentFilterForm(FlaskForm):
+        id = IntegerField('Номер ученика', default=kwargs['id'])
+        surname = StringField('Фамилия ученика', default=kwargs['surname'])
+        class_num = IntegerField('Номер класса ученика', default=kwargs['class_num'])
+
+    return StudentFilterForm()
 
 
