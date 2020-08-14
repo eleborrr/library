@@ -296,6 +296,15 @@ class LibraryView(FlaskView):
         if filter_seed is None:
             filter_seed = ''
         query = session.query(Edition).filter(Edition.library_id == current_user.library_id)
+        kwargs = {
+            'id': '',
+            'name': '',
+            'author': '',
+            'publication_year': '',
+            'edition_id': '',
+            'owner_id': '',
+            'owner_surname': ''
+        }
         for i in filter_seed.split(','):
             attr, val = i.rsplit('_', 1)
             if attr == 'id':
@@ -316,8 +325,21 @@ class LibraryView(FlaskView):
                 query = query.filter(Edition.publication_year == val)
             else:
                 return abort(400)
-            result = query.all()
-            return render_template('smt.html', result=result, mode='edition')
+            kwargs[attr] = val
+        form = book_filter_form(**kwargs)
+        if form.validate_on_submit():
+            final = '/library/books'
+            args = []
+            for i in kwargs:
+                res = getattr(form, i).data
+                if res:
+                    args.append(f'{i}_{res}')
+            if args:
+                final += '?filter='
+                final += ','.join(args)
+            return redirect(final)
+        result = query.all()
+        return render_template('smt.html', result=result, mode='edition', form=form)
 
     @route('/students')
     def students(self):
