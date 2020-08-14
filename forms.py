@@ -35,3 +35,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Войти')
 
 
+class BorrowBookForm(FlaskForm):
+    submit = SubmitField('Взять книгу')
+
+

@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template
+from flask import Flask, redirect, render_template, abort
 from data import db_session
 from data.book import Book
 from data.edition import Edition
@@ -94,6 +94,26 @@ def generate_edition_qr(edition_id):
     create_qr_list([x.id for x in session.query(Edition).get(edition_id).books])
 
 
+@app.errorhandler(401)
+def error_401(er):
+    return redirect('/sign_in#tab_03'), 401
+
+
+@app.errorhandler(403)
+def error_403(er):
+    return render_template('тебе_сюда_нельзя.html', msg=er.message), 403
+
+
+@app.errorhandler(404)
+def error_404(er):
+    return render_template('не_найдено.html', msg=er.message), 404
+
+
+@app.errorhandler(500)
+def error_500(er):
+    return render_template('разрабы_тупые_криворученки.html', msg=er.message), 404
+
+
 @login_manager.user_loader
 def load_user(user_id):
     session = db_session.create_session()
@@ -151,7 +171,7 @@ def sign_in():
                        password=library_form.password.data)
         return redirect('/library')
     if login_form.validate_on_submit():
-        us: User = session.query(User).filter(User.login == login_form.email.data).first()
+        us = session.query(User).filter(User.login == login_form.email.data).first()
         if not us:
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=3, msg3="Неверный адрес электронной почты")
@@ -168,14 +188,52 @@ def sign_in():
         if register_form.password.data != register_form.repeat.data:
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=2, msg2="Пароли не совпадают")
-        if not session.query(Library).get(register_form.library_id.data):  # Здесь должна быть проверка идентификаора
+        for i in session.query(Library).all():
+            if i.check_id(register_form.library_id.data):
+                lib_id = i.id
+                break
+        else:
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=2, msg2="Неверный идентификатор библиотеки")
-        register_student(register_form.name.data, register_form.surname.data, register_form.email.data, register_form.password.data, register_form.library_id.data,
+        register_student(register_form.name.data, register_form.surname.data, register_form.email.data, register_form.password.data, lib_id,
                          register_form.class_num.data)
         return redirect('/library')
     return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                            login_form=login_form, tab_num=3)
+
+
+@app.route('/borrow_book/<string:code>')
+def borrow_book(code):
+    session = db_session.create_session()
+    if not current_user.is_authenticated:
+        form = LoginForm()
+        if form.validate_on_submit():
+            us = session.query(User).filter(User.login == form.email.data).first()
+            if not us:
+                return render_template('alone_login.html', form=form, msg="Неверный адрес электронной почты")  # Шаблон только с логином
+            if not us.check_password(form.password.data):
+                return render_template('alone_login.html', form=form, msg="Неверный пароль")
+            login_user(us, remember=form.remember_me.data)
+            return redirect(f'/borrow_book/{code}')
+        return render_template('alone_login.html', form=form)
+    for i in session.query(Book).all():
+        if i.check_id(code):
+            cur_book = i
+            break
+    else:
+        return abort(404, messagge='Неверный идентификатор книги')  # Шаблон с сообщением в центре экрана
+    if not cur_book.owner:
+        cur_book.owner_id = current_user.id
+        session.commit()
+        form = BorrowBookForm()
+        if form.validate_on_submit():
+            cur_book.owner_id = current_user.id
+            session.commit()
+            session.close()
+            return render_template('message.html', msg='Книга добавлена в ваш формуляр')
+        return render_template('message.html', msg='У этой книги нет владельца', form=form)
+    else:
+        return render_template('message.html', msg=f'Эта книга принадлежит {cur_book.owner}')
 
 
 class LibraryView(FlaskView):
@@ -186,7 +244,15 @@ class LibraryView(FlaskView):
         # кроме своей
         # Мы просто определим его библиотеку и покажем её без доп. аргументов
         session = db_session.create_session()
-        library = session.query(Library).get(current_user.library_id)
+        books = []
+        if current_user.role_id == session.query(Role).filter(Role.name == 'Librarian').id:
+            for i in session.query(Book).all():
+                if i.edition.library_id == current_user.library_id and i.owner:
+                    books.append(i)
+        else:
+            for i in session.query(Book).all():
+                if i.edition.library_id == current_user.library_id and i.owner_id == current_user.id:
+                    books.append(i)
         #  Что здесь будет:
         #  Если user имеет роль "Candidate", на странице будет написано
         #  Вы подали заявку в библиотеку #{id библиотеки}
@@ -216,10 +282,8 @@ class LibraryView(FlaskView):
     @login_required
     def editions(self):
         session = db_session.create_session()
-        library = session.query(Library).get(current_user.library_id)
-        candidate_role = session.query(Role).filter(Role.name == 'Candidate').first()
-        if current_user.role_id == candidate_role:
-            pass  # Те, чью заявку не приняли, не допускаются
+        editions = session.query(Edition).filter(Edition.library_id == current_user.library_id).all()
+
         #  Эта вкладка доступна всем членам библиотеки
         #  Здесь будет находиться список всех изданий (editions)
         #  Под списком изданий понимается список ссылок на library/edition/{edition_id}
@@ -230,17 +294,14 @@ class LibraryView(FlaskView):
     @login_required
     def edition(self, edition_id):
         session = db_session.create_session()
-        library = session.query(Library).get(current_user.library_id)
         edition = session.query(Edition).get(edition_id)
-        candidate_role = session.query(Role).filter(Role.name == 'Candidate').first()
-        if current_user.role_id == candidate_role:
-            pass  # Те, чью заявку не приняли, не допускаются
         if not edition:
-            pass  # Такого издания не существует
-        if edition.library_id != library.id:
-            pass  # Если это издание не принадлежит этой библиотеке
+            return abort(404, message='Книга не найдена')
+        if edition.library_id != current_user.library_id:
+            return abort(403, 'Эта книга приписана к другой библиотеке')
             #  Стоит отметить, что хоть одна и таже книга (одно и тоже издание) может быть в нескольких библиотеках,
             #  Каждое издание привязано к конкретной библиотеке
+        books = session.query(Book).filter(Book.edition_id == edition_id).all()
         # Сдесь будет список книг данного издания с их текущими владельцами
         # У библиотекаря рядом с каждой книгой есть кнопка "Вернуть в библиотеку" или "Одолжить книгу"
         # (Я думаю у библиотекаря должна быть возможность одалживать книгу вручную),
@@ -252,15 +313,11 @@ class LibraryView(FlaskView):
     @login_required
     def book(self, book_id):
         session = db_session.create_session()
-        library = session.query(Library).get(current_user.library_id)
         book = session.query(Book).get(book_id)
         if not book:
-            pass  # Такой книги не существует
-        if book.edition.library_id != library.id:
-            pass  # Если это издание не принадлежит этой библиотеке
-        candidate_role = session.query(Role).filter(Role.name == 'Candidate').first()
-        if current_user.role_id == candidate_role:
-            pass  # Те, чью заявку не приняли, не допускаются
+            return abort(404, message='Книга не найдена')
+        if book.edition.library_id != current_user.library_id:
+            return abort(403, 'Эта книга приписана к другой библиотеке')
         #  Здесь будут находиться
         #  id книги (именно книги, не издания)
         #  Информация об ИЗДАНИИ (тип название, автор, год издания и тд.)
@@ -271,10 +328,10 @@ class LibraryView(FlaskView):
     @login_required
     def students(self):
         session = db_session.create_session()
-        library = session.query(Library).get(current_user.library_id)
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
         if current_user.role_id != librarian_role.id:
-            pass  # Эта вкладка доступна только библиотекарю
+            return abort(403, message='Сюда можно только библиотекарю')
+        students = session.query(User).filter(User.role_id != librarian_role.id, User.library_id == current_user.library_id)
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
 
@@ -282,32 +339,19 @@ class LibraryView(FlaskView):
     @login_required
     def student(self, user_id):
         session = db_session.create_session()
-        library = session.query(Library).get(current_user.library_id)
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
         if current_user.role_id != librarian_role.id:
-            pass  # Эта вкладка доступна только библиотекарю
+            return abort(403, message='Сюда можно только библиотекарю')
         student = session.query(User).get(user_id)
         if not student:
-            pass  # Если такого юзера не существует
+            return abort(404, message='Данный пользователь не найден')
         student_role = session.query(Role).filter(Role.name == 'Student').first()
         if student.role_id != student_role.id:
-            pass  # В этой вкладке должен быть ученик, привязанный к библиотеке
+            return abort(403, message='Этот ученик из другой школы')
 
         #  Здесь библиотекарь видит Фамилию и Имя ученика
         #  И список всех книг, которые у него сейчас находятся
         #  P.S. это не профиль студента (я думаю, профили других людей будут недоступны)
-
-    @route('/candidates')
-    @login_required
-    def candidates(self):
-        session = db_session.create_session()
-        library = session.query(Library).get(current_user.library_id)
-        librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
-        if current_user.role_id != librarian_role.id:
-            pass  # Эта вкладка доступна только библиотекарю
-        # Здесь будут все юзеры с ролью candidate, привязанные к данной библиотеке
-        # Рядом с каждым юзером будет кнопка "Принять заявку"
-        # Нажав на неё, роль юзера меняется на student
 
 
 LibraryView.register(app, route_base='/library')
