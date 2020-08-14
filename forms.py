@@ -43,12 +43,22 @@ def book_filter_form(**kwargs):
     class BookFilterForm(FlaskForm):
         id = IntegerField('Номер книги', default=kwargs['id'])
         name = StringField('Название книги', default=kwargs['name'])
-        author = StringField('Авто книги', default=kwargs['author'])
+        author = StringField('Фамилия автора', default=kwargs['author'])
         publication_year = IntegerField('Год публикации', default=kwargs['publication_year'])
         edition_id = IntegerField('Номер издания', default=kwargs['edition_id'])
         owner_id = IntegerField('Номер владельца', default=kwargs['owner_id'])
         owner_surname = StringField('Фамилия владельца', default=kwargs['owner_surname'])
 
     return BookFilterForm()
+
+
+def edition_filter_form(**kwargs):
+    class EditionFilterForm(FlaskForm):
+        id = IntegerField('Номер издания', default=kwargs['id'])
+        name = StringField('Название книги', default=kwargs['name'])
+        author = StringField('Фамилия автора', default=kwargs['author'])
+        publication_year = IntegerField('Год публиукации', default=kwargs['publication_year'])
+
+    return EditionFilterForm()
 
 
