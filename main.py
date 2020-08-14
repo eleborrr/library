@@ -75,7 +75,7 @@ def register_student(name, surname, login, password, library_id, class_num):
     role_id = session.query(Role).filter(Role.name == 'Candidate').first().id
     if not ex_user:
         us = User(name=name, surname=surname, password=password, role_id=role_id, library_id=library_id,
-                         class_num=class_num, login=login)
+                  class_num=class_num, login=login)
         session.add(us)
         login_user(us)
     session.commit()
@@ -164,6 +164,10 @@ def sign_in():
         if library_form.password.data != library_form.repeat.data:
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=1, msg1="Пароли не совпадают")
+        if '_' in library_form.name.data:
+            # обработать и другие символы
+            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                                   login_form=login_form, tab_num=1, msg1="Недопустимые символы в названии библиотеки")
         create_library(library_form.library_school_name.data,
                        login=library_form.email.data,
                        name=library_form.name.data,
@@ -188,6 +192,10 @@ def sign_in():
         if register_form.password.data != register_form.repeat.data:
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=2, msg2="Пароли не совпадают")
+        if '_' in register_form.name.data or '_' in register_form.surname.data:
+            # обработать и другие символы
+            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                                   login_form=login_form, tab_num=2, msg2="Недопустимые символы в имени пользователя")
         for i in session.query(Library).all():
             if i.check_id(register_form.library_id.data):
                 lib_id = i.id
@@ -195,7 +203,8 @@ def sign_in():
         else:
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=2, msg2="Неверный идентификатор библиотеки")
-        register_student(register_form.name.data, register_form.surname.data, register_form.email.data, register_form.password.data, lib_id,
+        register_student(register_form.name.data, register_form.surname.data, register_form.email.data,
+                         register_form.password.data, lib_id,
                          register_form.class_num.data)
         return redirect('/library')
     return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
@@ -205,17 +214,6 @@ def sign_in():
 @app.route('/borrow_book/<string:code>')
 def borrow_book(code):
     session = db_session.create_session()
-    if not current_user.is_authenticated:
-        form = LoginForm()
-        if form.validate_on_submit():
-            us = session.query(User).filter(User.login == form.email.data).first()
-            if not us:
-                return render_template('alone_login.html', form=form, msg="Неверный адрес электронной почты")  # Шаблон только с логином
-            if not us.check_password(form.password.data):
-                return render_template('alone_login.html', form=form, msg="Неверный пароль")
-            login_user(us, remember=form.remember_me.data)
-            return redirect(f'/borrow_book/{code}')
-        return render_template('alone_login.html', form=form)
     for i in session.query(Book).all():
         if i.check_id(code):
             cur_book = i
@@ -223,14 +221,28 @@ def borrow_book(code):
     else:
         return abort(404, messagge='Неверный идентификатор книги')  # Шаблон с сообщением в центре экрана
     if not cur_book.owner:
-        cur_book.owner_id = current_user.id
-        session.commit()
         form = BorrowBookForm()
-        if form.validate_on_submit():
-            cur_book.owner_id = current_user.id
-            session.commit()
-            session.close()
-            return render_template('message.html', msg='Книга добавлена в ваш формуляр')
+        if form.validate_on_submit() and current_user.is_authenticated:
+            if current_user.library_id == cur_book.edition.library_id:
+                cur_book.owner_id = current_user.id
+                session.commit()
+                session.close()
+                return render_template('message.html', msg='Книга добавлена в ваш формуляр')
+            else:
+                return render_template('message.html',
+                                       msg='Эта книга принадлежит другой библиотеке!')  # отнеси ее туда, не будь говнюком
+        elif form.validate_on_submit() and not current_user.is_authenticated:
+            login_form = LoginForm()
+            if login_form.validate_on_submit():
+                us = session.query(User).filter(User.login == login_form.email.data).first()
+                if not us:
+                    return render_template('alone_login.html', form=login_form,
+                                           msg="Неверный адрес электронной почты")  # Шаблон только с логином
+                if not us.check_password(login_form.password.data):
+                    return render_template('alone_login.html', form=login_form, msg="Неверный пароль")
+                login_user(us, remember=login_form.remember_me.data)
+                return redirect(f'/borrow_book/{code}')
+            return render_template('alone_login.html', form=login_form)
         return render_template('message.html', msg='У этой книги нет владельца', form=form)
     else:
         return render_template('message.html', msg=f'Эта книга принадлежит {cur_book.owner}')
@@ -240,9 +252,6 @@ class LibraryView(FlaskView):
     @route('/')
     @login_required
     def index(self):
-        # Я решил не делать /<int:library_id>, потому что человек не сможет посмотреть какую-либо библиотеку,
-        # кроме своей
-        # Мы просто определим его библиотеку и покажем её без доп. аргументов
         session = db_session.create_session()
         books = []
         if current_user.role_id == session.query(Role).filter(Role.name == 'Librarian').id:
@@ -253,12 +262,6 @@ class LibraryView(FlaskView):
             for i in session.query(Book).all():
                 if i.edition.library_id == current_user.library_id and i.owner_id == current_user.id:
                     books.append(i)
-        #  Что здесь будет:
-        #  Если user имеет роль "Candidate", на странице будет написано
-        #  Вы подали заявку в библиотеку #{id библиотеки}
-        #  Дождитесь когда заявка будет принята
-        #  Под надписью будет маленькая ссылка:
-        #  Ошиблись библиотекой? <a href="ещё не придумал">Сменить номер библиотеки</a>
 
         #  Если user имеет роль "Student", на сайте будет написано
         #  Вы причислены к библиотек #{id библиотеки}
@@ -331,7 +334,8 @@ class LibraryView(FlaskView):
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
         if current_user.role_id != librarian_role.id:
             return abort(403, message='Сюда можно только библиотекарю')
-        students = session.query(User).filter(User.role_id != librarian_role.id, User.library_id == current_user.library_id)
+        students = session.query(User).filter(User.role_id != librarian_role.id,
+                                              User.library_id == current_user.library_id)
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
 
@@ -356,8 +360,6 @@ class LibraryView(FlaskView):
 
 LibraryView.register(app, route_base='/library')
 
-
 if __name__ == '__main__':
     db_session.global_init('db/library.sqlite3')
     app.run(debug=True)
-
