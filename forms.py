@@ -49,6 +49,7 @@ def book_filter_form(**kwargs):
         edition_id = IntegerField('Номер издания', default=kwargs['edition_id'])
         owner_id = IntegerField('Номер владельца', default=kwargs['owner_id'])
         owner_surname = StringField('Фамилия владельца', default=kwargs['owner_surname'])
+        submit = SubmitField('Искать')
 
     return BookFilterForm()
 
@@ -59,6 +60,7 @@ def edition_filter_form(**kwargs):
         name = StringField('Название книги', default=kwargs['name'])
         author = StringField('Фамилия автора', default=kwargs['author'])
         publication_year = IntegerField('Год публиукации', default=kwargs['publication_year'])
+        submit = SubmitField('Искать')
 
     return EditionFilterForm()
 
@@ -68,6 +70,7 @@ def student_filter_form(**kwargs):
         id = IntegerField('Номер ученика', default=kwargs['id'])
         surname = StringField('Фамилия ученика', default=kwargs['surname'])
         class_num = IntegerField('Номер класса ученика', default=kwargs['class_num'])
+        submit = SubmitField('Искать')
 
     return StudentFilterForm()
 
