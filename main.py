@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, abort
+from flask import Flask, redirect, render_template, abort, request
 from data import db_session
 from data.book import Book
 from data.edition import Edition
@@ -145,7 +145,7 @@ def create_roles():
 
 @app.route('/')
 def index():
-    return render_template('main.html')
+    return render_template('index.html')
 
 
 @app.route('/sign_in', methods=['GET', 'POST'])
