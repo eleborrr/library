@@ -141,6 +141,7 @@ def create_roles():
         role = Role()
         role.name = i
         session.add(role)
+    print(session.query(Library).get(1).generate_id())
     session.commit()
     session.close()
 
@@ -248,6 +249,7 @@ def check_int_type(el):
 
 class LibraryView(FlaskView):
     @route('/books')
+    @route('/')
     @login_required
     def books(self):
         session = db_session.create_session()
@@ -306,9 +308,8 @@ class LibraryView(FlaskView):
     @route('/editions')
     def editions(self):
         session = db_session.create_session()
-        filter_seed = request.args.get('filter')
-        if filter_seed is None:
-            filter_seed = ''
+        id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
+        publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year')
         kwargs = {
             'id': '',
             'name': '',
@@ -316,27 +317,18 @@ class LibraryView(FlaskView):
             'publication_year': ''
         }
         query = session.query(Edition).filter(Edition.library_id == current_user.library_id)
-        for i in filter_seed.split(','):
-            attr, val = i.rsplit('_', 1)
-            if attr == 'id':
-                try:
-                    val = int(val)
-                except ValueError:
-                    return abort(400)
-                query = query.filter(Edition.id == val)
-            elif attr == 'name':
-                query = query.filter(SequenceMatcher(None, Edition.name, val.lower().capitalize()).ratio() >= 0.6)
-            elif attr == 'author':
-                query = query.filter(SequenceMatcher(None, Edition.author, val.lower().capitalize()).ratio() >= 0.6)
-            elif attr == 'publication_year':
-                try:
-                    val = int(val)
-                except ValueError:
-                    return abort(400)
-                query = query.filter(Edition.publication_year == val)
-            else:
-                return abort(400)
-            kwargs[attr] = val
+        if id_:
+            query = query.filter(Edition.id == check_int_type(id_))
+            kwargs['id'] = id_
+        if name:
+            query = query.filter(SequenceMatcher(None, Edition.name, name.lower().capitalize()).ratio() >= 0.6)
+            kwargs['name'] = name
+        if author:
+            query = query.filter(SequenceMatcher(None, Edition.author, author.lower().capitalize()).ratio() >= 0.6)
+            kwargs['author'] = author
+        if publication_year:
+            query = query.filter(Edition.publication_year == check_int_type(publication_year))
+            kwargs['publication_year'] = publication_year
         form = edition_filter_form()
         if form.validate_on_submit():
             final = '/library/editions'
@@ -344,10 +336,10 @@ class LibraryView(FlaskView):
             for i in kwargs:
                 res = kwargs[i]
                 if res:
-                    args.append(f'{i}_{res}')
+                    args.append(f'{i}={res}')
             if args:
-                final += '?filter='
-                final += ','.join(args)
+                final += '?'
+                final += '&'.join(args)
             return redirect(final)
         result = query.all()
         return render_template('smt.html', result=result, mode='edition', form=form)
@@ -355,9 +347,7 @@ class LibraryView(FlaskView):
     @route('/students')
     def students(self):
         session = db_session.create_session()
-        filter_seed = request.args.get('filter')
-        if filter_seed is None:
-            filter_seed = ''
+        id_, surname, class_num = request.args.get('id'), request.args.get('surname'), request.args.get('class_num')
         kwargs = {
             'id': '',
             'surname': '',
@@ -365,25 +355,15 @@ class LibraryView(FlaskView):
         }
         query = session.query(User).join(Role).filter(User.library_id == current_user.library_id,
                                                       Role.name == 'Student')
-        for i in filter_seed.split(','):
-            attr, val = i.rsplit('_', 1)
-            if attr == 'id':
-                try:
-                    val = int(val)
-                except ValueError:
-                    return abort(400)
-                query = query.filter(User.id == val)
-            elif attr == 'surname':
-                query = query.filter(SequenceMatcher(None, User.surname, val.lower().capitalize()).ratio() >= 0.6)
-            elif attr == 'class_num':
-                try:
-                    val = int(val)
-                except ValueError:
-                    return abort(400)
-                query = query.filter(User.class_num == val)
-            else:
-                return abort(400)
-            kwargs[attr] = val
+        if id_:
+            query = query.filter(User.id == check_int_type(id_))
+            kwargs['id'] = id_
+        if surname:
+            query = query.filter(SequenceMatcher(None, User.name, surname.lower().capitalize()).ratio() >= 0.6)
+            kwargs['name'] = surname
+        if class_num:
+            query = query.filter(User.class_num == check_int_type(class_num))
+            kwargs['author'] = class_num
 
         form = student_filter_form()
         if form.validate_on_submit():
@@ -392,10 +372,10 @@ class LibraryView(FlaskView):
             for i in kwargs:
                 res = kwargs[i]
                 if res:
-                    args.append(f'{i}_{res}')
+                    args.append(f'{i}={res}')
             if args:
-                final += '?filter='
-                final += ','.join(args)
+                final += '?'
+                final += '&'.join(args)
             return redirect(final)
 
         result = query.all()
@@ -408,6 +388,9 @@ class LibraryView(FlaskView):
     @route('/book/<int:book_id>')
     def book(self, book_id):
         pass  # Здесь будет инфо о книге и его qr-код
+
+
+LibraryView.register(app)
 
 
 if __name__ == '__main__':
