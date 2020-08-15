@@ -22,8 +22,10 @@ def create_library(school_name, **librarian_data):  # login, name, surname, pass
     session.add(lib)
     session.commit()
     role_id = session.query(Role).filter(Role.name == 'Librarian').first().id
-    session.add(User(**librarian_data, role_id=role_id, library_id=lib.id,
-                     class_num=None))
+    user = User(**librarian_data, role_id=role_id, library_id=lib.id,
+                class_num=None)
+    session.add(user)
+    login_user(user)
     session.commit()
     session.close()
 
@@ -94,24 +96,24 @@ def generate_edition_qr(edition_id):
     create_qr_list([x.id for x in session.query(Edition).get(edition_id).books])
 
 
-@app.errorhandler(401)
-def error_401(er):
-    return redirect('/sign_in#tab_03'), 401
-
-
-@app.errorhandler(403)
-def error_403(er):
-    return render_template('тебе_сюда_нельзя.html', msg=er.message), 403
-
-
-@app.errorhandler(404)
-def error_404(er):
-    return render_template('не_найдено.html', msg=er.message), 404
-
-
-@app.errorhandler(500)
-def error_500(er):
-    return render_template('разрабы_тупые_криворученки.html', msg=er.message), 404
+# @app.errorhandler(401)
+# def error_401(er):
+#     return redirect('/sign_in#tab_03'), 401
+#
+#
+# @app.errorhandler(403)
+# def error_403(er):
+#     return render_template('тебе_сюда_нельзя.html', msg=er.message), 403
+#
+#
+# @app.errorhandler(404)
+# def error_404(er):
+#     return render_template('не_найдено.html', msg=er.message), 404
+#
+#
+# @app.errorhandler(500)
+# def error_500(er):
+#     return render_template('разрабы_тупые_криворученки.html', msg=er.message), 404
 
 
 @login_manager.user_loader
@@ -132,13 +134,14 @@ def logout():
 @app.before_first_request
 def create_roles():
     session = db_session.create_session()
-    roles = {'Student', 'Librarian', 'Candidate'}
+    roles = {'Student', 'Librarian'}
     for i in session.query(Role).all():
         roles.discard(i.name)
     for i in roles:
         role = Role()
         role.name = i
         session.add(role)
+    # print(session.query(Library).get(1).generate_id())
     session.commit()
     session.close()
 
@@ -150,6 +153,7 @@ def index():
 
 @app.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
+    print(current_user.is_authenticated)
     if current_user.is_authenticated:
         return redirect('/library')
     session = db_session.create_session()
@@ -254,7 +258,7 @@ class LibraryView(FlaskView):
     def index(self):
         session = db_session.create_session()
         books = []
-        if current_user.role_id == session.query(Role).filter(Role.name == 'Librarian').id:
+        if current_user.role_id == session.query(Role).filter(Role.name == 'Librarian').first().id:
             for i in session.query(Book).all():
                 if i.edition.library_id == current_user.library_id and i.owner:
                     books.append(i)
@@ -262,9 +266,8 @@ class LibraryView(FlaskView):
             for i in session.query(Book).all():
                 if i.edition.library_id == current_user.library_id and i.owner_id == current_user.id:
                     books.append(i)
-
-        #  Если user имеет роль "Student", на сайте будет написано
-        #  Вы причислены к библиотек #{id библиотеки}
+        return render_template('library.html')
+        #  у ученика: Вы причислены к библиотек #{id библиотеки}
         #  Под надписью будет маленькая ссылка:
         #  Ошиблись библиотекой? <a href="ещё не придумал">Сменить номер библиотеки</a>
         #  (Здесь ссылка на случай, если библиотекарь по ошибке принял чужого ребенка)
@@ -272,14 +275,9 @@ class LibraryView(FlaskView):
 
         #  Если user - "Librarian", на сайте будет написано
         #  Вы управляете библиотекой #{id библиотеки}
-        #  (Регистрация устроена так, что ошибиться с номером библиотеки не получится)
-        #  Ниже будет список всех книг, которые взяли из библиотеки (с поиском)
-        #  Рядом с каждой книгой кнопка "Вернуть в библиотеку"
 
         #  У каждого есть возможность изменить свой профиль
         #  А у библиотекаря так же имя школы
-
-        #  Под списком книг понимается список ссылкок на library/books/{book_id}
 
     @route('/editions')
     @login_required
@@ -302,8 +300,6 @@ class LibraryView(FlaskView):
             return abort(404, message='Книга не найдена')
         if edition.library_id != current_user.library_id:
             return abort(403, 'Эта книга приписана к другой библиотеке')
-            #  Стоит отметить, что хоть одна и таже книга (одно и тоже издание) может быть в нескольких библиотеках,
-            #  Каждое издание привязано к конкретной библиотеке
         books = session.query(Book).filter(Book.edition_id == edition_id).all()
         # Сдесь будет список книг данного издания с их текущими владельцами
         # У библиотекаря рядом с каждой книгой есть кнопка "Вернуть в библиотеку" или "Одолжить книгу"

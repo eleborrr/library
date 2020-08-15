@@ -1,3 +1,5 @@
+from flask_login import UserMixin
+
 from .db_session import SqlAlchemyBase
 from sqlalchemy import Column as Cl
 from sqlalchemy import orm, ForeignKey
@@ -5,7 +7,7 @@ import sqlalchemy as sql
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
-class User(SqlAlchemyBase):
+class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
     id = Cl(sql.Integer, autoincrement=True, primary_key=True, nullable=False)
     login = Cl(sql.String(64), nullable=False, unique=True)
