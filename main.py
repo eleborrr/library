@@ -77,7 +77,7 @@ def register_student(name, surname, login, password, library_id, class_num):
     role_id = session.query(Role).filter(Role.name == 'Candidate').first().id
     if not ex_user:
         us = User(name=name, surname=surname, password=password, role_id=role_id, library_id=library_id,
-                         class_num=class_num, login=login)
+                  class_num=class_num, login=login)
         session.add(us)
         login_user(us)
     session.commit()
@@ -94,7 +94,6 @@ def bind_student(user_id):
 def generate_edition_qr(edition_id):
     session = db_session.create_session()
     create_qr_list([x.id for x in session.query(Edition).get(edition_id).books])
-
 
 
 # @app.errorhandler(401)
@@ -142,6 +141,7 @@ def create_roles():
         role = Role()
         role.name = i
         session.add(role)
+    print(session.query(Library).get(1).generate_id())
     session.commit()
     session.close()
 
@@ -198,7 +198,8 @@ def sign_in():
         else:
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=2, msg2="Неверный идентификатор библиотеки")
-        register_student(register_form.name.data, register_form.surname.data, register_form.email.data, register_form.password.data, lib_id,
+        register_student(register_form.name.data, register_form.surname.data, register_form.email.data,
+                         register_form.password.data, lib_id,
                          register_form.class_num.data)
         return redirect('/library')
     return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
@@ -213,7 +214,8 @@ def borrow_book(code):
         if form.validate_on_submit():
             us = session.query(User).filter(User.login == form.email.data).first()
             if not us:
-                return render_template('alone_login.html', form=form, msg="Неверный адрес электронной почты")  # Шаблон только с логином
+                return render_template('alone_login.html', form=form,
+                                       msg="Неверный адрес электронной почты")  # Шаблон только с логином
             if not us.check_password(form.password.data):
                 return render_template('alone_login.html', form=form, msg="Неверный пароль")
             login_user(us, remember=form.remember_me.data)
@@ -237,14 +239,24 @@ def borrow_book(code):
         return render_template('message.html', msg=f'Эта книга принадлежит {cur_book.owner}')
 
 
+def check_int_type(el):
+    try:
+        el = int(el)
+    except ValueError:
+        return abort(400)
+    return el
+
+
 class LibraryView(FlaskView):
     @route('/books')
+    @route('/')
     @login_required
     def books(self):
         session = db_session.create_session()
-        filter_seed = request.args.get('filter')
-        if filter_seed is None:
-            filter_seed = ''
+        id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
+        publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
+            'edition_id'), request.args.get('owner_id'), request.args.get('owner_surname')
+
         query = session.query(Book).join(User).join(Edition).filter(Edition.library_id == current_user.libray_id)
         kwargs = {
             'id': '',
@@ -255,41 +267,28 @@ class LibraryView(FlaskView):
             'owner_id': '',
             'owner_surname': ''
         }
-        for i in filter_seed.split(','):
-            attr, val = i.rsplit('_', 1)
-            if attr == 'id':
-                try:
-                    val = int(val)
-                except ValueError:
-                    return abort(400)
-                query = query.filter(Book.id == val)
-            elif attr == 'edition_id':
-                try:
-                    val = int(val)
-                except ValueError:
-                    return abort(400)
-                query = query.filter(Book.edition_id == val)
-            elif attr == 'owner_id':
-                try:
-                    val = int(val)
-                except ValueError:
-                    return abort(400)
-                query = query.filter(Book.owner_id == val)
-            elif attr == 'name':
-                query = query.filter(SequenceMatcher(None, Edition.name, val.lower().capitalize()).ratio() >= 0.6)
-            elif attr == 'author':
-                query = query.filter(SequenceMatcher(None, Edition.author, val.lower().capitalize()).ratio() >= 0.6)
-            elif attr == 'publication_year':
-                try:
-                    val = int(val)
-                except ValueError:
-                    return abort(400)
-                query = query.filter(Edition.publication_year == val)
-            elif attr == 'owner_surname':
-                query = query.filter(SequenceMatcher(None, User.surname, val.lower().capitalize()).ratio() >= 0.6)
-            else:
-                return abort(400)
-            kwargs[attr] = val
+
+        if id_:
+            query = query.filter(Book.id == check_int_type(id_))
+            kwargs['id'] = id_
+        if name:
+            query = query.filter(SequenceMatcher(None, Edition.name, name.lower().capitalize()).ratio() >= 0.6)
+            kwargs['name'] = name
+        if author:
+            query = query.filter(SequenceMatcher(None, Edition.author, author.lower().capitalize()).ratio() >= 0.6)
+            kwargs['author'] = author
+        if publication_year:
+            query = query.filter(Edition.publication_year == check_int_type(publication_year))
+            kwargs['publication_year'] = publication_year
+        if edition_id:
+            query = query.filter(Book.edition_id == check_int_type(edition_id))
+            kwargs['edition_id'] = edition_id
+        if owner_id:
+            query = query.filter(Book.owner_id == check_int_type(owner_id))
+            kwargs['owner_id'] = owner_id
+        if owner_surname:
+            query = query.filter(SequenceMatcher(None, User.surname, owner_surname.lower().capitalize()).ratio() >= 0.6)
+            kwargs['owner_surname'] = owner_surname
         form = book_filter_form(**kwargs)
         if form.validate_on_submit():
             final = '/library/books'
@@ -297,21 +296,20 @@ class LibraryView(FlaskView):
             for i in kwargs:
                 res = getattr(form, i).data
                 if res:
-                    args.append(f'{i}_{res}')
+                    args.append(f'{i}={res}')
             if args:
-                final += '?filter='
-                final += ','.join(args)
+                final += '?'
+                final += '&'.join(args)
             return redirect(final)
         result = query.all()
-        return render_template('smt.html', result=result, mode='book', form=form)  # mode говорит о том, какой тип элементов в result
-      
+        return render_template('smt.html', result=result, mode='book',
+                               form=form)  # mode говорит о том, какой тип элементов в result
 
     @route('/editions')
     def editions(self):
         session = db_session.create_session()
-        filter_seed = request.args.get('filter')
-        if filter_seed is None:
-            filter_seed = ''
+        id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
+        publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year')
         kwargs = {
             'id': '',
             'name': '',
@@ -319,27 +317,18 @@ class LibraryView(FlaskView):
             'publication_year': ''
         }
         query = session.query(Edition).filter(Edition.library_id == current_user.library_id)
-        for i in filter_seed.split(','):
-            attr, val = i.rsplit('_', 1)
-            if attr == 'id':
-                try:
-                    val = int(val)
-                except ValueError:
-                    return abort(400)
-                query = query.filter(Edition.id == val)
-            elif attr == 'name':
-                query = query.filter(SequenceMatcher(None, Edition.name, val.lower().capitalize()).ratio() >= 0.6)
-            elif attr == 'author':
-                query = query.filter(SequenceMatcher(None, Edition.author, val.lower().capitalize()).ratio() >= 0.6)
-            elif attr == 'publication_year':
-                try:
-                    val = int(val)
-                except ValueError:
-                    return abort(400)
-                query = query.filter(Edition.publication_year == val)
-            else:
-                return abort(400)
-            kwargs[attr] = val
+        if id_:
+            query = query.filter(Edition.id == check_int_type(id_))
+            kwargs['id'] = id_
+        if name:
+            query = query.filter(SequenceMatcher(None, Edition.name, name.lower().capitalize()).ratio() >= 0.6)
+            kwargs['name'] = name
+        if author:
+            query = query.filter(SequenceMatcher(None, Edition.author, author.lower().capitalize()).ratio() >= 0.6)
+            kwargs['author'] = author
+        if publication_year:
+            query = query.filter(Edition.publication_year == check_int_type(publication_year))
+            kwargs['publication_year'] = publication_year
         form = edition_filter_form()
         if form.validate_on_submit():
             final = '/library/editions'
@@ -347,10 +336,10 @@ class LibraryView(FlaskView):
             for i in kwargs:
                 res = kwargs[i]
                 if res:
-                    args.append(f'{i}_{res}')
+                    args.append(f'{i}={res}')
             if args:
-                final += '?filter='
-                final += ','.join(args)
+                final += '?'
+                final += '&'.join(args)
             return redirect(final)
         result = query.all()
         return render_template('smt.html', result=result, mode='edition', form=form)
@@ -358,34 +347,23 @@ class LibraryView(FlaskView):
     @route('/students')
     def students(self):
         session = db_session.create_session()
-        filter_seed = request.args.get('filter')
-        if filter_seed is None:
-            filter_seed = ''
+        id_, surname, class_num = request.args.get('id'), request.args.get('surname'), request.args.get('class_num')
         kwargs = {
             'id': '',
             'surname': '',
             'class_num': ''
         }
-        query = session.query(User).join(Role).filter(User.library_id == current_user.library_id, Role.name == 'Student')
-        for i in filter_seed.split(','):
-            attr, val = i.rsplit('_', 1)
-            if attr == 'id':
-                try:
-                    val = int(val)
-                except ValueError:
-                    return abort(400)
-                query = query.filter(User.id == val)
-            elif attr == 'surname':
-                query = query.filter(SequenceMatcher(None, User.surname, val.lower().capitalize()).ratio() >= 0.6)
-            elif attr == 'class_num':
-                try:
-                    val = int(val)
-                except ValueError:
-                    return abort(400)
-                query = query.filter(User.class_num == val)
-            else:
-                return abort(400)
-            kwargs[attr] = val
+        query = session.query(User).join(Role).filter(User.library_id == current_user.library_id,
+                                                      Role.name == 'Student')
+        if id_:
+            query = query.filter(User.id == check_int_type(id_))
+            kwargs['id'] = id_
+        if surname:
+            query = query.filter(SequenceMatcher(None, User.name, surname.lower().capitalize()).ratio() >= 0.6)
+            kwargs['name'] = surname
+        if class_num:
+            query = query.filter(User.class_num == check_int_type(class_num))
+            kwargs['author'] = class_num
 
         form = student_filter_form()
         if form.validate_on_submit():
@@ -394,10 +372,10 @@ class LibraryView(FlaskView):
             for i in kwargs:
                 res = kwargs[i]
                 if res:
-                    args.append(f'{i}_{res}')
+                    args.append(f'{i}={res}')
             if args:
-                final += '?filter='
-                final += ','.join(args)
+                final += '?'
+                final += '&'.join(args)
             return redirect(final)
 
         result = query.all()
@@ -412,6 +390,8 @@ class LibraryView(FlaskView):
         pass  # Здесь будет инфо о книге и его qr-код
 
 
+LibraryView.register(app)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-
