@@ -36,13 +36,13 @@ body {
 
 
 
-.wrapper {
+.wrappers {
 	min-height: 100%;
 	position: relative;
 	overflow: hidden;
 }
 
-.content {
+.contents {
 	padding: 50px 0;
 	max-width: 1000px;
 	margin: 0px auto;

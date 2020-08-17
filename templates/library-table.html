@@ -1,31 +1,7 @@
-<!DOCTYPE html>
+{% extends "base-table.html" %}
 
-<html lang="ru">
-	<head>
-		<title>Title</title>
-		
-		
-		
-		<meta charset="UTF-8">
-		
-		<meta name="viewport" content="width=device-width">
-		<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="../static/css/library.css">
-		<link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
-	</head>
-
-	<body>
-
-		<div class="body-div">
-		<div class="topfix"></div>
-
-		<div class="pretext"><h1>Библиотека</h1>
-			<p>Здесь Вы всегда найдете нужную книгу. Попробуйте!</p>
-		</div>
-
-		<div class="flex-block">
-			<div class="flex-first"></div>
-			<div class="flex-second">
+{% block right-side %}
+<div class="flex-second">
 				<div>
 					<input type="text" name="" class="intpfield" placeholder="Поиск по изданиям">
 				</div>
@@ -36,11 +12,4 @@
 					<a class='link-izd' href='#'>Удалить</a>
 				</div>
 			</div>
-		</div>
-
-
-		
-
-	</div>
-	</body>
-	</html>
+{% endblock %}

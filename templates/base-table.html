@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+	<head>
+		<title>Title</title>
+		<meta charset="UTF-8">
+
+		<meta name="viewport" content="width=device-width">
+		<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../static/css/library.css">
+		<link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
+        {% block link %}{% endblock %}
+	</head>
+
+	<body>
+
+		<div class="body-div">
+		<div class="topfix"></div>
+
+		<div class="pretext"><h1>Библиотека</h1>
+			<p>Здесь Вы всегда найдете нужную книгу. Попробуйте!</p>
+		</div>
+
+		<div class="flex-block">
+			<div class="flex-first"></div>
+            {% block right-side %}{% endblock %}
+
+		</div>
+
+
+
+
+	</div>
+	</body>
+	</html>
