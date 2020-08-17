@@ -106,10 +106,12 @@ def generate_edition_qr(edition_id):
 #     return render_template('тебе_сюда_нельзя.html', msg=er.message), 403
 #
 #
-# @app.errorhandler(404)
-# def error_404(er):
-#     return render_template('не_найдено.html', msg=er.message), 404
-#
+@app.errorhandler(404)
+def error_404(er):
+    if er.description == 'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.':
+        er.description = 'Страница не найдена'
+    return render_template('404.html', msg=er.description), 404
+
 #
 # @app.errorhandler(500)
 # def error_500(er):
@@ -153,7 +155,6 @@ def index():
 
 @app.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
-    print(current_user.is_authenticated)
     if current_user.is_authenticated:
         return redirect('/library')
     session = db_session.create_session()
@@ -223,7 +224,7 @@ def borrow_book(code):
             cur_book = i
             break
     else:
-        return abort(404, messagge='Неверный идентификатор книги')  # Шаблон с сообщением в центре экрана
+        return abort(404, description='Неверный идентификатор книги')  # Шаблон с сообщением в центре экрана
     if not cur_book.owner:
         form = BorrowBookForm()
         if form.validate_on_submit() and current_user.is_authenticated:
@@ -284,7 +285,7 @@ class LibraryView(FlaskView):
     def editions(self):
         session = db_session.create_session()
         editions = session.query(Edition).filter(Edition.library_id == current_user.library_id).all()
-
+        return render_template('editions.html')
         #  Эта вкладка доступна всем членам библиотеки
         #  Здесь будет находиться список всех изданий (editions)
         #  Под списком изданий понимается список ссылок на library/edition/{edition_id}
@@ -297,7 +298,7 @@ class LibraryView(FlaskView):
         session = db_session.create_session()
         edition = session.query(Edition).get(edition_id)
         if not edition:
-            return abort(404, message='Книга не найдена')
+            return abort(404, description='Книга не найдена')
         if edition.library_id != current_user.library_id:
             return abort(403, 'Эта книга приписана к другой библиотеке')
         books = session.query(Book).filter(Book.edition_id == edition_id).all()
@@ -314,7 +315,7 @@ class LibraryView(FlaskView):
         session = db_session.create_session()
         book = session.query(Book).get(book_id)
         if not book:
-            return abort(404, message='Книга не найдена')
+            return abort(404, description='Книга не найдена')
         if book.edition.library_id != current_user.library_id:
             return abort(403, 'Эта книга приписана к другой библиотеке')
         #  Здесь будут находиться
@@ -329,7 +330,7 @@ class LibraryView(FlaskView):
         session = db_session.create_session()
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
         if current_user.role_id != librarian_role.id:
-            return abort(403, message='Сюда можно только библиотекарю')
+            return abort(403, description='Сюда можно только библиотекарю')
         students = session.query(User).filter(User.role_id != librarian_role.id,
                                               User.library_id == current_user.library_id)
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
@@ -341,13 +342,13 @@ class LibraryView(FlaskView):
         session = db_session.create_session()
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
         if current_user.role_id != librarian_role.id:
-            return abort(403, message='Сюда можно только библиотекарю')
+            return abort(403, description='Сюда можно только библиотекарю')
         student = session.query(User).get(user_id)
         if not student:
-            return abort(404, message='Данный пользователь не найден')
+            return abort(404, description='Данный пользователь не найден')
         student_role = session.query(Role).filter(Role.name == 'Student').first()
         if student.role_id != student_role.id:
-            return abort(403, message='Этот ученик из другой школы')
+            return abort(403, description='Этот ученик из другой школы')
 
         #  Здесь библиотекарь видит Фамилию и Имя ученика
         #  И список всех книг, которые у него сейчас находятся
