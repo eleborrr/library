@@ -309,15 +309,49 @@ class LibraryView(FlaskView):
         # Так же библиотекарю доступна кнопка "Добавить книгу", добавляющая новую книгу этого издания,
         # и кнопка "список qr-кодов"
 
-    @route('/books/<int:book_id>')
+    @route('/books/<int:book_id>', methods=['GET', 'POST'])
     @login_required
     def book(self, book_id):
         session = db_session.create_session()
         book = session.query(Book).get(book_id)
+        # print(book.owner)
         if not book:
             return abort(404, description='Книга не найдена')
         if book.edition.library_id != current_user.library_id:
             return abort(403, 'Эта книга приписана к другой библиотеке')
+        if request.method == 'POST':
+            try:
+                if request.form['return-book']:
+                    return_book(book_id)
+            except Exception:
+                pass
+            try:
+                if request.form['give-book']:
+                    pass
+            except Exception:
+                pass
+            try:
+                if request.form['delete-book']:
+                    remove_book(book_id)
+            except Exception:
+                pass
+            try:
+                if request.form['add-in-edition']:
+                    pass
+            except Exception:
+                pass
+            try:
+                if request.form['print-qr']:
+                    pass
+            except Exception:
+                pass
+            try:
+                if request.form['take-book']:
+                    lend_book(current_user.id, book_id)
+            except Exception:
+                pass
+            return redirect('/library/books/' + str(book_id))
+        return render_template('bookone.html', book=book, user=current_user)
         #  Здесь будут находиться
         #  id книги (именно книги, не издания)
         #  Информация об ИЗДАНИИ (тип название, автор, год издания и тд.)
