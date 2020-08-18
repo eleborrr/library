@@ -1,7 +1,11 @@
 {% extends "base-table.html" %}
-
+{% block links %}
+<link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
+{% endblock %}
 {% block right_side %}
-<div class="flex-second">
+<div class="flex-block" style="margin-left: 0">
+
+			<div class="flex-second" style="width:100%;margin-left: -20px">
 				<div>
 					<input type="text" name="" class="intpfield" placeholder="Поиск по изданиям">
 				</div>
@@ -14,4 +18,5 @@
 				</div>
                 {% endfor %}
 			</div>
+</div>
 {% endblock %}
