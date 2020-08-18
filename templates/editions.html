@@ -1,8 +1,6 @@
 {% extends "base-table.html" %}
-{% block links %}
+{% block contents %}
 <link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
-{% endblock %}
-{% block right_side %}
 <div class="flex-block" style="margin-left: 0">
 
 			<div class="flex-second" style="width:100%;margin-left: -20px">
@@ -11,7 +9,8 @@
 				</div>
                 {% for edition in editions %}
 				<div class="izd-item">
-					<p>{{ edition.name }}</p>
+                    <img src="../static/img/editions{{ editions.avatar_image }}">
+					<a href="/library/editions/{{ edition.id }}">{{ edition.name }}</a>
 					<span >Литература</span>
 					<span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
 					<input type="submit" name="delete-edition" class='link-izd' href='#' value="Удалить">

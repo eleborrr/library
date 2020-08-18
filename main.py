@@ -14,6 +14,7 @@ from forms import *
 app = Flask(__name__)
 login_manager = LoginManager(app)
 app.config.from_object(AppConfig)
+db_session.global_init('db/library.sqlite3')
 
 
 def create_library(school_name, **librarian_data):  # login, name, surname, password
@@ -211,6 +212,7 @@ def sign_in():
         register_student(register_form.name.data, register_form.surname.data, register_form.email.data,
                          register_form.password.data, lib_id,
                          register_form.class_num.data)
+        login_user(ex)
         return redirect('/library')
     return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                            login_form=login_form, tab_num=3)
@@ -286,7 +288,7 @@ class LibraryView(FlaskView):
     def editions(self):
         session = db_session.create_session()
         editions = session.query(Edition).filter(Edition.library_id == current_user.library_id).all()
-        return render_template('editions.html')
+        return render_template('editions.html', editions=editions)
         #  Эта вкладка доступна всем членам библиотеки
         #  Здесь будет находиться список всех изданий (editions)
         #  Под списком изданий понимается список ссылок на library/edition/{edition_id}
