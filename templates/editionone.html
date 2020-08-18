@@ -1,79 +1,71 @@
 <!DOCTYPE html>
 
 <html lang="ru">
-	<head>
-		<title>Title</title>
+<head>
+    <title>Title</title>
 
 
+    <meta charset="UTF-8">
 
-		<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../static/css/bookone.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/editionone.css">
+</head>
 
-		<meta name="viewport" content="width=device-width">
-		<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="../static/css/bookone.css">
-		<link rel="stylesheet" type="text/css" href="../static/css/editionone.css">
-	</head>
+<body>
+<div class="body-cont">
+    <div class="logo-text"><strong style="font-size: 25px">M | L</strong></div>
 
-	<body>
-		<div class="body-cont">
-		<div class="logo-text"><strong style="font-size: 25px">M | L</strong></div>
+    <div style="margin:auto;max-width: 1040px;margin-top: 40px">
+        <a href='#' class="link-del green" style="float: right;margin-bottom:50px">Добавить издание</a>
+    </div>
 
-			<div style="margin:auto;max-width: 1040px;margin-top: 40px">
-<a href='#' class="link-del green" style="float: right;margin-bottom:50px">Добавить издание</a>
+    <form method="post">
+        <div class="edition-body">
+            <div class="upper-block">
+                <div class="img-book">
+                    <img src="../static/img/editions/{{ edition.avatar_image }}">
+                </div>
+                <div class="descrs">
+                    <h3>Название издания: {{ edition.name }}</h3>
+                    <p>Количество книг: {{ count_books }}</p>
+                    <input type="submit" name="delete-edition" class="link-delete hiden" value="Удалить издание">
+                </div>
+                <div style="margin-left: auto">
+                    <input type="submit" name="delete-edition" class="link-delete opas" value="Удалить издание">
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="lower-block">
+        <input type="text" name="" placeholder="Поиск в издании" class="inpt-srh">
+    </div>
+
+    <div class="ed-books">
+        {% for book in books %}
+        <div class="book-item">
+            <div class="img-book bookitem">
+                <img src="../static/img/editions/newaris.png">
+            </div>
+            <div class="descrs bookitem">
+                <h3 style="font-size: 15px">Название: {{ book.name }}</h3>
+                {% if book.owner %}
+                <a href='#' class="link-del">Книга у {{ book.owner.name }}</a>
+                {% else %}
+                <a href='#' class="link-del green">Книга свободна</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+
+    </div>
+
 </div>
 
 
-		<div class="edition-body">
-			<div class="upper-block">
-			<div class="img-book">
-				<img src="../static/img/mars.jpg">
-			</div>
-			<div class="descrs">
-				<h3>Название издания: Либби</h3>
-				<p>Количество книг: 233</p>
-				<a href='#' class="link-delete hiden">Удалить издание</a>
-			</div>
-			<div style="margin-left: auto">
-				<a href='#' class="link-delete opas">Удалить издание</a>
-			</div>
-		</div>
-
-		<div class="lower-block">
-			<input type="text" name="" placeholder="Поиск в издании" class="inpt-srh">
-		</div>
-
-		<div class="ed-books">
-
-			<div class="book-item">
-				<div class="img-book bookitem">
-				<img src="../static/img/newaris.png">
-			</div>
-			<div class="descrs bookitem">
-				<h3 style="font-size: 15px">Название: Либби</h3>
-
-				<a href='#' class="link-del" >Книга занята</a>
-			</div>
-			</div>
-
-
-			<div class="book-item">
-				<div class="img-book bookitem">
-				<img src="../static/img/newaris.png">
-			</div>
-			<div class="descrs bookitem">
-				<h3 style="font-size: 15px">Название: Либби</h3>
-
-				<a href='#' class="link-del green" >Книга свободна</a>
-			</div>
-			</div>
-
-
-
-		</div>
-
-		</div>
-
-
-	</div>
+</div>
 </body>
 </html>
