@@ -3,33 +3,47 @@
 <html lang="ru">
 	<head>
 		<title>Title</title>
+
+
+
 		<meta charset="UTF-8">
 
 		<meta name="viewport" content="width=device-width">
 		<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
 		<link rel="stylesheet" type="text/css" href="../static/css/library.css">
-		<link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
-        {% block link %}{% endblock %}
+		<link rel="stylesheet" type="text/css" href="../static/css/library-page.css">
+		{% block links %}{% endblock %}
 	</head>
 
 	<body>
 
-		<div class="body-div">
 		<div class="topfix"></div>
+		<div class="body-content">
 
-		<div class="pretext"><h1>Библиотека</h1>
-			<p>Здесь Вы всегда найдете нужную книгу. Попробуйте!</p>
+			<div class="fixed-side">
+
+				<h1 >Библио</h1>
+
+					<a href='#' class="link-menu abs">Ученики</a>
+					<a href='#' class="link-menu">Книги</a>
+					<a href='#' class="link-menu">Издания</a>
+
+			</div>
+			<div class="normal-side">
+				<div class="borders">
+				<p class="text-des">Здесь Вы всегда найдете нужную книгу. Попробуйте!</p>
+
+				{% block contents %}{% endblock %}
+
+
+
+
+			</div>
+			</div>
+
 		</div>
 
-		<div class="flex-block">
-			<div class="flex-first"></div>
-            {% block right-side %}{% endblock %}
-
-		</div>
 
 
-
-
-	</div>
 	</body>
 	</html>

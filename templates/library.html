@@ -1,28 +1,6 @@
-<!DOCTYPE html>
-
-<html lang="ru">
-	<head>
-		<title>Title</title>
-		
-		
-		
-		<meta charset="UTF-8">
-		
-		<meta name="viewport" content="width=device-width">
-		<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="../static/css/library.css">
-	</head>
-
-	<body>
-
-		<div class="body-div">
-		<div class="topfix"></div>
-
-		<div class="pretext"><h1>Библиотека</h1>
-			<p>Здесь Вы всегда найдете нужную книгу. Попробуйте!</p>
-		</div>
-
-		<div class="books-side">
+{% extends "base-table.html" %}
+{% block contents %}
+		<div class="books-side" style="margin-top: 80px">
 			<div>
 				<input type="text" name=" " class="intpfield" placeholder="Введите название книги">
 			</div>
@@ -30,42 +8,55 @@
 			<div class="book-item">
 				<div class="leftside">
 					<div class="nameb">
-					<p style="padding: 0;margin:0" >id    <strong>Название</strong></p></div>
-				
+					<p style="padding: 0;margin:0" >id </p></div>
+
+					<div class="nameb">
+					<p style="padding: 0;margin:0;font-size: 14px" >   <strong>Информация</strong></p></div>
+
+					<div class="nameb">
+					<p style="padding: 0;margin:0" ><strong>Название</strong></p></div>
+
 				<div class="nameb">
 					<p style="padding: 0;margin:0" ><strong>Автор</strong></p>
 								</div>
-				
+
 				<div class="nameb">
 					<p style="padding: 0;margin:0" ><strong>Год публикации</strong></p>
 								</div>
 
-				<a class="owner">Кто владелец</a>
+
 				</div>
-			
+
 
 
 				<div class="rightside">
 					<a href='#' class="link-getback tr">Вернуть в библиотеку</a>
+					<a class="owner red">Кто владелец</a>
 				</div>
 			</div>
 
 			<div class="book-item">
 				<div class="leftside">
 					<div class="nameb">
-					<p style="padding: 0;margin:0" >id    <strong>Название</strong></p></div>
-				
+					<p style="padding: 0;margin:0" >id </p></div>
+
+					<div class="nameb">
+					<p style="padding: 0;margin:0;font-size: 14px" >   <strong>Информация</strong></p></div>
+
+					<div class="nameb">
+					<p style="padding: 0;margin:0" ><strong>Название</strong></p></div>
+
 				<div class="nameb">
 					<p style="padding: 0;margin:0" ><strong>Автор</strong></p>
 								</div>
-				
+
 				<div class="nameb">
 					<p style="padding: 0;margin:0" ><strong>Год публикации</strong></p>
 								</div>
 
 				<a class="owner free">Сейчас в библиотеке</a>
 				</div>
-			
+
 
 
 				<div class="rightside">
@@ -76,5 +67,4 @@
 		</div>
 
 	</div>
-	</body>
-	</html>
+		{% endblock %}
