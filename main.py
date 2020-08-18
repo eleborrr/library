@@ -255,6 +255,7 @@ def borrow_book(code):
 
 class LibraryView(FlaskView):
     @route('/')
+    @route('/books')
     @login_required
     def index(self):
         session = db_session.create_session()
@@ -280,7 +281,7 @@ class LibraryView(FlaskView):
         #  У каждого есть возможность изменить свой профиль
         #  А у библиотекаря так же имя школы
 
-    @route('/editions')
+    @route('/editions', methods=['GET', 'POST'])
     @login_required
     def editions(self):
         session = db_session.create_session()
@@ -292,7 +293,7 @@ class LibraryView(FlaskView):
         #  У библиотекаря должна быть кнопка "Добавить книгу" (не "Добавить издание", слишком непонятно),
         #  добавляющее новое издание
 
-    @route('/editions/<int:edition_id>')
+    @route('/editions/<int:edition_id>', methods=['GET', 'POST'])
     @login_required
     def edition(self, edition_id):
         session = db_session.create_session()
@@ -302,6 +303,7 @@ class LibraryView(FlaskView):
         if edition.library_id != current_user.library_id:
             return abort(403, 'Эта книга приписана к другой библиотеке')
         books = session.query(Book).filter(Book.edition_id == edition_id).all()
+        return render_template('editionone.html', books=books, count_books=len(books), edition=edition)
         # Сдесь будет список книг данного издания с их текущими владельцами
         # У библиотекаря рядом с каждой книгой есть кнопка "Вернуть в библиотеку" или "Одолжить книгу"
         # (Я думаю у библиотекаря должна быть возможность одалживать книгу вручную),
@@ -358,7 +360,7 @@ class LibraryView(FlaskView):
         #  У библиотекаря есть такие же кнопки, как и рядом с каждой книгой в списке,
         #  А так же кнопка "Получить qr-код"
 
-    @route('/students')
+    @route('/students', methods=['GET', 'POST'])
     @login_required
     def students(self):
         session = db_session.create_session()
@@ -367,10 +369,11 @@ class LibraryView(FlaskView):
             return abort(403, description='Сюда можно только библиотекарю')
         students = session.query(User).filter(User.role_id != librarian_role.id,
                                               User.library_id == current_user.library_id)
+        return render_template('students.html', students=students)
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
 
-    @route('/students/<int:user_id>')
+    @route('/students/<int:user_id>', methods=['GET', 'POST'])
     @login_required
     def student(self, user_id):
         session = db_session.create_session()
@@ -383,7 +386,7 @@ class LibraryView(FlaskView):
         student_role = session.query(Role).filter(Role.name == 'Student').first()
         if student.role_id != student_role.id:
             return abort(403, description='Этот ученик из другой школы')
-
+        return render_template('student.html', student=student)
         #  Здесь библиотекарь видит Фамилию и Имя ученика
         #  И список всех книг, которые у него сейчас находятся
         #  P.S. это не профиль студента (я думаю, профили других людей будут недоступны)

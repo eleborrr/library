@@ -1,15 +1,17 @@
 {% extends "base-table.html" %}
 
-{% block right-side %}
+{% block right_side %}
 <div class="flex-second">
 				<div>
 					<input type="text" name="" class="intpfield" placeholder="Поиск по изданиям">
 				</div>
+                {% for edition in editions %}
 				<div class="izd-item">
-					<p>Название издания</p>
+					<p>{{ edition.name }}</p>
 					<span >Литература</span>
 					<span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
-					<a class='link-izd' href='#'>Удалить</a>
+					<input type="submit" name="delete-edition" class='link-izd' href='#' value="Удалить">
 				</div>
+                {% endfor %}
 			</div>
 {% endblock %}
