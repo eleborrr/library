@@ -10,10 +10,12 @@ from generators import create_qr_list
 from flask_login import LoginManager, logout_user, login_user, login_required, current_user
 from flask_classy import route, FlaskView
 from forms import *
+from sequence_matcher import SequenceMatcher
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
 app.config.from_object(AppConfig)
+db_session.global_init('db/library.sqlite3')
 
 
 def create_library(school_name, **librarian_data):  # login, name, surname, password
@@ -106,6 +108,7 @@ def generate_edition_qr(edition_id):
 #     return render_template('тебе_сюда_нельзя.html', msg=er.message), 403
 #
 #
+
 @app.errorhandler(404)
 def error_404(er):
     if er.description == 'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.':
@@ -211,6 +214,7 @@ def sign_in():
         register_student(register_form.name.data, register_form.surname.data, register_form.email.data,
                          register_form.password.data, lib_id,
                          register_form.class_num.data)
+        login_user(ex)
         return redirect('/library')
     return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                            login_form=login_form, tab_num=3)
@@ -253,9 +257,17 @@ def borrow_book(code):
         return render_template('message.html', msg=f'Эта книга принадлежит {cur_book.owner}')
 
 
+def check_int_type(el):
+    try:
+        el = int(el)
+    except ValueError:
+        return abort(400)
+    return el
+
+
 class LibraryView(FlaskView):
-    @route('/')
     @route('/books')
+    @route('/')
     @login_required
     def index(self):
         session = db_session.create_session()
@@ -268,7 +280,58 @@ class LibraryView(FlaskView):
             for i in session.query(Book).all():
                 if i.edition.library_id == current_user.library_id and i.owner_id == current_user.id:
                     books.append(i)
-        return render_template('library.html')
+        id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
+        publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
+            'edition_id'), request.args.get('owner_id'), request.args.get('owner_surname')
+
+        query = session.query(Book).join(User).join(Edition).filter(Edition.library_id == current_user.library_id)
+        kwargs = {
+            'id': '',
+            'name': '',
+            'author': '',
+            'publication_year': '',
+            'edition_id': '',
+            'owner_id': '',
+            'owner_surname': ''
+        }
+
+        if id_:
+            query = query.filter(Book.id == check_int_type(id_))
+            kwargs['id'] = id_
+        if name:
+            query = query.filter(SequenceMatcher(Edition.name, name)())
+            kwargs['name'] = name
+        if author:
+            query = query.filter(SequenceMatcher(Edition.author, author)())
+            kwargs['author'] = author
+        if publication_year:
+            query = query.filter(Edition.publication_year == check_int_type(publication_year))
+            kwargs['publication_year'] = publication_year
+        if edition_id:
+            query = query.filter(Book.edition_id == check_int_type(edition_id))
+            kwargs['edition_id'] = edition_id
+        if owner_id:
+            query = query.filter(Book.owner_id == check_int_type(owner_id))
+            kwargs['owner_id'] = owner_id
+        if owner_surname:
+            query = query.filter(SequenceMatcher(User.surname, owner_surname)())
+            kwargs['owner_surname'] = owner_surname
+        form = book_filter_form(**kwargs)
+        if form.validate_on_submit():
+            final = '/library/books'
+            args = []
+            for i in kwargs:
+                res = getattr(form, i).data
+                if res:
+                    args.append(f'{i}={res}')
+            if args:
+                final += '?'
+                final += '&'.join(args)
+            return redirect(final)
+        result = query.all()
+         # mode говорит о том, какой тип элементов в result            
+        return render_template('library.html', result=result, mode='book',
+                               form=form)
         #  у ученика: Вы причислены к библиотек #{id библиотеки}
         #  Под надписью будет маленькая ссылка:
         #  Ошиблись библиотекой? <a href="ещё не придумал">Сменить номер библиотеки</a>
@@ -286,7 +349,7 @@ class LibraryView(FlaskView):
     def editions(self):
         session = db_session.create_session()
         editions = session.query(Edition).filter(Edition.library_id == current_user.library_id).all()
-        return render_template('editions.html')
+        return render_template('editions.html', editions=editions)
         #  Эта вкладка доступна всем членам библиотеки
         #  Здесь будет находиться список всех изданий (editions)
         #  Под списком изданий понимается список ссылок на library/edition/{edition_id}
@@ -303,6 +366,41 @@ class LibraryView(FlaskView):
         if edition.library_id != current_user.library_id:
             return abort(403, 'Эта книга приписана к другой библиотеке')
         books = session.query(Book).filter(Book.edition_id == edition_id).all()
+        id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
+        publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year')
+        kwargs = {
+            'id': '',
+            'name': '',
+            'author': '',
+            'publication_year': ''
+        }
+        query = session.query(Edition).filter(Edition.library_id == current_user.library_id)
+        if id_:
+            query = query.filter(Edition.id == check_int_type(id_))
+            kwargs['id'] = id_
+        if name:
+            query = query.filter(SequenceMatcher(Edition.name, name)())
+            kwargs['name'] = name
+        if author:
+            query = query.filter(SequenceMatcher(Edition.author, author)())
+            kwargs['author'] = author
+        if publication_year:
+            query = query.filter(Edition.publication_year == check_int_type(publication_year))
+            kwargs['publication_year'] = publication_year
+        form = edition_filter_form()
+        if form.validate_on_submit():
+            final = '/library/editions'
+            args = []
+            for i in kwargs:
+                res = kwargs[i]
+                if res:
+                    args.append(f'{i}={res}')
+            if args:
+                final += '?'
+                final += '&'.join(args)
+            return redirect(final)
+        result = query.all()
+        return render_template('smt.html', result=result, mode='edition', form=form)
         return render_template('editionone.html', books=books, count_books=len(books), edition=edition)
         # Сдесь будет список книг данного издания с их текущими владельцами
         # У библиотекаря рядом с каждой книгой есть кнопка "Вернуть в библиотеку" или "Одолжить книгу"
@@ -369,6 +467,38 @@ class LibraryView(FlaskView):
             return abort(403, description='Сюда можно только библиотекарю')
         students = session.query(User).filter(User.role_id != librarian_role.id,
                                               User.library_id == current_user.library_id)
+        id_, surname, class_num = request.args.get('id'), request.args.get('surname'), request.args.get('class_num')
+        kwargs = {
+            'id': '',
+            'surname': '',
+            'class_num': ''
+        }
+        query = session.query(User).join(Role).filter(User.library_id == current_user.library_id,
+                                                      Role.name == 'Student')
+        if id_:
+            query = query.filter(User.id == check_int_type(id_))
+            kwargs['id'] = id_
+        if surname:
+            query = query.filter(SequenceMatcher(User.surname, surname))
+            kwargs['name'] = surname
+        if class_num:
+            query = query.filter(User.class_num == check_int_type(class_num))
+            kwargs['author'] = class_num
+
+        form = student_filter_form()
+        if form.validate_on_submit():
+            final = '/library/students'
+            args = []
+            for i in kwargs:
+                res = kwargs[i]
+                if res:
+                    args.append(f'{i}={res}')
+            if args:
+                final += '?'
+                final += '&'.join(args)
+            return redirect(final)
+
+        result = query.all()
         return render_template('students.html', students=students)
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
@@ -392,8 +522,7 @@ class LibraryView(FlaskView):
         #  P.S. это не профиль студента (я думаю, профили других людей будут недоступны)
 
 
-LibraryView.register(app, route_base='/library')
+LibraryView.register(app)
 
 if __name__ == '__main__':
-    db_session.global_init('db/library.sqlite3')
     app.run(debug=True)

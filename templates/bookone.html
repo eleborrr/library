@@ -45,9 +45,8 @@
 					<input type='submit' class="back green" name="add-in-edition" value="Добавить в издание">
 				</div>
 				<div class="right-flex">
-					<input type="submit" class="qrcode" name="print-qr" value="Распечатать QR код">
-                    {% if not book.owner and user.role_id == 1%}
-					<input type="submit" class="qrcode" name="take-book" value="Забрать к себе">
+                    {% if current_user.role_id == 1 and current_user.library_id == book.edition.library_id%}
+                    <input type="submit" class="qrcode" name="print-qr" value="Распечатать QR код">
                     {% endif %}
 				</div>
 			</div>

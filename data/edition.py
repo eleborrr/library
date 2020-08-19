@@ -11,6 +11,7 @@ class Edition(SqlAlchemyBase):
     name = Cl(sql.String(64), nullable=False)
     author = Cl(sql.String(64), nullable=False)
     publication_year = Cl(sql.Integer, nullable=False)
+    avatar_image = Cl(sql.String(64), default='none.jpg')
     library_id = Cl(sql.Integer, ForeignKey('libraries.id'), nullable=False)
     library = orm.relation('Library')
     books = orm.relation('Book', back_populates='edition')

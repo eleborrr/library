@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, RadioField, BooleanField, TextAreaField, DateTimeField, \
     DateField, TimeField, FileField, IntegerField, SelectField
 from wtforms.fields.html5 import EmailField, DateTimeLocalField
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, Length, NumberRange
 from flask_wtf.recaptcha import RecaptchaField
 from datetime import datetime
 
@@ -23,7 +23,8 @@ class RegisterStudentForm(FlaskForm):
     email = EmailField('Адрес электронной почты', validators=[DataRequired(), Length(max=64)])
     password = PasswordField('Пароль', validators=[DataRequired(), Length(max=128)])
     repeat = PasswordField('Повторите пароль', validators=[DataRequired(), Length(max=128)])
-    library_id = StringField('Идентификатор библтотеки (спросите у библиотекаря)', validators=[DataRequired()])
+    library_id = StringField('Идентификатор библтотеки (спросите у библиотекаря)', validators=[DataRequired(),
+                                                                                               NumberRange(min=1, max=11)])
     class_num = IntegerField('Номер класса, в котором вы учитесь', validators=[DataRequired()])
     submit = SubmitField('Зарегистрироваться')
 
@@ -37,5 +38,40 @@ class LoginForm(FlaskForm):
 
 class BorrowBookForm(FlaskForm):
     submit = SubmitField('Взять книгу')
+
+
+def book_filter_form(**kwargs):
+    class BookFilterForm(FlaskForm):
+        id = IntegerField('Номер книги', default=kwargs['id'])
+        name = StringField('Название книги', default=kwargs['name'])
+        author = StringField('Фамилия автора', default=kwargs['author'])
+        publication_year = IntegerField('Год публикации', default=kwargs['publication_year'])
+        edition_id = IntegerField('Номер издания', default=kwargs['edition_id'])
+        owner_id = IntegerField('Номер владельца', default=kwargs['owner_id'])
+        owner_surname = StringField('Фамилия владельца', default=kwargs['owner_surname'])
+        submit = SubmitField('Искать')
+
+    return BookFilterForm()
+
+
+def edition_filter_form(**kwargs):
+    class EditionFilterForm(FlaskForm):
+        id = IntegerField('Номер издания', default=kwargs['id'])
+        name = StringField('Название книги', default=kwargs['name'])
+        author = StringField('Фамилия автора', default=kwargs['author'])
+        publication_year = IntegerField('Год публиукации', default=kwargs['publication_year'])
+        submit = SubmitField('Искать')
+
+    return EditionFilterForm()
+
+
+def student_filter_form(**kwargs):
+    class StudentFilterForm(FlaskForm):
+        id = IntegerField('Номер ученика', default=kwargs['id'])
+        surname = StringField('Фамилия ученика', default=kwargs['surname'])
+        class_num = IntegerField('Номер класса ученика', default=kwargs['class_num'])
+        submit = SubmitField('Искать')
+
+    return StudentFilterForm()
 
 

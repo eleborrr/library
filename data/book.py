@@ -4,6 +4,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import orm
 import sqlalchemy as sql
 import hashlib
+from flask import Markup
 
 
 class Book(SqlAlchemyBase):
