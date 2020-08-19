@@ -284,7 +284,7 @@ class LibraryView(FlaskView):
         publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
             'edition_id'), request.args.get('owner_id'), request.args.get('owner_surname')
 
-        query = session.query(Book).join(User).join(Edition).filter(Edition.library_id == current_user.libray_id)
+        query = session.query(Book).join(User).join(Edition).filter(Edition.library_id == current_user.library_id)
         kwargs = {
             'id': '',
             'name': '',
@@ -467,7 +467,7 @@ class LibraryView(FlaskView):
             return abort(403, description='Сюда можно только библиотекарю')
         students = session.query(User).filter(User.role_id != librarian_role.id,
                                               User.library_id == current_user.library_id)
-         id_, surname, class_num = request.args.get('id'), request.args.get('surname'), request.args.get('class_num')
+        id_, surname, class_num = request.args.get('id'), request.args.get('surname'), request.args.get('class_num')
         kwargs = {
             'id': '',
             'surname': '',
@@ -499,7 +499,6 @@ class LibraryView(FlaskView):
             return redirect(final)
 
         result = query.all()
-        return render_template('smt.html', result=result, mode='user', form=form)
         return render_template('students.html', students=students)
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
