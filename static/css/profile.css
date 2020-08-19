@@ -1,0 +1,164 @@
+body{
+	background-color: #FEC4A4
+}
+.topfix{
+	background-color: white;
+}
+.body-content{
+	background-color: #FEC4A4;
+	padding: 40px;
+	width:100%;
+	max-width: 1000px;
+	height: 100%;
+	margin: auto;
+}
+.topblock{
+	color: white;
+	font-size: 30px;
+	display: flex;
+	justify-content: flex-start;
+
+}
+.topblock h1{
+	font-size: 55px;
+	font-weight: 400
+}
+.topblock a{
+	color: white;
+	font-weight: 700;
+	font-size: 18px;
+	margin-left: 20px;
+	text-decoration: none;
+	margin-top: 70px;
+	font-weight: 400;
+	margin-left: 40px
+}
+.downblock{
+	display: flex;width:100%;
+	margin-top: 20px
+
+}
+.left-btns{
+	width:50%;
+
+	/*border:1px solid grey;*/
+	box-sizing: border-box;
+
+}
+.btn-white{
+	background-color: white;
+	padding: 25px 15px;
+	color: #584B4B;
+	border-radius: 5px;
+	text-decoration: none;
+	font-size: 12px;
+	box-sizing: border-box;
+	display: block;
+	max-width: 150px;
+	float: left
+}
+.link-red{
+	background-color: #F87070;
+	padding: 13px 45px;
+	color: #fff;
+	border-radius: 5px;
+	text-decoration: none;
+	font-size: 12px;
+	max-width: 200px;
+	white-space: wrap;
+	box-sizing: border-box;
+	display: block;
+	margin-top: 20px;
+	text-align: center;
+	line-height: 15px;
+
+}
+.right-books{
+	width:50%;
+	display: flex;
+	flex-direction: column;
+}
+.right-books .cont-book{
+	width:100%;
+	border: 2px solid white;
+	height: 100%;
+	border-bottom: none;
+	border-radius: 5px
+}
+.text-my-book{
+	width: 100%;
+	text-align: center;
+	color: white;
+	font-weight: 700;
+	font-size: 15px
+}
+
+.img-it img{
+	max-width: 100px;
+	border-radius: 5px
+}
+.book-it{
+	display: flex;
+	width: 92%;
+	padding:20px;
+	background-color: rgba(255,255,255,0.4);
+	box-sizing: border-box;
+	margin: 20px;
+	margin-right: 0;
+	border-radius: 5px;
+}
+.name-and-go{
+	display: flex;
+	flex-direction: column;
+	margin-left: 20px;
+
+
+}
+.name-and-go h3{
+	font-size: 15px;
+	font-weight: 700;
+	color: #584B4B;
+}
+.name-and-go a{
+	font-size: 15px;
+	font-weight: 700;
+	background-color: white;
+	color: #584B4B;
+	padding: 10px 30px;
+	border-radius: 5px;
+	margin-top: auto;
+	margin-bottom: 20px;
+	font-size: 12px;
+	text-decoration: none;
+}
+
+@media(max-width: 767px){
+	.downblock{
+		flex-direction: column;
+		box-sizing: border-box;
+	}
+	.left-btns, .right-books{
+		width:85%;
+		box-sizing: border-box;
+	}
+	.right-books{
+		margin-top: 40px
+	}
+
+	.topblock a{
+		font-size: 15px;
+		margin-top: 55px
+	}
+	.topblock h1{
+		font-size: 45px
+	}
+	.topblock{
+		margin-top: -20px
+	}
+	.topfix{
+		height: 40px
+	}
+	.link-red{
+		padding: 13px 40px
+	}
+}
