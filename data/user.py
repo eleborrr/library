@@ -5,6 +5,7 @@ from sqlalchemy import Column as Cl
 from sqlalchemy import orm, ForeignKey
 import sqlalchemy as sql
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask import Markup
 
 
 class User(SqlAlchemyBase, UserMixin):
