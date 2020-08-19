@@ -7,13 +7,14 @@ body{
 	outline: none;
 }
 .body-div{
-
+max-width: 1000px;
+margin:auto;
 }
 .topfix{
 	width:100%;
 	background-color: #FEC4A4;
 	height:50px;
-	
+
 }
 .pretext{
 	display: flex;
@@ -36,7 +37,7 @@ body{
 	font-size: 15px;
 	font-weight: 500;;
 	padding-bottom: 8px;
-	
+
 }
 
 .books-side{
@@ -67,7 +68,7 @@ input[placeholder]{
 .book-item{
 	background-color: #E7E7E7;
 	width: 100%;
-	height: 150px;
+	height: 100%;
 	margin-top: 20px;
 	border-radius: 5px;
 	box-sizing: border-box;
@@ -144,12 +145,12 @@ input[placeholder]{
 .link-getback.tr:hover{
 	color: #fff;
 	background-color: #FEC4A4;
-	
+
 }
 .link-getback.delete:hover{
 	color: #fff;
 	background-color: #F87070;
-	
+
 }
 a:hover{
 	color: #584B4B;
@@ -168,5 +169,15 @@ a:hover{
 		padding-left: 45px;
 		padding-top: 20px;
 		line-height: 20px
+	}
+	.book-item{
+		flex-direction: column;
+		height: 100%
+	}
+	.rightside, .leftside{
+		width: 100%
+	}
+	.link-getback, .owner.red{
+		float: left;
 	}
 }

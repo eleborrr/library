@@ -1,3 +1,5 @@
+from flask_login import UserMixin
+
 from .db_session import SqlAlchemyBase
 from sqlalchemy import Column as Cl
 from sqlalchemy import orm, ForeignKey
@@ -6,13 +8,14 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask import Markup
 
 
-class User(SqlAlchemyBase):
+class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
     id = Cl(sql.Integer, autoincrement=True, primary_key=True, nullable=False)
     login = Cl(sql.String(64), nullable=False, unique=True)
     surname = Cl(sql.String(32), nullable=False)
     name = Cl(sql.String(32), nullable=False)
     password = Cl(sql.String(128), nullable=False)
+    # сделать букву у класса
     class_num = Cl(sql.Integer)
     library_id = Cl(sql.Integer, ForeignKey('libraries.id'))
     library = orm.relation('Library')

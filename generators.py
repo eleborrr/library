@@ -5,12 +5,12 @@ import os
 import qrcode
 
 
-def _create_qrcode(book_id):
-    img = qrcode.make(f'http://mylibby.ru/{book_id}')  # Книга привязана к библиотеке, нет смысла в доп. аргументе
+def _create_qrcode(book_code):
+    img = qrcode.make(f'http://mylibby.ru/borrow_book/{book_code}')
     img = img.resize((165, 165))
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype('static/fonts/qr_font.ttf', 16)
-    msg = f'#{book_id}'
+    msg = f'#{book_code}'
     w, h = draw.textsize(msg, font)
     draw.text(xy=((165 - w) / 2, 150), text=msg, fill=(0,), font=font)
     return img
