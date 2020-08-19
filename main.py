@@ -10,7 +10,7 @@ from generators import create_qr_list
 from flask_login import LoginManager, logout_user, login_user, login_required, current_user
 from flask_classy import route, FlaskView
 from forms import *
-from difflib import SequenceMatcher
+from sequence_matcher import SequenceMatcher
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
@@ -299,10 +299,10 @@ class LibraryView(FlaskView):
             query = query.filter(Book.id == check_int_type(id_))
             kwargs['id'] = id_
         if name:
-            query = query.filter(SequenceMatcher(None, Edition.name, name.lower().capitalize()).ratio() >= 0.6)
+            query = query.filter(SequenceMatcher(Edition.name, name)())
             kwargs['name'] = name
         if author:
-            query = query.filter(SequenceMatcher(None, Edition.author, author.lower().capitalize()).ratio() >= 0.6)
+            query = query.filter(SequenceMatcher(Edition.author, author)())
             kwargs['author'] = author
         if publication_year:
             query = query.filter(Edition.publication_year == check_int_type(publication_year))
@@ -314,7 +314,7 @@ class LibraryView(FlaskView):
             query = query.filter(Book.owner_id == check_int_type(owner_id))
             kwargs['owner_id'] = owner_id
         if owner_surname:
-            query = query.filter(SequenceMatcher(None, User.surname, owner_surname.lower().capitalize()).ratio() >= 0.6)
+            query = query.filter(SequenceMatcher(User.surname, owner_surname)())
             kwargs['owner_surname'] = owner_surname
         form = book_filter_form(**kwargs)
         if form.validate_on_submit():
@@ -379,10 +379,10 @@ class LibraryView(FlaskView):
             query = query.filter(Edition.id == check_int_type(id_))
             kwargs['id'] = id_
         if name:
-            query = query.filter(SequenceMatcher(None, Edition.name, name.lower().capitalize()).ratio() >= 0.6)
+            query = query.filter(SequenceMatcher(Edition.name, name)())
             kwargs['name'] = name
         if author:
-            query = query.filter(SequenceMatcher(None, Edition.author, author.lower().capitalize()).ratio() >= 0.6)
+            query = query.filter(SequenceMatcher(Edition.author, author)())
             kwargs['author'] = author
         if publication_year:
             query = query.filter(Edition.publication_year == check_int_type(publication_year))
@@ -479,7 +479,7 @@ class LibraryView(FlaskView):
             query = query.filter(User.id == check_int_type(id_))
             kwargs['id'] = id_
         if surname:
-            query = query.filter(SequenceMatcher(None, User.name, surname.lower().capitalize()).ratio() >= 0.6)
+            query = query.filter(SequenceMatcher(User.surname, surname))
             kwargs['name'] = surname
         if class_num:
             query = query.filter(User.class_num == check_int_type(class_num))
