@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+	<head>
+		<title>Title</title>
+
+
+
+		<meta charset="UTF-8">
+
+		<meta name="viewport" content="width=device-width">
+		<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../static/css/library.css">
+		<link rel="stylesheet" type="text/css" href="../static/css/profile.css">
+	</head>
+
+	<body>
+
+		<div class="topfix"></div>
+		<div class="body-content">
+				<div class="topblock">
+					<h1>Профиль</h1>
+					<a href='#'>Редактировать</a>
+				</div>
+				<div class="downblock">
+					<div class="left-btns">
+						<div style="width:100%">
+						<a href='/library/editions' class="btn-white">Издания школы</a>
+						<a href='#' class="btn-white" style="margin-left: 20px">Книги школы</a></div>
+						<div style="display: flex;width:100%">
+						<a class="link-red" href="#">Просмотреть идентификатор библиотеки</a>
+						<a class="link-red" href="#" style="margin-left: 20px">Изменить название библиотеки</a>
+					</div>
+					</div>
+					<div class="right-books">
+						<div class="cont-book">
+							<h5 class="text-my-book">{{ user.name }}. Книги:</h5>
+
+							<div class="book-it">
+								<div class="img-it"><img src="../static/img/mars.jpg"></div>
+								<div class="name-and-go">
+									<h3>Название</h3>
+									<a href="#">Зайти</a>
+								</div>
+							</div>
+
+
+							<div class="book-it">
+								<div class="img-it"><img src="../static/img/mars.jpg"></div>
+								<div class="name-and-go">
+									<h3>Название</h3>
+									<a href="#">Зайти</a>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+		</div>
+	</body>
+	</html>

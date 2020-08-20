@@ -115,7 +115,6 @@ def error_404(er):
         er.description = 'Страница не найдена'
     return render_template('404.html', msg=er.description), 404
 
-
 #
 # @app.errorhandler(500)
 # def error_500(er):
@@ -330,9 +329,10 @@ class LibraryView(FlaskView):
                 final += '&'.join(args)
             return redirect(final)
         result = query.all()
-        # mode говорит о том, какой тип элементов в result
+        library = session.query(Library).get(current_user.library_id)
+         # mode говорит о том, какой тип элементов в result
         return render_template('library.html', result=result, mode='book',
-                               form=form)
+                               form=form, library_code=library.generate_id())
         #  у ученика: Вы причислены к библиотек #{id библиотеки}
         #  Под надписью будет маленькая ссылка:
         #  Ошиблись библиотекой? <a href="ещё не придумал">Сменить номер библиотеки</a>
@@ -521,6 +521,18 @@ class LibraryView(FlaskView):
         #  Здесь библиотекарь видит Фамилию и Имя ученика
         #  И список всех книг, которые у него сейчас находятся
         #  P.S. это не профиль студента (я думаю, профили других людей будут недоступны)
+
+    @route('/profile/<int:student_id>', methods=['GET', 'POST'])
+    @login_required
+    def profile(self, student_id):
+        session = db_session.create_session()
+        student_role = session.query(Role).filter(Role.name == 'Student').first()
+        if current_user.role_id == student_role.id:
+            return abort(403, description='Сюда можно только библиотекарю')
+        if current_user.library_id != session.query(User).get(student_id).library_id:
+            return abort(403, description='Пользователь не в вашей библиотеке')
+        books = session.query(Book).filter(Book.owner_id == student_id).all()
+        return render_template('profile.html', books=books, user=current_user)
 
 
 LibraryView.register(app)

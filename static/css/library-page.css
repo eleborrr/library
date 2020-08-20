@@ -84,6 +84,32 @@ body{
 .owner.red{
 	float: right;
 }
+
+.code{
+	color: #584B4B;
+	font-size: 10px;
+	padding: 10px 0px;
+	border-radius: 5px;
+	border:1px dotted #584B4B;
+	width:200px;
+	float: right;
+	margin: 0;
+	margin-right: 30px;
+	text-align: center;
+}
+.block-code{
+		display:none;
+		width:100%;float: right;
+	}
+
+	.block-abs-code{
+		position: absolute;
+		right: 0;
+		top:150px;
+	}
+	.block-abs-code p{
+		width:150px;
+	}
 @media(max-width: 767px){
 	.fixed-side h1{
 		font-size:35px;
@@ -105,4 +131,13 @@ body{
 		float: left
 	}
 
+}
+
+@media(max-width: 1300px){
+	.block-code{
+		display: block
+	}
+	.block-abs-code{
+		display: none;
+	}
 }
