@@ -4,67 +4,40 @@
 			<div>
 				<input type="text" name=" " class="intpfield" placeholder="Введите название книги">
 			</div>
-
+            {% for book in books %}
 			<div class="book-item">
 				<div class="leftside">
 					<div class="nameb">
-					<p style="padding: 0;margin:0" >id </p></div>
+					<p style="padding: 0;margin:0" >id {{ book.id }}</p></div>
 
 					<div class="nameb">
 					<p style="padding: 0;margin:0;font-size: 14px" >   <strong>Информация</strong></p></div>
 
 					<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Название</strong></p></div>
+					<p style="padding: 0;margin:0" ><strong>Название {{ book.edition.name }}</strong></p></div>
 
 				<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Автор</strong></p>
+					<p style="padding: 0;margin:0" ><strong>Автор {{ book.edition.author }}</strong></p>
 								</div>
 
 				<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Год публикации</strong></p>
+					<p style="padding: 0;margin:0" ><strong>Год публикации {{ book.edition.publication_year }}</strong></p>
 								</div>
-
 
 				</div>
 
-
-
 				<div class="rightside">
+                    {% if book.owner %}
 					<a href='#' class="link-getback tr">Вернуть в библиотеку</a>
-					<a class="owner red">Кто владелец</a>
-				</div>
-			</div>
-
-			<div class="book-item">
-				<div class="leftside">
-					<div class="nameb">
-					<p style="padding: 0;margin:0" >id </p></div>
-
-					<div class="nameb">
-					<p style="padding: 0;margin:0;font-size: 14px" >   <strong>Информация</strong></p></div>
-
-					<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Название</strong></p></div>
-
-				<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Автор</strong></p>
-								</div>
-
-				<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Год публикации</strong></p>
-								</div>
-
-				<a class="owner free">Сейчас в библиотеке</a>
-				</div>
-
-
-
-				<div class="rightside">
+					<a class="owner red">{{ book.owner.name }} {{ book.owner.surname }} владеет книгой</a>
+                    {% else %}
 					<a href='#' class="link-getback tr">Выдать книгу</a>
 					<a href='#' class="link-getback tr delete">Удалить из библиотеки</a>
+                    {% endif %}
+				</div>
 			</div>
+            {% endfor %}
 
 		</div>
 
-	</div>
 		{% endblock %}

@@ -274,17 +274,17 @@ class LibraryView(FlaskView):
         books = []
         if current_user.role_id == session.query(Role).filter(Role.name == 'Librarian').first().id:
             for i in session.query(Book).all():
-                if i.edition.library_id == current_user.library_id and i.owner:
+                if i.edition.library_id == current_user.library_id:
                     books.append(i)
         else:
             for i in session.query(Book).all():
-                if i.edition.library_id == current_user.library_id and i.owner_id == current_user.id:
+                if i.edition.library_id == current_user.library_id:
                     books.append(i)
         id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
         publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
             'edition_id'), request.args.get('owner_id'), request.args.get('owner_surname')
 
-        query = session.query(Book).join(User).join(Edition).filter(Edition.library_id == current_user.library_id)
+        query = session.query(Book).join(Edition).filter(Edition.library_id == current_user.library_id)
         kwargs = {
             'id': '',
             'name': '',
@@ -331,7 +331,7 @@ class LibraryView(FlaskView):
         result = query.all()
         library = session.query(Library).get(current_user.library_id)
          # mode говорит о том, какой тип элементов в result
-        return render_template('library.html', result=result, mode='book',
+        return render_template('library.html', books=result, mode='book',
                                form=form, library_code=library.generate_id())
         #  у ученика: Вы причислены к библиотек #{id библиотеки}
         #  Под надписью будет маленькая ссылка:
@@ -372,7 +372,6 @@ class LibraryView(FlaskView):
             query = query.filter(Edition.publication_year == check_int_type(publication_year))
             kwargs['publication_year'] = publication_year
         form = edition_filter_form(**kwargs)
-        print(kwargs)
         if form.validate_on_submit():
             final = '/library/editions'
             args = []
