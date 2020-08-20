@@ -284,7 +284,7 @@ class LibraryView(FlaskView):
         publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
             'edition_id'), request.args.get('owner_id'), request.args.get('owner_surname')
 
-        query = session.query(Book).join(User).join(Edition).filter(Edition.library_id == current_user.library_id)
+        query = session.query(Book).join(Edition).filter(Edition.library_id == current_user.library_id)
         kwargs = {
             'id': '',
             'name': '',

@@ -1,70 +1,97 @@
 {% extends "base-table.html" %}
 {% block contents %}
-		<div class="books-side" style="margin-top: 80px">
-			<div>
-				<input type="text" name=" " class="intpfield" placeholder="Введите название книги">
-			</div>
+    <div class="books-side" style="margin-top: 80px">
+        <div>
+            <input type="text" name=" " class="intpfield" placeholder="Введите название книги">
+        </div>
+        {% for i in books %} {# Добавить ифы #}
+            <div class="book-item">
+                <div class="leftside">
+                    <div class="nameb">
+                        <p style="padding: 0;margin:0">{{ i.id }}</p>
+                    </div>
 
-			<div class="book-item">
-				<div class="leftside">
-					<div class="nameb">
-					<p style="padding: 0;margin:0" >id </p></div>
+                    <div class="nameb">
+                        <p style="padding: 0;margin:0;font-size: 14px"><strong>Информация</strong></p>
+                    </div>
 
-					<div class="nameb">
-					<p style="padding: 0;margin:0;font-size: 14px" >   <strong>Информация</strong></p></div>
+                    <div class="nameb">
+                        <p style="padding: 0;margin:0">{{ i.name }}</p>
+                    </div>
 
-					<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Название</strong></p></div>
+                    <div class="nameb">
+                        <p style="padding: 0;margin:0">{{ i.author }}</p>
+                    </div>
 
-				<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Автор</strong></p>
-								</div>
+                    <div class="nameb">
+                        <p style="padding: 0;margin:0">{{ i.publication_year }}</p>
+                    </div>
+                </div>
+                <div class="rightside">
+                    <a href='#' class="link-getback tr">Вернуть в библиотеку</a>
+                    <a class="owner red">{{ i.owner.surname }} {{ i.owner.name }}</a>
+                </div>
+            </div>
+        {% endfor %}
 
-				<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Год публикации</strong></p>
-								</div>
+        <div class="book-item">
+            <div class="leftside">
+                <div class="nameb">
+                    <p style="padding: 0;margin:0">id </p></div>
 
+                <div class="nameb">
+                    <p style="padding: 0;margin:0;font-size: 14px"><strong>Информация</strong></p></div>
 
-				</div>
+                <div class="nameb">
+                    <p style="padding: 0;margin:0"><strong>Название</strong></p></div>
 
+                <div class="nameb">
+                    <p style="padding: 0;margin:0"><strong>Автор</strong></p>
+                </div>
 
-
-				<div class="rightside">
-					<a href='#' class="link-getback tr">Вернуть в библиотеку</a>
-					<a class="owner red">Кто владелец</a>
-				</div>
-			</div>
-
-			<div class="book-item">
-				<div class="leftside">
-					<div class="nameb">
-					<p style="padding: 0;margin:0" >id </p></div>
-
-					<div class="nameb">
-					<p style="padding: 0;margin:0;font-size: 14px" >   <strong>Информация</strong></p></div>
-
-					<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Название</strong></p></div>
-
-				<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Автор</strong></p>
-								</div>
-
-				<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Год публикации</strong></p>
-								</div>
-
-				<a class="owner free">Сейчас в библиотеке</a>
-				</div>
+                <div class="nameb">
+                    <p style="padding: 0;margin:0"><strong>Год публикации</strong></p>
+                </div>
 
 
+            </div>
 
-				<div class="rightside">
-					<a href='#' class="link-getback tr">Выдать книгу</a>
-					<a href='#' class="link-getback tr delete">Удалить из библиотеки</a>
-			</div>
 
-		</div>
+            <div class="rightside">
+                <a href='#' class="link-getback tr">Вернуть в библиотеку</a>
+                <a class="owner red">Кто владелец</a>
+            </div>
+        </div>
 
-	</div>
-		{% endblock %}
+        <div class="book-item">
+            <div class="leftside">
+                <div class="nameb">
+                    <p style="padding: 0;margin:0">id </p></div>
+
+                <div class="nameb">
+                    <p style="padding: 0;margin:0;font-size: 14px"><strong>Информация</strong></p></div>
+
+                <div class="nameb">
+                    <p style="padding: 0;margin:0"><strong>Название</strong></p></div>
+
+                <div class="nameb">
+                    <p style="padding: 0;margin:0"><strong>Автор</strong></p>
+                </div>
+
+                <div class="nameb">
+                    <p style="padding: 0;margin:0"><strong>Год публикации</strong></p>
+                </div>
+
+                <a class="owner free">Сейчас в библиотеке</a>
+            </div>
+
+
+            <div class="rightside">
+                <a href='#' class="link-getback tr">Выдать книгу</a>
+                <a href='#' class="link-getback tr delete">Удалить из библиотеки</a>
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
