@@ -298,12 +298,6 @@ class LibraryView(FlaskView):
         if id_:
             query = query.filter(Book.id == check_int_type(id_))
             kwargs['id'] = id_
-        if name:
-            query = query.filter(SequenceMatcher(Edition.name, name)())
-            kwargs['name'] = name
-        if author:
-            query = query.filter(SequenceMatcher(Edition.author, author)())
-            kwargs['author'] = author
         if publication_year:
             query = query.filter(Edition.publication_year == check_int_type(publication_year))
             kwargs['publication_year'] = publication_year
@@ -313,9 +307,18 @@ class LibraryView(FlaskView):
         if owner_id:
             query = query.filter(Book.owner_id == check_int_type(owner_id))
             kwargs['owner_id'] = owner_id
-        if owner_surname:
-            query = query.filter(SequenceMatcher(User.surname, owner_surname)())
-            kwargs['owner_surname'] = owner_surname
+        result = query.all()
+        new_res = []
+        for i in result:
+            flag = True
+            if name and not SequenceMatcher(i.edition.name, name)():
+                flag = False
+            if author and not SequenceMatcher(i.edition.author, author)():
+                flag = False
+            if owner_surname and not SequenceMatcher(i.owner.surname, owner_surname)():
+                flag = False
+            if flag:
+                new_res.append(i)
         form = book_filter_form(**kwargs)
         if form.validate_on_submit():
             final = '/library/books'
@@ -328,10 +331,8 @@ class LibraryView(FlaskView):
                 final += '?'
                 final += '&'.join(args)
             return redirect(final)
-        result = query.all()
         library = session.query(Library).get(current_user.library_id)
-         # mode говорит о том, какой тип элементов в result
-        return render_template('library.html', result=result, mode='book',
+        return render_template('library.html', books=new_res, mode='book',
                                form=form, library_code=library.generate_id())
         #  у ученика: Вы причислены к библиотек #{id библиотеки}
         #  Под надписью будет маленькая ссылка:
@@ -362,17 +363,21 @@ class LibraryView(FlaskView):
         if id_:
             query = query.filter(Edition.id == check_int_type(id_))
             kwargs['id'] = id_
-        if name:
-            query = query.filter(SequenceMatcher(Edition.name, name)())
-            kwargs['name'] = name
-        if author:
-            query = query.filter(SequenceMatcher(Edition.author, author)())
-            kwargs['author'] = author
         if publication_year:
             query = query.filter(Edition.publication_year == check_int_type(publication_year))
             kwargs['publication_year'] = publication_year
         form = edition_filter_form(**kwargs)
         print(kwargs)
+        result = query.all()
+        new_res = []
+        for i in result:
+            flag = True
+            if name and not SequenceMatcher(i.name, name)():
+                flag = False
+            if author and not SequenceMatcher(i.author, name)():
+                flag = False
+            if flag:
+                new_res.append(i)
         if form.validate_on_submit():
             final = '/library/editions'
             args = []
@@ -384,8 +389,7 @@ class LibraryView(FlaskView):
                 final += '?'
                 final += '&'.join(args)
             return redirect(final)
-        result = query.all()
-        return render_template('editions.html', editions=result, form=form)
+        return render_template('editions.html', editions=new_res, form=form)
         #  Эта вкладка доступна всем членам библиотеки
         #  Здесь будет находиться список всех изданий (editions)
         #  Под списком изданий понимается список ссылок на library/edition/{edition_id}
@@ -466,8 +470,6 @@ class LibraryView(FlaskView):
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
         if current_user.role_id != librarian_role.id:
             return abort(403, description='Сюда можно только библиотекарю')
-        students = session.query(User).filter(User.role_id != librarian_role.id,
-                                              User.library_id == current_user.library_id)
         id_, surname, class_num = request.args.get('id'), request.args.get('surname'), request.args.get('class_num')
         kwargs = {
             'id': '',
@@ -479,19 +481,22 @@ class LibraryView(FlaskView):
         if id_:
             query = query.filter(User.id == check_int_type(id_))
             kwargs['id'] = id_
-        if surname:
-            query = query.filter(SequenceMatcher(User.surname, surname))
-            kwargs['name'] = surname
         if class_num:
             query = query.filter(User.class_num == check_int_type(class_num))
             kwargs['author'] = class_num
+
+        result = query.all()
+        new_res = []
+        for i in result:
+            if surname and SequenceMatcher(i.surname, surname):
+                new_res.append(i)
 
         form = student_filter_form(**kwargs)
         if form.validate_on_submit():
             final = '/library/students'
             args = []
             for i in kwargs:
-                res = kwargs[i]
+                res = getattr(form, i).data
                 if res:
                     args.append(f'{i}={res}')
             if args:
@@ -499,8 +504,7 @@ class LibraryView(FlaskView):
                 final += '&'.join(args)
             return redirect(final)
 
-        result = query.all()
-        return render_template('students.html', students=students)
+        return render_template('students.html', students=new_res)
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
 
