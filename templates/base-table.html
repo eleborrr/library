@@ -16,10 +16,10 @@
 	</head>
 
 	<body>
+{% block code-out-block %}
 
-				<div class="block-abs-code">
-					<p class="code">Код библиотеки: 2330384</p>
-				</div>
+						{%endblock%}
+
 
 		<div class="topfix"></div>
 		<div class="body-content">
@@ -31,6 +31,7 @@
 					<a href='/library/students' class="link-menu abs">Ученики</a>
 				<a href='/library/students' class="link-menu abs">Мои книги</a>
 					<a href='/library/books' class="link-menu">Книги</a>
+
 					<a href='/library/editions' class="link-menu">Издания</a>
 				<a href='/library/editions' class="link-menu" style="font-size: 12px; margin-top: 40px">Редактировать профиль</a>
 
@@ -40,7 +41,9 @@
 				<p class="text-des">Здесь Вы всегда найдете нужную книгу. Попробуйте!</p>
 
 					<div class="block-code" style="margin-bottom: 20px">
-					<p class="code">Код библиотеки: {{ library_code }}</p>
+						{% block code-in-block %}
+
+						{%endblock%}
 				</div>
 
 

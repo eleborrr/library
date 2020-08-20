@@ -1,5 +1,13 @@
 {% extends "base-table.html" %}
+{% block code-in-block %}
+					<p class="code">Код библиотеки: {{ library_code }}</p>
+						{%endblock%}
 {% block contents %}
+{% block code-out-block %}
+					<div class="block-abs-code">
+					<p class="code">Код библиотеки: {{ library_code }}</p>
+				</div>
+						{%endblock%}
 <link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
 <div class="flex-block" style="margin-left: 0">
 
