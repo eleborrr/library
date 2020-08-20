@@ -115,6 +115,7 @@ def error_404(er):
         er.description = 'Страница не найдена'
     return render_template('404.html', msg=er.description), 404
 
+
 #
 # @app.errorhandler(500)
 # def error_500(er):
@@ -329,7 +330,7 @@ class LibraryView(FlaskView):
                 final += '&'.join(args)
             return redirect(final)
         result = query.all()
-         # mode говорит о том, какой тип элементов в result            
+        # mode говорит о том, какой тип элементов в result
         return render_template('library.html', result=result, mode='book',
                                form=form)
         #  у ученика: Вы причислены к библиотек #{id библиотеки}
@@ -348,26 +349,9 @@ class LibraryView(FlaskView):
     @login_required
     def editions(self):
         session = db_session.create_session()
-        editions = session.query(Edition).filter(Edition.library_id == current_user.library_id).all()
-        return render_template('editions.html', editions=editions)
-        #  Эта вкладка доступна всем членам библиотеки
-        #  Здесь будет находиться список всех изданий (editions)
-        #  Под списком изданий понимается список ссылок на library/edition/{edition_id}
-        #  У библиотекаря должна быть кнопка "Добавить книгу" (не "Добавить издание", слишком непонятно),
-        #  добавляющее новое издание
-
-    @route('/editions/<int:edition_id>', methods=['GET', 'POST'])
-    @login_required
-    def edition(self, edition_id):
-        session = db_session.create_session()
-        edition = session.query(Edition).get(edition_id)
-        if not edition:
-            return abort(404, description='Книга не найдена')
-        if edition.library_id != current_user.library_id:
-            return abort(403, 'Эта книга приписана к другой библиотеке')
-        books = session.query(Book).filter(Book.edition_id == edition_id).all()
         id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
-        publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year')
+        publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
+            'edition_id'), request.args.get('owner_id'), request.args.get('owner_surname')
         kwargs = {
             'id': '',
             'name': '',
@@ -387,12 +371,13 @@ class LibraryView(FlaskView):
         if publication_year:
             query = query.filter(Edition.publication_year == check_int_type(publication_year))
             kwargs['publication_year'] = publication_year
-        form = edition_filter_form()
+        form = edition_filter_form(**kwargs)
+        print(kwargs)
         if form.validate_on_submit():
             final = '/library/editions'
             args = []
             for i in kwargs:
-                res = kwargs[i]
+                res = getattr(form, i).data
                 if res:
                     args.append(f'{i}={res}')
             if args:
@@ -400,7 +385,23 @@ class LibraryView(FlaskView):
                 final += '&'.join(args)
             return redirect(final)
         result = query.all()
-        return render_template('smt.html', result=result, mode='edition', form=form)
+        return render_template('editions.html', editions=result, form=form)
+        #  Эта вкладка доступна всем членам библиотеки
+        #  Здесь будет находиться список всех изданий (editions)
+        #  Под списком изданий понимается список ссылок на library/edition/{edition_id}
+        #  У библиотекаря должна быть кнопка "Добавить книгу" (не "Добавить издание", слишком непонятно),
+        #  добавляющее новое издание
+
+    @route('/editions/<int:edition_id>', methods=['GET', 'POST'])
+    @login_required
+    def edition(self, edition_id):
+        session = db_session.create_session()
+        edition = session.query(Edition).get(edition_id)
+        if not edition:
+            return abort(404, description='Книга не найдена')
+        if edition.library_id != current_user.library_id:
+            return abort(403, 'Эта книга приписана к другой библиотеке')
+        books = session.query(Book).filter(Book.edition_id == edition_id).all()
         return render_template('editionone.html', books=books, count_books=len(books), edition=edition)
         # Сдесь будет список книг данного издания с их текущими владельцами
         # У библиотекаря рядом с каждой книгой есть кнопка "Вернуть в библиотеку" или "Одолжить книгу"
@@ -485,7 +486,7 @@ class LibraryView(FlaskView):
             query = query.filter(User.class_num == check_int_type(class_num))
             kwargs['author'] = class_num
 
-        form = student_filter_form()
+        form = student_filter_form(**kwargs)
         if form.validate_on_submit():
             final = '/library/students'
             args = []

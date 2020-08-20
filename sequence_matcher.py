@@ -82,6 +82,6 @@ class SequenceMatcher:
 
 
 if __name__ == '__main__':
-    str1 = 'Собрание сочинений Пушкина'
-    str2 = 'Пушкин'
+    str1 = 'Петров Иван'
+    str2 = 'петр'
     print(SequenceMatcher(str1, str2)())

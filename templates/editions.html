@@ -5,7 +5,50 @@
 
 			<div class="flex-second" style="width:100%;margin-left: -20px">
 				<div>
-					<input type="text" name="" class="intpfield" placeholder="Поиск по изданиям">
+					<form method="post" action="">
+                        {{ form.hidden_tag() }}
+                        {{ form.crsf_token }}
+
+                        {{ form.id(placeholder='Her\' vsykaya') }}
+                        {{ form.id.label }}<br>
+                        {% for error in form.id.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                        {% endfor %}
+
+
+                        {{ form.name(placeholder='Her\' vsykaya') }}
+                        {{ form.name.label }}<br>
+                        {% for error in form.name.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                        {% endfor %}
+
+                        {{ form.author(placeholder='Her\' vsykaya') }}
+                        {{ form.author.label }}<br>
+                        {% for error in form.author.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                        {% endfor %}
+
+                        {{ form.publication_year(placeholder='Her\' vsykaya') }}
+                        {{ form.publication_year.label }}<br>
+                        {% for error in form.publication_year.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                        {% endfor %}
+
+                        {{ form.submit() }}
+                        {% for error in form.submit.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                        {% endfor %}
+                    </form>
 				</div>
                 {% for edition in editions %}
 				<div class="izd-item">
