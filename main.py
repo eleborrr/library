@@ -15,7 +15,7 @@ from sequence_matcher import SequenceMatcher
 app = Flask(__name__)
 login_manager = LoginManager(app)
 app.config.from_object(AppConfig)
-db_session.global_init('db/library.sqlite3')
+db_session.global_init('db/library.sql')
 
 
 def create_library(school_name, **librarian_data):  # login, name, surname, password
