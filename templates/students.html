@@ -10,11 +10,6 @@
     {% endif %}
 {% endblock %}
 {% block contents %}
-{% block codeoutblock %}
-					<div class="block-abs-code">
-					<p class="code">Код библиотеки: {{ library_code }}</p>
-				</div>
-						{%endblock%}
 <link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
 <div class="flex-block" style="margin-left: 0">
 
@@ -41,17 +36,25 @@
                                 </p>
                         {% endfor %}
 
-                        {{ form.author(placeholder='Her\' vsykaya') }}
-                        {{ form.author.label }}<br>
-                        {% for error in form.author.errors %}
+                        {{ form.surname(placeholder='Her\' vsykaya') }}
+                        {{ form.surname.label }}<br>
+                        {% for error in form.surname.errors %}
                                 <p class="alert alert-danger" role="alert">
                                     {{ error }}
                                 </p>
                         {% endfor %}
 
-                        {{ form.publication_year(placeholder='Her\' vsykaya') }}
-                        {{ form.publication_year.label }}<br>
-                        {% for error in form.publication_year.errors %}
+                        {{ form.class_num(placeholder='Her\' vsykaya') }}
+                        {{ form.class_num.label }}<br>
+                        {% for error in form.class_num.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                        {% endfor %}
+
+                        {{ form.class_letter(placeholder='Her\' vsykaya') }}
+                        {{ form.class_letter.label }}<br>
+                        {% for error in form.class_letter.errors %}
                                 <p class="alert alert-danger" role="alert">
                                     {{ error }}
                                 </p>
@@ -65,11 +68,10 @@
                         {% endfor %}
                     </form>
 				</div>
-                {% for edition in editions %}
+                {% for student in students %}
 				<div class="izd-item">
-                    <img src="../static/img/editions{{ editions.avatar_image }}">
-					<a href="/library/editions/{{ edition.id }}">{{ edition.name }}</a>
-					<span >Литература</span>
+					<a href="/library/profile/{{ student.id }}">{{ student.name }}</a>
+					<span >{{ student.cla }}</span>
 					<span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
 					<input type="submit" name="delete-edition" class='link-izd' href='#' value="Удалить">
 				</div>

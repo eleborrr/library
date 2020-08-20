@@ -323,8 +323,9 @@ class LibraryView(FlaskView):
                 final += '&'.join(args)
             return redirect(final)
         library = session.query(Library).get(current_user.library_id)
+        cur_user = session.query(User).get(current_user.id)
         return render_template('library.html', books=new_res, mode='book',
-                               form=form, library_code=library.generate_id())
+                               form=form, library_code=library.generate_id(), current_user=cur_user)
         #  у ученика: Вы причислены к библиотек #{id библиотеки}
         #  Под надписью будет маленькая ссылка:
         #  Ошиблись библиотекой? <a href="ещё не придумал">Сменить номер библиотеки</a>
@@ -379,7 +380,8 @@ class LibraryView(FlaskView):
                 final += '?'
                 final += '&'.join(args)
             return redirect(final)
-        return render_template('editions.html', editions=new_res, form=form)
+        library_code = session.query(Library).get(current_user.library_id).generate_id()
+        return render_template('editions.html', editions=new_res, form=form, library_code=library_code)
         #  Эта вкладка доступна всем членам библиотеки
         #  Здесь будет находиться список всех изданий (editions)
         #  Под списком изданий понимается список ссылок на library/edition/{edition_id}
@@ -463,8 +465,10 @@ class LibraryView(FlaskView):
         id_, surname, class_num = request.args.get('id'), request.args.get('surname'), request.args.get('class_num')
         kwargs = {
             'id': '',
+            'name': '',
             'surname': '',
-            'class_num': ''
+            'class_num': '',
+            'class_letter': ''
         }
         query = session.query(User).join(Role).filter(User.library_id == current_user.library_id,
                                                       Role.name == 'Student')
@@ -493,8 +497,7 @@ class LibraryView(FlaskView):
                 final += '?'
                 final += '&'.join(args)
             return redirect(final)
-
-        return render_template('students.html', students=new_res)
+        return render_template('students.html', students=new_res, form=form)
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
 
@@ -511,7 +514,7 @@ class LibraryView(FlaskView):
         student_role = session.query(Role).filter(Role.name == 'Student').first()
         if student.role_id != student_role.id:
             return abort(403, description='Этот ученик из другой школы')
-        return render_template('student.html', student=student)
+        return render_template('students.html', student=student)
         #  Здесь библиотекарь видит Фамилию и Имя ученика
         #  И список всех книг, которые у него сейчас находятся
         #  P.S. это не профиль студента (я думаю, профили других людей будут недоступны)
@@ -521,6 +524,12 @@ class LibraryView(FlaskView):
     def profile(self, student_id):
         session = db_session.create_session()
         student_role = session.query(Role).filter(Role.name == 'Student').first()
+        librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
+        student = session.query(User).get(student_id)
+        if not student:
+            return abort(404, description='Такого ученика нет')
+        if student.role_id == librarian_role.id:
+            return redirect('/library')
         if current_user.role_id == student_role.id:
             return abort(403, description='Сюда можно только библиотекарю')
         if current_user.library_id != session.query(User).get(student_id).library_id:

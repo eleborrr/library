@@ -1,43 +1,57 @@
 {% extends "base-table.html" %}
+{% block codeinblock %}
+					<p class="code">Код библиотеки: {{ library_code }}</p>
+{%endblock%}
+{% block url %}
+    {%  if current_user.role_id == 2 %}
+        <a href='/library/students' class="link-menu abs">Мои книги</a>
+    {% elif current_user.role_id == 1 %}
+        <a href='/library/students' class="link-menu abs">Ученики</a>
+    {% endif %}
+{% endblock %}
 {% block contents %}
-		<div class="books-side" style="margin-top: 80px">
-			<div>
-				<input type="text" name=" " class="intpfield" placeholder="Введите название книги">
-			</div>
-            {% for book in books %}
-			<div class="book-item">
-				<div class="leftside">
-					<div class="nameb">
-					<p style="padding: 0;margin:0" >id {{ book.id }}</p></div>
+    <div class="block-code" style="margin-bottom: 20px">
+        <p class="code">Код библиотеки: {{ library_code }}</p>
+    </div>
+    <div class="books-side" style="margin-top: 80px">
+        <div>
+            <input type="text" name=" " class="intpfield" placeholder="Введите название книги">
+        </div>
+        {% for book in books %}
+            <div class="book-item">
+                <div class="leftside">
+                    <div class="nameb">
+                        <p style="padding: 0;margin:0">id {{ book.id }}</p></div>
 
-					<div class="nameb">
-					<p style="padding: 0;margin:0;font-size: 14px" >   <strong>Информация</strong></p></div>
+                    <div class="nameb">
+                        <p style="padding: 0;margin:0;font-size: 14px"><strong>Информация</strong></p></div>
 
-					<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Название {{ book.edition.name }}</strong></p></div>
+                    <div class="nameb">
+                        <p style="padding: 0;margin:0"><strong>Название {{ book.edition.name }}</strong></p></div>
 
-				<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Автор {{ book.edition.author }}</strong></p>
-								</div>
+                    <div class="nameb">
+                        <p style="padding: 0;margin:0"><strong>Автор {{ book.edition.author }}</strong></p>
+                    </div>
 
-				<div class="nameb">
-					<p style="padding: 0;margin:0" ><strong>Год публикации {{ book.edition.publication_year }}</strong></p>
-								</div>
+                    <div class="nameb">
+                        <p style="padding: 0;margin:0"><strong>Год
+                            публикации {{ book.edition.publication_year }}</strong></p>
+                    </div>
 
-				</div>
+                </div>
 
-				<div class="rightside">
+                <div class="rightside">
                     {% if book.owner %}
-					<a href='#' class="link-getback tr">Вернуть в библиотеку</a>
-					<a class="owner red">{{ book.owner.name }} {{ book.owner.surname }} владеет книгой</a>
+                        <a href='#' class="link-getback tr">Вернуть в библиотеку</a>
+                        <a class="owner red">{{ book.owner.name }} {{ book.owner.surname }} владеет книгой</a>
                     {% else %}
-					<a href='#' class="link-getback tr">Выдать книгу</a>
-					<a href='#' class="link-getback tr delete">Удалить из библиотеки</a>
+                        <a href='#' class="link-getback tr">Выдать книгу</a>
+                        <a href='#' class="link-getback tr delete">Удалить из библиотеки</a>
                     {% endif %}
-				</div>
-			</div>
-            {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
 
-		</div>
+    </div>
 
-		{% endblock %}
+{% endblock %}
