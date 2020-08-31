@@ -11,11 +11,18 @@ from flask_login import LoginManager, logout_user, login_user, login_required, c
 from flask_classy import route, FlaskView
 from forms import *
 from sequence_matcher import SequenceMatcher
+from data import db_session
+import logging
+from logging.handlers import RotatingFileHandler
 
-app = Flask(__name__)
-login_manager = LoginManager(app)
-app.config.from_object(AppConfig)
-db_session.global_init('db/library.sqlite3')
+
+application = Flask(__name__)
+application.config.from_object(AppConfig)
+login_manager = LoginManager(application)
+handler = RotatingFileHandler('foo.log', maxBytes=10000, backupCount=1)
+handler.setLevel(logging.INFO)
+application.logger.addHandler(handler)
+db_session.global_init('db/library.sql')
 
 
 def create_library(school_name, **librarian_data):  # login, name, surname, password
@@ -109,7 +116,7 @@ def generate_edition_qr(edition_id):
 #
 #
 
-@app.errorhandler(404)
+@application.errorhandler(404)
 def error_404(er):
     if er.description == 'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.':
         er.description = 'Страница не найдена'
@@ -130,13 +137,13 @@ def load_user(user_id):
         session.close()
 
 
-@app.route('/logout')
+@application.route('/logout')
 def logout():
     logout_user()
     return redirect('/')
 
 
-@app.before_first_request
+@application.before_first_request
 def create_roles():
     session = db_session.create_session()
     roles = {'Student', 'Librarian'}
@@ -146,17 +153,21 @@ def create_roles():
         role = Role()
         role.name = i
         session.add(role)
-    # print(session.query(Library).get(1).generate_id())
     session.commit()
     session.close()
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+@application.route("/zhoppa")
+def hello():
+   return "<h1 style='color:blue'>Hello There!</h1>"
 
+   
+@application.route("/")
+def zhoppa():
+    return render_template("index.html")
 
-@app.route('/sign_in', methods=['GET', 'POST'])
+    
+@application.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
     if current_user.is_authenticated:
         return redirect('/library')
@@ -217,10 +228,10 @@ def sign_in():
         login_user(ex)
         return redirect('/library')
     return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
-                           login_form=login_form, tab_num=3)
-
-
-@app.route('/borrow_book/<string:code>')
+                           login_form=login_form, tab_num=3)    
+                           
+                           
+@application.route('/borrow_book/<string:code>')
 def borrow_book(code):
     session = db_session.create_session()
     for i in session.query(Book).all():
@@ -254,7 +265,7 @@ def borrow_book(code):
             return render_template('alone_login.html', form=login_form)
         return render_template('message.html', msg='У этой книги нет владельца', form=form)
     else:
-        return render_template('message.html', msg=f'Эта книга принадлежит {cur_book.owner}')
+        return render_template('message.html', msg=f'Эта книга принадлежит {cur_book.owner}')                           
 
 
 def check_int_type(el):
@@ -411,7 +422,6 @@ class LibraryView(FlaskView):
     def book(self, book_id):
         session = db_session.create_session()
         book = session.query(Book).get(book_id)
-        # print(book.owner)
         if not book:
             return abort(404, description='Книга не найдена')
         if book.edition.library_id != current_user.library_id:
@@ -536,9 +546,10 @@ class LibraryView(FlaskView):
             return abort(403, description='Пользователь не в вашей библиотеке')
         books = session.query(Book).filter(Book.owner_id == student_id).all()
         return render_template('profile.html', books=books, user=current_user)
+        
+        
+LibraryView.register(application)        
 
 
-LibraryView.register(app)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+   application.run(host='0.0.0.0')
