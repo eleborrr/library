@@ -10,9 +10,9 @@ from flask import Markup
 class Book(SqlAlchemyBase):
     __tablename__ = 'books'
     id = Cl(sql.Integer, autoincrement=True, primary_key=True, nullable=False)
-    edition_id = Cl(sql.Integer, ForeignKey('editions.id'), nullable=False)
+    edition_id = Cl(sql.Integer, ForeignKey('editions.id', ondelete='CASCADE'), nullable=False)
     edition = orm.relation('Edition')
-    owner_id = Cl(sql.Integer, ForeignKey('users.id'))
+    owner_id = Cl(sql.Integer, ForeignKey('users.id', ondelete='SET NULL'))
     owner = orm.relation('User')
 
     def generate_id(self):
