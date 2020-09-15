@@ -15,7 +15,6 @@ from sequence_matcher import match
 app = Flask(__name__)
 login_manager = LoginManager(app)
 app.config.from_object(AppConfig)
-db_session.global_init('db/library.sqlite3')
 
 
 def create_library(school_name, **librarian_data):  # login, name, surname, password
@@ -27,12 +26,15 @@ def create_library(school_name, **librarian_data):  # login, name, surname, pass
     user = User(**librarian_data, role_id=role_id, library_id=lib.id,
                 class_num=None)
     session.add(user)
-    login_user(user)
+    try:
+        login_user(user)
+    except Exception:
+        pass
     session.commit()
     session.close()
 
 
-def add_edition(library_id, count, **edition_data):  # name, author, publication_year
+def add_edition(library_id, count, **edition_data):  # name, author, publication_year, ed_name
     session = db_session.create_session()
     edition = Edition(**edition_data, library_id=library_id)
     session.add(edition)
@@ -40,6 +42,7 @@ def add_edition(library_id, count, **edition_data):  # name, author, publication
     for i in range(count):
         session.add(Book(edition_id=edition.id))
     session.commit()
+    session.close()
 
 
 def add_book(edition_id):
@@ -76,12 +79,15 @@ def return_book(book_id):
 def register_student(name, surname, login, password, library_id, class_num):
     session = db_session.create_session()
     ex_user = session.query(User).filter(User.login == login).first()
-    role_id = session.query(Role).filter(Role.name == 'Candidate').first().id
+    role_id = session.query(Role).filter(Role.name == 'Student').first().id
     if not ex_user:
         us = User(name=name, surname=surname, password=password, role_id=role_id, library_id=library_id,
                   class_num=class_num, login=login)
         session.add(us)
-        login_user(us)
+        try:
+            login_user(us)
+        except Exception:
+            pass
     session.commit()
     session.close()
 
@@ -139,9 +145,9 @@ def logout():
 @app.before_first_request
 def create_roles():
     session = db_session.create_session()
-    roles = {'Student', 'Librarian'}
+    roles = ['Student', 'Librarian']
     for i in session.query(Role).all():
-        roles.discard(i.name)
+        roles.remove(i.name)
     for i in roles:
         role = Role()
         role.name = i
@@ -176,7 +182,7 @@ def sign_in():
             # обработать и другие символы
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=1, msg1="Недопустимые символы в названии библиотеки")
-        create_library(library_form.library_school_name.data,
+        user = create_library(library_form.library_school_name.data,
                        login=library_form.email.data,
                        name=library_form.name.data,
                        surname=library_form.surname.data,
@@ -559,4 +565,5 @@ class LibraryView(FlaskView):
 LibraryView.register(app)
 
 if __name__ == '__main__':
+    db_session.global_init('db/library.sqlite3')
     app.run(debug=True)
