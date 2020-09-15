@@ -28,14 +28,6 @@
                         {% endfor %}
 
 
-                        {{ form.name(placeholder='Her\' vsykaya') }}
-                        {{ form.name.label }}<br>
-                        {% for error in form.name.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
-
                         {{ form.surname(placeholder='Her\' vsykaya') }}
                         {{ form.surname.label }}<br>
                         {% for error in form.surname.errors %}

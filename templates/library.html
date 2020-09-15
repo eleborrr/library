@@ -1,9 +1,6 @@
 {% extends "base-table.html" %}
-{% block codeinblock %}
-					<p class="code">Код библиотеки: {{ library_code }}</p>
-{%endblock%}
 {% block url %}
-    {%  if current_user.role_id == 2 %}
+    {% if current_user.role_id == 2 %}
         <a href='/library/students' class="link-menu abs">Мои книги</a>
     {% elif current_user.role_id == 1 %}
         <a href='/library/students' class="link-menu abs">Ученики</a>
@@ -15,7 +12,73 @@
     </div>
     <div class="books-side" style="margin-top: 80px">
         <div>
-            <input type="text" name=" " class="intpfield" placeholder="Введите название книги">
+            <form method="post" action="">
+                {{ form.hidden_tag() }}
+                {{ form.crsf_token }}
+
+                {{ form.id(placeholder='Her\' vsykaya') }}
+                {{ form.id.label }}<br>
+                {% for error in form.id.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.name(placeholder='Her\' vsykaya') }}
+                {{ form.name.label }}<br>
+                {% for error in form.name.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.author(placeholder='Her\' vsykaya') }}
+                {{ form.author.label }}<br>
+                {% for error in form.author.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.publication_year(placeholder='Her\' vsykaya') }}
+                {{ form.publication_year.label }}<br>
+                {% for error in form.publication_year.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.edition_id(placeholder='Her\' vsykaya') }}
+                {{ form.edition_id.label }}<br>
+                {% for error in form.edition_id.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.owner_id(placeholder='Her\' vsykaya') }}
+                {{ form.owner_id.label }}<br>
+                {% for error in form.owner_id.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.owner_surname(placeholder='Her\' vsykaya') }}
+                {{ form.owner_surname.label }}<br>
+                {% for error in form.owner_surname.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.submit()}}
+                {% for error in form.owner_surname.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </form>
         </div>
         {% for book in books %}
             <div class="book-item">

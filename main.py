@@ -10,7 +10,7 @@ from generators import create_qr_list
 from flask_login import LoginManager, logout_user, login_user, login_required, current_user
 from flask_classy import route, FlaskView
 from forms import *
-from sequence_matcher import SequenceMatcher
+from sequence_matcher import match
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
@@ -98,10 +98,10 @@ def generate_edition_qr(edition_id):
     create_qr_list([x.id for x in session.query(Edition).get(edition_id).books])
 
 
-# @app.errorhandler(401)
-# def error_401(er):
-#     return redirect('/sign_in#tab_03'), 401
-#
+@app.errorhandler(401)
+def error_401(er):
+    return redirect('/sign_in#tab_03'), 401
+
 #
 # @app.errorhandler(403)
 # def error_403(er):
@@ -266,8 +266,8 @@ def check_int_type(el):
 
 
 class LibraryView(FlaskView):
-    @route('/books')
-    @route('/')
+    @route('/books', methods=['GET', 'POST'])
+    @route('/', methods=['GET', 'POST'])
     @login_required
     def index(self):
         session = db_session.create_session()
@@ -299,18 +299,27 @@ class LibraryView(FlaskView):
             query = query.filter(Book.owner_id == check_int_type(owner_id))
             kwargs['owner_id'] = owner_id
         result = query.all()
+        print(result, 1)
         new_res = []
         for i in result:
             flag = True
-            if name and not SequenceMatcher(i.edition.name, name)():
-                flag = False
-            if author and not SequenceMatcher(i.edition.author, author)():
-                flag = False
-            if owner_surname and not SequenceMatcher(i.owner.surname, owner_surname)():
-                flag = False
+            if name:
+                kwargs['name'] = name
+                if not match(i.edition.name, name):
+                    flag = False
+            if author:
+                kwargs['author'] = author
+                if not match(i.edition.author, author):
+                    flag = False
+            if owner_surname:
+                kwargs['owner_surname'] = owner_surname
+                if not match(i.owner.surname, owner_surname):
+                    flag = False
             if flag:
                 new_res.append(i)
+        print(new_res, 2)
         form = book_filter_form(**kwargs)
+        print(kwargs)
         if form.validate_on_submit():
             final = '/library/books'
             args = []
@@ -363,10 +372,14 @@ class LibraryView(FlaskView):
         new_res = []
         for i in result:
             flag = True
-            if name and not SequenceMatcher(i.name, name)():
-                flag = False
-            if author and not SequenceMatcher(i.author, name)():
-                flag = False
+            if name:
+                kwargs['name'] = name
+                if not match(i.edition.name, name):
+                    flag = False
+            if author:
+                kwargs['author'] = author
+                if not match(i.edition.author, author):
+                    flag = False
             if flag:
                 new_res.append(i)
         if form.validate_on_submit():
@@ -462,10 +475,10 @@ class LibraryView(FlaskView):
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
         if current_user.role_id != librarian_role.id:
             return abort(403, description='Сюда можно только библиотекарю')
-        id_, surname, class_num = request.args.get('id'), request.args.get('surname'), request.args.get('class_num')
+        id_, surname, class_num, class_letter = request.args.get('id'), request.args.get('surname'), request.args.get('class_num'), \
+                                                request.args.get('class_letter')
         kwargs = {
             'id': '',
-            'name': '',
             'surname': '',
             'class_num': '',
             'class_letter': ''
@@ -478,12 +491,17 @@ class LibraryView(FlaskView):
         if class_num:
             query = query.filter(User.class_num == check_int_type(class_num))
             kwargs['author'] = class_num
+        if class_letter:
+            query = query.filter(User.class_letter in [class_letter.lower(), class_letter.upper()])
+            kwargs['class_letter'] = class_letter
 
         result = query.all()
         new_res = []
         for i in result:
-            if surname and SequenceMatcher(i.surname, surname):
-                new_res.append(i)
+            if surname:
+                kwargs['surname'] = surname
+                if match(i.surname, surname):
+                    new_res.append(i)
 
         form = student_filter_form(**kwargs)
         if form.validate_on_submit():
