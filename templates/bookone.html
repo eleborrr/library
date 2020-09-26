@@ -20,7 +20,7 @@
 		<div class="book">
 			<div class="top-flex">
 				<div class="img-book">
-					<img src='img/mars.jpg'>
+					<img src='{{ url_for('static', filename='img/' + book.edition.avatar_image)}}'>
 				</div>
 				<div class="names">
 					<p style="padding-top: 15px;font-size: 15px;"><strong>Название: {{ book.name }}</strong></p>

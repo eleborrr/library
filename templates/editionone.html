@@ -18,14 +18,14 @@
     <div class="logo-text"><strong style="font-size: 25px">M | L</strong></div>
 
     <div style="margin:auto;max-width: 1040px;margin-top: 40px">
-        <a href='#' class="link-del green" style="float: right;margin-bottom:50px">Добавить издание</a>
+        <a href='#' class="link-del green" style="float: right;margin-bottom:50px">Добавить книгу к изданию</a>
     </div>
 
     <form method="post">
         <div class="edition-body">
             <div class="upper-block">
                 <div class="img-book">
-                    <img src="../static/img/editions/{{ edition.avatar_image }}">
+                    <img src="{{ url_for('static', filename='img/' + edition.avatar_image)}}">
                 </div>
                 <div class="descrs">
                     <h3>Название издания: {{ edition.name }}</h3>
@@ -47,14 +47,14 @@
         {% for book in books %}
         <div class="book-item">
             <div class="img-book bookitem">
-                <img src="../static/img/editions/newaris.png">
+                <img src="{{ url_for('static', filename="img/newaris.png") }}">
             </div>
             <div class="descrs bookitem">
-                <h3 style="font-size: 15px">Название: {{ edition.name }}</h3>
+                <h3 style="font-size: 15px">id: {{ book.id }}</h3>
                 {% if book.owner %}
-                <a href='#' class="link-del">Книга у {{ book.owner.name }}</a>
+                <a href='/library/books/{{ book.id }}' class="link-del">Книга у {{ book.owner.name }}</a>
                 {% else %}
-                <a href='#' class="link-del green">Книга свободна</a>
+                <a href='/library/books/{{ book.id }}' class="link-del green">Книга свободна</a>
                 {% endif %}
             </div>
         </div>

@@ -1,4 +1,5 @@
 {% extends "base-table.html" %}
+
 {% block codeinblock %}
 					<p class="code">Код библиотеки: {{ library_code }}</p>
 {%endblock%}
@@ -10,7 +11,7 @@
     {% endif %}
 {% endblock %}
 {% block contents %}
-<link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/lybrary-table.css')}}">
 <div class="flex-block" style="margin-left: 0">
 
 			<div class="flex-second" style="width:100%;margin-left: -20px">
@@ -62,7 +63,7 @@
 				</div>
                 {% for student in students %}
 				<div class="izd-item">
-					<a href="/library/profile/{{ student.id }}">{{ student.name }}</a>
+					<a href="/library/students/{{ student.id }}">{{ student.name }}</a>
 					<span >{{ student.cla }}</span>
 					<span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
 					<input type="submit" name="delete-edition" class='link-izd' href='#' value="Удалить">
