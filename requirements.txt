@@ -6,3 +6,4 @@ Flask-Classy
 WTForms
 qrcode
 Pillow
+Flask-WTF
