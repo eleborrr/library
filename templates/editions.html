@@ -14,10 +14,10 @@
 					<div class="block-abs-code">
 					<p class="code">Код библиотеки: {{ library_code }}</p>
 				</div>
-						{%endblock%}
+                <a href="/library/editions/create">Добавить издание</a>
+{%endblock%}
 <link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
 <div class="flex-block" style="margin-left: 0">
-
 			<div class="flex-second" style="width:100%;margin-left: -20px">
 				<div>
 					<form method="post" action="">
@@ -31,7 +31,6 @@
                                     {{ error }}
                                 </p>
                         {% endfor %}
-
 
                         {{ form.name(placeholder='Her\' vsykaya') }}
                         {{ form.name.label }}<br>

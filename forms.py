@@ -45,6 +45,15 @@ class RegisterStudentForm(FlaskForm):
     submit = SubmitField('Зарегистрироваться')
 
 
+class CreateEdition(FlaskForm):
+    name = StringField()
+    publisher_name = StringField()
+    author = StringField()
+    publication_year = IntegerField()
+    book_counts = IntegerField()
+    submit = SubmitField()
+    # добавить картинку издания
+
 class LoginForm(FlaskForm):
     email = EmailField('Адрес электронной почты')
     password = PasswordField('Пароль')

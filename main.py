@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, abort, request
+from flask import Flask, redirect, render_template, abort, request, url_for
 from data import db_session
 from data.book import Book
 from data.edition import Edition
@@ -15,6 +15,8 @@ from sequence_matcher import match
 app = Flask(__name__)
 login_manager = LoginManager(app)
 app.config.from_object(AppConfig)
+
+db_session.global_init('db/library.sqlite3')
 
 
 def create_library(school_name, **librarian_data):  # login, name, surname, password
@@ -108,6 +110,7 @@ def generate_edition_qr(edition_id):
 def error_401(er):
     return redirect('/sign_in#tab_03'), 401
 
+
 #
 # @app.errorhandler(403)
 # def error_403(er):
@@ -119,7 +122,8 @@ def error_401(er):
 def error_404(er):
     if er.description == 'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.':
         er.description = 'Страница не найдена'
-    return render_template('404.html', msg=er.description), 404
+    return render_template('404.html', msg=er.description, url_for=url_for), 404
+
 
 #
 # @app.errorhandler(500)
@@ -182,7 +186,7 @@ def sign_in():
             # обработать и другие символы
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=1, msg1="Недопустимые символы в названии библиотеки")
-        user = create_library(library_form.library_school_name.data,
+        create_library(library_form.library_school_name.data,
                        login=library_form.email.data,
                        name=library_form.name.data,
                        surname=library_form.surname.data,
@@ -305,7 +309,6 @@ class LibraryView(FlaskView):
             query = query.filter(Book.owner_id == check_int_type(owner_id))
             kwargs['owner_id'] = owner_id
         result = query.all()
-        print(result, 1)
         new_res = []
         for i in result:
             flag = True
@@ -323,9 +326,7 @@ class LibraryView(FlaskView):
                     flag = False
             if flag:
                 new_res.append(i)
-        print(new_res, 2)
         form = book_filter_form(**kwargs)
-        print(kwargs)
         if form.validate_on_submit():
             final = '/library/books'
             args = []
@@ -417,13 +418,36 @@ class LibraryView(FlaskView):
         if edition.library_id != current_user.library_id:
             return abort(403, 'Эта книга приписана к другой библиотеке')
         books = session.query(Book).filter(Book.edition_id == edition_id).all()
-        return render_template('editionone.html', books=books, count_books=len(books), edition=edition)
+        return render_template('editionone.html', books=books, count_books=len(books), edition=edition, url_for=url_for)
         # Сдесь будет список книг данного издания с их текущими владельцами
         # У библиотекаря рядом с каждой книгой есть кнопка "Вернуть в библиотеку" или "Одолжить книгу"
         # (Я думаю у библиотекаря должна быть возможность одалживать книгу вручную),
         # А так эе кнопка "Удалить" (Вдруг случайно лишнюю создала") P.s кнопка недоступна, если книга не в библиотеке
         # Так же библиотекарю доступна кнопка "Добавить книгу", добавляющая новую книгу этого издания,
         # и кнопка "список qr-кодов"
+
+    @route('/editions/create', methods=['GET', 'POST'])
+    @login_required
+    def create_edition(self):
+        session = db_session.create_session()
+        form = CreateEdition()
+        if form.validate_on_submit():
+            edition = Edition()
+            edition.name = form.name.data
+            edition.library_id = current_user.library_id
+            edition.ed_name = form.publisher_name.data
+            edition.author = form.author.data
+            edition.publication_year = form.publication_year.data
+            session.add(edition)
+            session.commit()
+            for i in range(int(form.book_counts.data)):
+                book = Book()
+                book.name
+                book.edition_id = edition.id
+                session.add(book)
+                session.commit()
+            return redirect(f'/library/editions/{edition.id}')
+        return render_template('edition_create.html', form=form)
 
     @route('/books/<int:book_id>', methods=['GET', 'POST'])
     @login_required
@@ -481,7 +505,8 @@ class LibraryView(FlaskView):
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
         if current_user.role_id != librarian_role.id:
             return abort(403, description='Сюда можно только библиотекарю')
-        id_, surname, class_num, class_letter = request.args.get('id'), request.args.get('surname'), request.args.get('class_num'), \
+        id_, surname, class_num, class_letter = request.args.get('id'), request.args.get('surname'), request.args.get(
+            'class_num'), \
                                                 request.args.get('class_letter')
         kwargs = {
             'id': '',
@@ -565,5 +590,5 @@ class LibraryView(FlaskView):
 LibraryView.register(app)
 
 if __name__ == '__main__':
-    db_session.global_init('db/library.sqlite3')
+    # db_session.global_init('db/library.sqlite3')
     app.run(debug=True)

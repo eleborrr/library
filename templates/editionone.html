@@ -9,8 +9,8 @@
 
     <meta name="viewport" content="width=device-width">
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="../static/css/bookone.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/editionone.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="../static/css/bookone.css")}}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='../static/css/editionone.css')}}">
 </head>
 
 <body>
@@ -50,7 +50,7 @@
                 <img src="../static/img/editions/newaris.png">
             </div>
             <div class="descrs bookitem">
-                <h3 style="font-size: 15px">Название: {{ book.name }}</h3>
+                <h3 style="font-size: 15px">Название: {{ edition.name }}</h3>
                 {% if book.owner %}
                 <a href='#' class="link-del">Книга у {{ book.owner.name }}</a>
                 {% else %}
