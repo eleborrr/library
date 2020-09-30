@@ -16,7 +16,8 @@ app = Flask(__name__)
 login_manager = LoginManager(app)
 app.config.from_object(AppConfig)
 
-db_session.global_init('db/library.sqlite3')
+if __name__ != 'tests.py':
+    db_session.global_init('db/library.sqlite3')
 
 
 def create_library(school_name, **librarian_data):  # login, name, surname, password
