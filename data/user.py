@@ -17,6 +17,7 @@ class User(SqlAlchemyBase, UserMixin):
     password = Cl(sql.String(128), nullable=False)
     class_num = Cl(sql.Integer)
     class_letter = Cl(sql.String(1))
+    enlisted = Cl(sql.Boolean)  # Черный список
     library_id = Cl(sql.Integer, ForeignKey('libraries.id', ondelete='SET NULL'))
     library = orm.relation('Library')
     books = orm.relation('Book', back_populates='owner')

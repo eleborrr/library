@@ -16,7 +16,8 @@ app = Flask(__name__)
 login_manager = LoginManager(app)
 app.config.from_object(AppConfig)
 
-db_session.global_init('db/library.sqlite3')
+if __name__ != 'tests.py':
+    db_session.global_init('db/library.sqlite3')
 
 
 def create_library(school_name, **librarian_data):  # login, name, surname, password
@@ -192,16 +193,6 @@ def sign_in():
                        surname=library_form.surname.data,
                        password=library_form.password.data)
         return redirect('/library')
-    if login_form.validate_on_submit():
-        us = session.query(User).filter(User.login == login_form.email.data).first()
-        if not us:
-            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
-                                   login_form=login_form, tab_num=3, msg3="Неверный адрес электронной почты")
-        if not us.check_password(login_form.password.data):
-            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
-                                   login_form=login_form, tab_num=3, msg3="Неверный пароль")
-        login_user(us, remember=login_form.remember_me.data)
-        return redirect('/library')
     if register_form.validate_on_submit():
         ex = session.query(User).filter(User.login == register_form.email.data).first()
         if ex:
@@ -224,7 +215,18 @@ def sign_in():
         register_student(register_form.name.data, register_form.surname.data, register_form.email.data,
                          register_form.password.data, lib_id,
                          register_form.class_num.data)
+        print('ok')
         login_user(ex)
+        return redirect('/library')
+    if login_form.validate_on_submit():
+        us = session.query(User).filter(User.login == login_form.email.data).first()
+        if not us:
+            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                                   login_form=login_form, tab_num=3, msg3="Неверный адрес электронной почты")
+        if not us.check_password(login_form.password.data):
+            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                                   login_form=login_form, tab_num=3, msg3="Неверный пароль")
+        login_user(us, remember=login_form.remember_me.data)
         return redirect('/library')
     return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                            login_form=login_form, tab_num=3)
@@ -442,7 +444,6 @@ class LibraryView(FlaskView):
             session.commit()
             for i in range(int(form.book_counts.data)):
                 book = Book()
-                book.name
                 book.edition_id = edition.id
                 session.add(book)
                 session.commit()
@@ -533,7 +534,8 @@ class LibraryView(FlaskView):
                 kwargs['surname'] = surname
                 if match(i.surname, surname):
                     new_res.append(i)
-
+            else:
+                new_res.append(i)
         form = student_filter_form(**kwargs)
         if form.validate_on_submit():
             final = '/library/students'
@@ -563,7 +565,7 @@ class LibraryView(FlaskView):
         student_role = session.query(Role).filter(Role.name == 'Student').first()
         if student.role_id != student_role.id:
             return abort(403, description='Этот ученик из другой школы')
-        return render_template('students.html', student=student)
+        return render_template('profile.html', user=student, current_user=current_user)
         #  Здесь библиотекарь видит Фамилию и Имя ученика
         #  И список всех книг, которые у него сейчас находятся
         #  P.S. это не профиль студента (я думаю, профили других людей будут недоступны)

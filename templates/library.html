@@ -1,7 +1,7 @@
 {% extends "base-table.html" %}
 {% block url %}
     {% if current_user.role_id == 2 %}
-        <a href='/library/students' class="link-menu abs">Мои книги</a>
+        <a href='/library/my_books' class="link-menu abs">Мои книги</a>
     {% elif current_user.role_id == 1 %}
         <a href='/library/students' class="link-menu abs">Ученики</a>
     {% endif %}
