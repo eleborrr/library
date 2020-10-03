@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="../static/css/bookone.css")}}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='../static/css/editionone.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='../static/css/popups.css')}}">
 </head>
 
 <body>
@@ -34,8 +35,10 @@
                            style="border: none;cursor: pointer">
                 </div>
                 <div style="margin-left: auto">
-                    <input type="submit" name="delete-edition" class="link-delete opas" value="Удалить издание"
-                           style="border: none;cursor: pointer">
+                    <a  class="link-delete opas"
+                       style="border: none;cursor: pointer" href="#popup3">Удалить издание</a>
+{#                    <input type="submit" name="delete-edition" class="link-delete opas" value="Удалить издание"#}
+{#                           style="border: none;cursor: pointer" href="#popup3">#}
                 </div>
             </div>
         </div>
@@ -68,6 +71,24 @@
 </div>
 
 
+
+    <div class='popup' id='popup3'>
+        <a class="popup__area" href='#header'></a>
+        <div class='popup__body'>
+            <div class='popup__content'>
+                <a class='popup__close' href='#header'>X</a>
+                <div><h3> Точно удалить? </h3></div>
+                <form class='form_up' id="create-chat" method="post">
+
+                    <input type="submit" name="delete-edition" class="link-delete opas" value="Удалить издание"
+                           style="border: none;cursor: pointer;color: white">
+                    <input type="submit" name="delete-edition" class="link-delete opas" value="Вернуться"
+                           style="border: none;cursor: pointer;color: white;background-color: #C1F084">
+                </form>
+            </div>
+        </div>
+
+    </div>
 
 </body>
 </html>
