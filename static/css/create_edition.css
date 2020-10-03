@@ -1,0 +1,163 @@
+
+:-moz-placeholder {
+ color: grey;
+}
+::-webkit-input-placeholder {
+ color: grey;
+}
+
+:-moz-placeholder {
+    color: grey;
+}
+::-webkit-input-placeholder {
+    color: grey;
+}
+
+*:focus {outline: none;}
+
+
+.form_hint, .required_notification
+{font-size: 9px;}
+
+.contact_form{
+    font: 14px/21px "Comfortaa", cursive;
+background-color: #FEC4A4;
+    color:white;
+    max-width: 500px;
+    margin: auto;
+    margin-top: 100px;
+    border: 1px solid white;
+    padding: 10px;
+
+    border-radius: 5px;
+    height: 230px
+}
+.contact_form ul {
+    width: 100%;
+    list-style-type:none;
+    list-style-position:outside;
+    margin:0px;
+    padding:0px;
+}
+.contact_form li{
+    padding:12px;
+    /*border-bottom:1px solid #eee;*/
+    position:relative;
+}
+
+
+.contact_form h2 {
+    margin:0;
+    display: inline;
+}
+.required_notification {
+    color:#F87070;
+    display:inline;
+    float:right;
+}
+
+
+
+.contact_form label {
+    width:150px;
+    margin-top: 3px;
+    display:inline-block;
+    float:left;
+    padding:3px;
+}
+.contact_form input {
+    height:33px;
+    width:220px;
+    padding:5px 8px;
+}
+.contact_form textarea
+{padding:8px; width:300px;}
+.contact_form button
+ {margin-left:156px;}
+
+
+
+
+.contact_form input,
+.contact_form textarea {
+    border: none;
+    /*box-shadow: 0px 0px 3px #ccc, 0 10px 15px #eee inset;*/
+    border-radius:2px;
+}
+.contact_form input:focus,
+.contact_form textarea:focus {
+    background: #fff;
+    border:1px solid #555;
+    box-shadow: 0 0 3px #aaa;
+}
+/* Button Style */
+button.submit{
+    background-color: #fff;
+    border:none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    transition: all 0.4s ease 0s;
+    color: #584B4B;
+
+}
+button.submit:hover{
+    padding: 12px 25px;
+    background-color: #584B4B;
+    color: white
+}
+
+button.submit:active {
+    background-color: white
+   }
+
+
+.contact_form input:focus, .contact_form textarea:focus { /* add this to the already existing style */
+    padding-right:70px;
+}
+.contact_form input, .contact_form textarea { /* add this to the already existing style */
+    -moz-transition: padding .25s;
+    -webkit-transition: padding .25s;
+    -o-transition: padding .25s;
+    transition: padding .25s;
+}
+input:required, textarea:required {
+ background: #fff url(images/red_asterisk.png) no-repeat 98% center;
+}
+.contact_form input, .contact_form textarea {
+ padding-right:30px;
+}
+input:required, textarea:required {
+ background: #fff url(images/red_asterisk.png) no-repeat 98% center;
+}
+
+.contact_form input:focus:invalid, .contact_form textarea:focus:invalid { /* when a field is considered invalid by the browser */
+ background: #fff url(images/invalid.png) no-repeat 98% center;
+ box-shadow: 0 0 5px #d45252;
+ border-color: #b03535
+}
+.contact_form input:required:valid, .contact_form textarea:required:valid { /* when a field is considered valid by the browser */
+ background: #fff url(../img/checkmark2.png) no-repeat 98% center;
+ box-shadow: 0 0 5px #5cd053;
+ border-color: #28921f;
+}
+
+.form_hint {
+ background: #d45252;
+ border-radius: 3px 3px 3px 3px;
+ color: white;
+ margin-left:8px;
+ padding: 1px 6px;
+ z-index: 999; /* hints stay above all other elements */
+ position: absolute; /* allows proper formatting if hint is two lines */
+ display: none;
+}
+.form_hint::before {
+ content: "\25C0"; /* треугольник, указующий влево, в  escaped unicode */
+ color:#d45252;
+ position: absolute;
+ top:1px;
+ left:-6px;
+}
+.contact_form input:focus + .form_hint {display: inline;}
+.contact_form input:required:valid + .form_hint {background: #28921f;} /* change form hint color when valid */
+.contact_form input:required:valid + .form_hint::before {color:#28921f;} /* change form hint arrow color when valid */

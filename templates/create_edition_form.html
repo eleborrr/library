@@ -1,0 +1,44 @@
+{% extends "base-table.html" %}
+{% block codeinblock %}
+					<p class="code">Код библиотеки: {{ library_code }}</p>
+{%endblock%}
+{% block url %}
+    {%  if current_user.role_id == 2 %}
+        <a href='/library/students' class="link-menu abs">Мои книги</a>
+    {% elif current_user.role_id == 1 %}
+        <a href='/library/students' class="link-menu abs">Ученики</a>
+    {% endif %}
+{% endblock %}
+{% block contents %}
+{% block codeoutblock %}
+{%endblock%}
+<link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/create_edition.css">
+<form class="contact_form" action="" method="post" name="contact_form">
+
+<ul>
+    <li>
+         <h2>Добавьте книгу в библиотеку</h2>
+
+    </li>
+    <li>
+        <label for="name">Название</label>
+        <input type="text" name="name" placeholder="Чистый понедельник" required="" />
+        <span class="form_hint">Формат ввода</span>
+    </li>
+
+
+<li>
+    <label for="author">Автор</label>
+    <input type="text" name="author" placeholder="Бунин" required />
+
+    <span class="form_hint">Формат ввода</span>
+</li>
+
+<li>
+ <button class="submit" type="submit">Добавить</button>
+</li>
+
+</ul>
+</form>
+{% endblock %}
