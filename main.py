@@ -146,6 +146,12 @@ def generate_edition_qr(edition_id):
     create_qr_list([x.id for x in session.query(Edition).get(edition_id).books])
 
 
+def get_user_by_token(token, session):
+    email = confirm_token(token)
+    user = session.query(User).filter(User.login == email).first()
+    return user
+
+
 @app.errorhandler(401)
 def error_401(er):
     return redirect('/sign_in#tab_03'), 401
@@ -178,6 +184,32 @@ def load_user(user_id):
         return session.query(User).get(user_id)
     finally:
         session.close()
+
+
+@app.route('/confirm_email/<string:token>')
+def confirm_email(token):
+    session = db_session.create_session()
+    user = get_user_by_token(token, session)
+    if not user:
+        return 'Токен не действителен'
+    user.confirmed = True
+    session.commit()
+    session.close()
+    return 'Адрес электронной почты был подтвержден'
+
+
+@app.route('/change_password/<string:token>', methods=['GET', 'POST'])
+def change_password(token):
+    session = db_session.create_session()
+    user = get_user_by_token(token, session)
+    if not user:
+        return 'Токен не действителен'
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.new_password.data)
+        session.commit()
+        return 'Пароль был изменён'
+    return render_template('change_password.html', form=form)
 
 
 @app.route('/logout')
