@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, abort, request, url_for
+from flask import Flask, redirect, render_template, abort, request, url_for, render_template_string
 from data import db_session
 from data.book import Book
 from data.edition import Edition
@@ -11,13 +11,52 @@ from flask_login import LoginManager, logout_user, login_user, login_required, c
 from flask_classy import route, FlaskView
 from forms import *
 from sequence_matcher import match
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
+mail = Mail(app)
 app.config.from_object(AppConfig)
 
 if __name__ != 'tests.py':
     db_session.global_init('db/library.sqlite3')
+
+
+def generate_token(email):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
+
+
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+            token,
+            salt=app.config['SECURITY_PASSWORD_SALT'],
+            max_age=expiration
+        )
+        print(email)
+    except Exception:
+        return False
+    return email
+
+
+def send_email(user, target):
+    email = user.login
+    token = generate_token(email)
+    if target == 1:  # confirm email
+        link = f'confirm_email/{token}'
+        template = render_template_string('', link=link)  # Можно вынести в отдельный файл
+        theme = ''
+    elif target == 2:  # change password:
+        link = f'change_password/{token}'
+        template = render_template_string('', link=link)  # Можно вынести в отдельный файл
+        theme = ''
+    else:
+        raise ValueError
+    message = Message(theme, recipients=[email], html=template)
+    mail.send(message)
 
 
 def create_library(school_name, **librarian_data):  # login, name, surname, password
