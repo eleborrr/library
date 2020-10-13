@@ -16,8 +16,8 @@ from itsdangerous import URLSafeTimedSerializer
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
-mail = Mail(app)
 app.config.from_object(AppConfig)
+mail = Mail(app)
 
 if __name__ != 'tests.py':
     db_session.global_init('db/library.sqlite3')
@@ -47,11 +47,13 @@ def send_email(user, target):
     token = generate_token(email)
     if target == 1:  # confirm email
         link = f'confirm_email/{token}'
-        template = render_template_string('', link=link)  # Можно вынести в отдельный файл
+        template = render_template_string('Для подтверждения адреса электронной почты'
+                                          'перейдите по ссылке {{ link }}', link=link)  # Можно вынести в отдельный файл
         theme = ''
     elif target == 2:  # change password:
         link = f'change_password/{token}'
-        template = render_template_string('', link=link)  # Можно вынести в отдельный файл
+        template = render_template_string('Для смены пароля перейдите'
+                                          'по ссылке {{ link }}', link=link)  # Можно вынести в отдельный файл
         theme = ''
     else:
         raise ValueError
@@ -184,6 +186,14 @@ def load_user(user_id):
         return session.query(User).get(user_id)
     finally:
         session.close()
+
+
+@app.route('/test_send_emails')
+@login_required
+def send_emails():
+    send_email(current_user, 1)
+    send_email(current_user, 2)
+    return 'Отправлено'
 
 
 @app.route('/confirm_email/<string:token>')
