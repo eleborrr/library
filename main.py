@@ -49,15 +49,15 @@ def send_email(user, target):
         link = f'confirm_email/{token}'
         template = render_template_string('Для подтверждения адреса электронной почты'
                                           'перейдите по ссылке {{ link }}', link=link)  # Можно вынести в отдельный файл
-        theme = ''
+        subject = 'Подтверждение адреса электронной почте на сайте libby.ru'
     elif target == 2:  # change password:
         link = f'change_password/{token}'
-        template = render_template_string('Для смены пароля перейдите'
+        template = render_template_string('Для смены пароля перейдите '
                                           'по ссылке {{ link }}', link=link)  # Можно вынести в отдельный файл
-        theme = ''
+        subject = 'Изменение пароля к аккаунту на сайте libby.ru'
     else:
         raise ValueError
-    message = Message(theme, recipients=[email], html=template)
+    message = Message(subject=subject, recipients=[email], html=template)
     mail.send(message)
 
 
