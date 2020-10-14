@@ -7,3 +7,5 @@ WTForms
 qrcode
 Pillow
 Flask-WTF
+Flask-Mail
+itsdangerous

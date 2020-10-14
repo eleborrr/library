@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, abort, request, url_for
+from flask import Flask, redirect, render_template, abort, request, url_for, render_template_string
 from data import db_session
 from data.book import Book
 from data.edition import Edition
@@ -11,13 +11,54 @@ from flask_login import LoginManager, logout_user, login_user, login_required, c
 from flask_classy import route, FlaskView
 from forms import *
 from sequence_matcher import match
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
 app.config.from_object(AppConfig)
+mail = Mail(app)
 
 if __name__ != 'tests.py':
     db_session.global_init('db/library.sqlite3')
+
+
+def generate_token(email):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
+
+
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+            token,
+            salt=app.config['SECURITY_PASSWORD_SALT'],
+            max_age=expiration
+        )
+        print(email)
+    except Exception:
+        return False
+    return email
+
+
+def send_email(user, target):
+    email = user.login
+    token = generate_token(email)
+    if target == 1:  # confirm email
+        link = f'confirm_email/{token}'
+        template = render_template_string('Для подтверждения адреса электронной почты'
+                                          'перейдите по ссылке {{ link }}', link=link)  # Можно вынести в отдельный файл
+        subject = 'Подтверждение адреса электронной почте на сайте libby.ru'
+    elif target == 2:  # change password:
+        link = f'change_password/{token}'
+        template = render_template_string('Для смены пароля перейдите '
+                                          'по ссылке {{ link }}', link=link)  # Можно вынести в отдельный файл
+        subject = 'Изменение пароля к аккаунту на сайте libby.ru'
+    else:
+        raise ValueError
+    message = Message(subject=subject, recipients=[email], html=template)
+    mail.send(message)
 
 
 def create_library(school_name, **librarian_data):  # login, name, surname, password
@@ -107,6 +148,12 @@ def generate_edition_qr(edition_id):
     create_qr_list([x.id for x in session.query(Edition).get(edition_id).books])
 
 
+def get_user_by_token(token, session):
+    email = confirm_token(token)
+    user = session.query(User).filter(User.login == email).first()
+    return user
+
+
 @app.errorhandler(401)
 def error_401(er):
     return redirect('/sign_in#tab_03'), 401
@@ -139,6 +186,40 @@ def load_user(user_id):
         return session.query(User).get(user_id)
     finally:
         session.close()
+
+
+@app.route('/test_send_emails')
+@login_required
+def send_emails():
+    send_email(current_user, 1)
+    send_email(current_user, 2)
+    return 'Отправлено'
+
+
+@app.route('/confirm_email/<string:token>')
+def confirm_email(token):
+    session = db_session.create_session()
+    user = get_user_by_token(token, session)
+    if not user:
+        return 'Токен не действителен'
+    user.confirmed = True
+    session.commit()
+    session.close()
+    return 'Адрес электронной почты был подтвержден'
+
+
+@app.route('/change_password/<string:token>', methods=['GET', 'POST'])
+def change_password(token):
+    session = db_session.create_session()
+    user = get_user_by_token(token, session)
+    if not user:
+        return 'Токен не действителен'
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.new_password.data)
+        session.commit()
+        return 'Пароль был изменён'
+    return render_template('change_password.html', form=form)
 
 
 @app.route('/logout')

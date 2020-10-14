@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, RadioField, BooleanField, TextAreaField, DateTimeField, \
     DateField, TimeField, FileField, IntegerField, SelectField
 from wtforms.fields.html5 import EmailField, DateTimeLocalField
-from wtforms.validators import DataRequired, Length, NumberRange
+from wtforms.validators import DataRequired, Length, NumberRange, EqualTo
 from flask_wtf.recaptcha import RecaptchaField
 from datetime import datetime
 
@@ -100,3 +100,9 @@ def student_filter_form(**kwargs):
         submit = SubmitField('Искать')
 
     return StudentFilterForm()
+
+
+class ChangePasswordForm(FlaskForm):
+    new_password = PasswordField('Новый пароль', validators=[DataRequired(), Length(max=128)])
+    confirm_new_password = PasswordField('Повторите пароль', validators=[EqualTo('new_password')])
+    submit = SubmitField('Сменить пароль')
