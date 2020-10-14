@@ -12,8 +12,8 @@
 {% block contents %}
 {% block codeoutblock %}
 {%endblock%}
-<link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/create_edition.css">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="css/lybrary-table.css")}}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="css/create_edition.css") }}">
 <form class="contact_form" action="" method="post" name="contact_form">
 
 <ul>

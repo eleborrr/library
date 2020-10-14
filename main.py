@@ -156,7 +156,7 @@ def get_user_by_token(token, session):
 
 @app.errorhandler(401)
 def error_401(er):
-    return redirect('/sign_in#tab_03'), 401
+    return redirect('/sign_in#tab_03')
 
 
 #
@@ -170,13 +170,13 @@ def error_401(er):
 def error_404(er):
     if er.description == 'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.':
         er.description = 'Страница не найдена'
-    return render_template('404.html', msg=er.description, url_for=url_for), 404
+    return render_template('404.html', msg=er.description, url_for=url_for)
 
 
 #
 # @app.errorhandler(500)
 # def error_500(er):
-#     return render_template('разрабы_тупые_криворученки.html', msg=er.message), 404
+#     return render_template('разрабы_тупые_криворученки.html', msg=er.message)
 
 
 @login_manager.user_loader
@@ -529,7 +529,7 @@ class LibraryView(FlaskView):
                 session.add(book)
                 session.commit()
             return redirect(f'/library/editions/{edition.id}')
-        return render_template('edition_create.html', form=form)
+        return render_template('create_edition_form.html', form=form, url_for=url_for)
 
     @route('/books/<int:book_id>', methods=['GET', 'POST'])
     @login_required
