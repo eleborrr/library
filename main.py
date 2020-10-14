@@ -13,6 +13,8 @@ from forms import *
 from sequence_matcher import match
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
+import uuid
+import os
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
@@ -521,6 +523,22 @@ class LibraryView(FlaskView):
             edition.ed_name = form.publisher_name.data
             edition.author = form.author.data
             edition.publication_year = form.publication_year.data
+            filename = str(uuid.uuid4())
+            filedata_ = form.photo.data
+            # filedata_.name = filename + '.jpg'
+            # help(filedata_.save)
+            # filedata_.save(url_for('static', filename='img/editions/' + filename + '.jpg'))
+            filedata_.save(os.path.join(app.config['UPLOAD_FOLDER']), filename)
+            # try:
+            #     os.makedirs('/static/img/editions')
+            # except FileExistsError:
+            #     pass
+            # with open(url_for('static', filename='img/editions/' + filename + '.jpg'), 'w') as file:
+            #     file.write(filedata)
+            # print(dir(filedata))
+            print(url_for('static', filename='img/editions/' + filename + '.jpg'))
+            while True:
+                pass
             session.add(edition)
             session.commit()
             for i in range(int(form.book_counts.data)):

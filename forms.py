@@ -52,6 +52,7 @@ class CreateEdition(FlaskForm):
     publication_year = IntegerField()
     book_counts = IntegerField()
     submit = SubmitField()
+    photo = FileField()
     # добавить картинку издания
 
 
