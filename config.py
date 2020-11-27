@@ -12,4 +12,4 @@ class AppConfig:
     MAIL_USERNAME = 'testing.some.web.apps@gmail.com'  # Я серьёзно создал эту почту, можете пользоваться
     MAIL_PASSWORD = 'TestIsCool1'
     MAIL_DEFAULT_SENDER = 'TestSender'
-    UPLOAD_FOLDER = '/static/img/editions/'
+    UPLOAD_FOLDER = 'static/img'

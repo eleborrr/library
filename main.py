@@ -528,7 +528,7 @@ class LibraryView(FlaskView):
             # filedata_.name = filename + '.jpg'
             # help(filedata_.save)
             # filedata_.save(url_for('static', filename='img/editions/' + filename + '.jpg'))
-            filedata_.save(os.path.join(app.config['UPLOAD_FOLDER']), filename)
+            filedata_.save(os.path.join(app.config['UPLOAD_FOLDER'] + '/editions', filename))
             # try:
             #     os.makedirs('/static/img/editions')
             # except FileExistsError:
@@ -536,9 +536,6 @@ class LibraryView(FlaskView):
             # with open(url_for('static', filename='img/editions/' + filename + '.jpg'), 'w') as file:
             #     file.write(filedata)
             # print(dir(filedata))
-            print(url_for('static', filename='img/editions/' + filename + '.jpg'))
-            while True:
-                pass
             session.add(edition)
             session.commit()
             for i in range(int(form.book_counts.data)):
