@@ -54,4 +54,9 @@
 
 
 </body>
+<script>
+    let hr = document.location.href.split('#');
+    if (hr.length === 1)
+        document.location.href = hr[0];
+</script>
 </html>
