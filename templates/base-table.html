@@ -2,7 +2,7 @@
 
 <html lang="ru">
 <head>
-    <title>Title</title>
+    <title>{% block title_block %}{% endblock %}</title>
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width">
@@ -56,7 +56,7 @@
 </body>
 <script>
     let hr = document.location.href.split('#');
-    if (hr.length === 1)
+    if (hr.length === 2)
         document.location.href = hr[0];
 </script>
 </html>
