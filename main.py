@@ -528,7 +528,7 @@ class LibraryView(FlaskView):
             # filedata_.name = filename + '.jpg'
             # help(filedata_.save)
             # filedata_.save(url_for('static', filename='img/editions/' + filename + '.jpg'))
-            filedata_.save(os.path.join(app.config['UPLOAD_FOLDER'] + '/editions', filename))
+            filedata_.save(os.path.join(app.config['UPLOAD_FOLDER'] + '/editions', filename + '.jpg'))
             # try:
             #     os.makedirs('/static/img/editions')
             # except FileExistsError:
