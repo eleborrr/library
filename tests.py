@@ -1,4 +1,5 @@
-from main import create_roles, lend_book, return_book, register_student, create_library, add_edition, add_book, remove_book
+from main import create_roles, lend_book, return_book, register_student, create_library, add_edition, add_book, \
+    remove_book
 from data import db_session, role, user, edition, library, book
 import unittest
 import os

@@ -15,8 +15,7 @@ class Edition(SqlAlchemyBase):
     library_id = Cl(sql.Integer, ForeignKey('libraries.id', ondelete='CASCADE'), nullable=False)
     library = orm.relation('Library')
     books = orm.relation('Book', back_populates='edition')
-    ed_name = Cl(sql.String(64), nullable=False) # publisher name
+    ed_name = Cl(sql.String(64), nullable=False)  # publisher name
     photo_name = Cl(sql.String(64))
     class_num = Cl(sql.Integer)
     # category = None  # Новая модель или строка??????????????
-

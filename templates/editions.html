@@ -1,78 +1,77 @@
 {% extends "base-table.html" %}
 {% block codeinblock %}
-					<p class="code">Код библиотеки: {{ library_code }}</p>
-{%endblock%}
+    <p class="code">Код библиотеки: {{ library_code }}</p>
+{% endblock %}
 {% block url %}
-    {%  if current_user.role_id == 2 %}
+    {% if current_user.role_id == 1 %}
         <a href='/library/students' class="link-menu abs">Мои книги</a>
-    {% elif current_user.role_id == 1 %}
+    {% elif current_user.role_id == 2 %}
         <a href='/library/students' class="link-menu abs">Ученики</a>
     {% endif %}
 {% endblock %}
 {% block contents %}
-{% block codeoutblock %}
-					<div class="block-abs-code">
-					<p class="code">Код библиотеки: {{ library_code }}</p>
-				</div>
-                <a href="/library/editions/create">Добавить издание</a>
-{%endblock%}
-<link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
-<div class="flex-block" style="margin-left: 0">
-			<div class="flex-second" style="width:100%;margin-left: -20px">
-				<div>
-					<form method="post" action="">
-                        {{ form.hidden_tag() }}
-                        {{ form.crsf_token }}
 
-                        {{ form.id(placeholder='Her\' vsykaya') }}
-                        {{ form.id.label }}<br>
-                        {% for error in form.id.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
+    <div class="block-abs-code">
+        <p class="code">Код библиотеки: {{ library_code }}</p>
+    </div>
+    <a href="/library/editions/create">Добавить издание</a>
+    <link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
+    <div class="flex-block" style="margin-left: 0">
+        <div class="flex-second" style="width:100%;margin-left: -20px">
+            <div>
+                <form method="post" action="">
+                    {{ form.hidden_tag() }}
+                    {{ form.crsf_token }}
 
-                        {{ form.name(placeholder='Her\' vsykaya') }}
-                        {{ form.name.label }}<br>
-                        {% for error in form.name.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
+                    {{ form.id(placeholder='Her\' vsykaya') }}
+                    {{ form.id.label }}<br>
+                    {% for error in form.id.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
 
-                        {{ form.author(placeholder='Her\' vsykaya') }}
-                        {{ form.author.label }}<br>
-                        {% for error in form.author.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
+                    {{ form.name(placeholder='Her\' vsykaya') }}
+                    {{ form.name.label }}<br>
+                    {% for error in form.name.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
 
-                        {{ form.publication_year(placeholder='Her\' vsykaya') }}
-                        {{ form.publication_year.label }}<br>
-                        {% for error in form.publication_year.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
+                    {{ form.author(placeholder='Her\' vsykaya') }}
+                    {{ form.author.label }}<br>
+                    {% for error in form.author.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
 
-                        {{ form.submit() }}
-                        {% for error in form.submit.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
-                    </form>
-				</div>
-                {% for edition in editions %}
-				<div class="izd-item">
+                    {{ form.publication_year(placeholder='Her\' vsykaya') }}
+                    {{ form.publication_year.label }}<br>
+                    {% for error in form.publication_year.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                    {{ form.submit() }}
+                    {% for error in form.submit.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </form>
+            </div>
+            {% for edition in editions %}
+                <div class="izd-item">
                     <img src="../static/img/editions{{ editions.avatar_image }}">
-					<a href="/library/editions/{{ edition.id }}">{{ edition.name }}</a>
-					<span >Литература</span>
-					<span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
-					<input type="submit" name="delete-edition" class='link-izd' href='#' value="Удалить">
-				</div>
-                {% endfor %}
-			</div>
-</div>
+                    <a href="/library/editions/{{ edition.id }}">{{ edition.name }}</a>
+                    <span>Литература</span>
+                    <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
+                    <input type="submit" name="delete-edition" class='link-izd' href='#' value="Удалить">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

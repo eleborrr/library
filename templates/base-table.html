@@ -1,59 +1,57 @@
 <!DOCTYPE html>
 
 <html lang="ru">
-	<head>
-		<title>Title</title>
-		<meta charset="UTF-8">
+<head>
+    <title>Title</title>
+    <meta charset="UTF-8">
 
-		<meta name="viewport" content="width=device-width">
-		<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="../static/css/library.css">
-		<link rel="stylesheet" type="text/css" href="../static/css/library-page.css">
-		{% block links %}{% endblock %}
-	</head>
+    <meta name="viewport" content="width=device-width">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../static/css/library.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/library-page.css">
+    {% block links %}{% endblock %}
+</head>
 
-	<body>
+<body>
 {% block codeoutblock %}
 
-						{%endblock%}
+{% endblock %}
 
 
-		<div class="topfix"></div>
-		<div class="body-content">
+<div class="topfix"></div>
+<div class="body-content">
 
-			<div class="fixed-side">
+    <div class="fixed-side">
 
-				<h1>Библио</h1>
-                    {% block url %}{% endblock %}
+        <h1>Библио</h1>
+        {% block url %}{% endblock %}
 
-					<a href='/library/books' class="link-menu">Книги</a>
+        <a href='/library/books' class="link-menu">Книги</a>
 
-					<a href='/library/editions' class="link-menu">Издания</a>
-				<a href='/library/editions' class="link-menu" style="font-size: 12px; margin-top: 40px">Редактировать профиль</a>
+        <a href='/library/editions' class="link-menu">Издания</a>
+        <a href='/library/editions' class="link-menu" style="font-size: 12px; margin-top: 40px">Редактировать
+            профиль</a>
 
-			</div>
-			<div class="normal-side">
-				<div class="borders">
-				<p class="text-des">Здесь Вы всегда найдете нужную книгу. Попробуйте!</p>
+    </div>
+    <div class="normal-side">
+        <div class="borders">
+            <p class="text-des">Здесь Вы всегда найдете нужную книгу. Попробуйте!</p>
 
-					<div class="block-code" style="margin-bottom: 20px">
-						{% block codeinblock %}
+            <div class="block-code" style="margin-bottom: 20px">
+                {% block codeinblock %}
 
-						{%endblock%}
-				</div>
-
-
-				{% block contents %}{% endblock %}
+                {% endblock %}
+            </div>
 
 
+            {% block contents %}{% endblock %}
 
 
-			</div>
-			</div>
+        </div>
+    </div>
 
-		</div>
+</div>
 
 
-
-	</body>
-	</html>
+</body>
+</html>

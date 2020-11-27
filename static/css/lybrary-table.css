@@ -1,78 +1,84 @@
-.flex-block{
-	width:100%;
-	display: flex;
-	/*margin: 40px;*/
-	margin-right: 0;
-	box-sizing: border-box;
-	padding: 40px
-	
-}
-
-.flex-first{
-	border: 1px solid #FEC4A4;
-	border-bottom: none;
-	width:25%;
-	height: 500px;
-	box-sizing: border-box;
-	border-radius: 5px
+.flex-block {
+    width: 100%;
+    display: flex;
+    /*margin: 40px;*/
+    margin-right: 0;
+    box-sizing: border-box;
+    padding: 40px
 
 }
 
-.flex-second{
-	width:75%;
-	display: flex;
-	flex-direction: column;
-	box-sizing: border-box;
-	padding-left: 20px
+.flex-first {
+    border: 1px solid #FEC4A4;
+    border-bottom: none;
+    width: 25%;
+    height: 500px;
+    box-sizing: border-box;
+    border-radius: 5px
+
 }
 
-.izd-item{
-	width: 100%;
-	background-color: #E7E7E7;
-	border-radius: 5px;
-	height: 40px;
-	margin: 10px 0;
-	display: flex;
-	align-items: center;
-	padding-left: 5px;
-	font-size: 12px
+.flex-second {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding-left: 20px
 }
-.izd-item span{
-	background-color: #B2A3DF;
-	color: white;
-	font-weight: 600;
-	padding: 5px 20px;
-	margin:0 15px;
-	border-radius: 5px
+
+.izd-item {
+    width: 100%;
+    background-color: #E7E7E7;
+    border-radius: 5px;
+    height: 40px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+    font-size: 12px
 }
-.link-izd{
-	background-color: #F87070;
-	color: white;
-	font-weight: 600;
-	padding: 5px 20px;
-	margin:0 15px;
-	border-radius: 5px;
-	font-size: 12px;
-	text-decoration: none;
-	transition: all 0.5s ease 0s;
-	margin-left: auto
+
+.izd-item span {
+    background-color: #B2A3DF;
+    color: white;
+    font-weight: 600;
+    padding: 5px 20px;
+    margin: 0 15px;
+    border-radius: 5px
 }
-@media(max-width: 767px){
-	.izd-item p{
-		font-size: 10px;
-		padding: 0;
-		margin-right: -7px
-	}
-	.izd-item span, .link-izd{
-		font-size:10px;
-		padding: 5px 10px;
-		margin:0 10px;
-	}
-	.link-izd{
-	
-		margin-left: -5px
-	}
-	.flex-block{
-		padding-right: 10px
-	}
+
+.link-izd {
+    background-color: #F87070;
+    color: white;
+    font-weight: 600;
+    padding: 5px 20px;
+    margin: 0 15px;
+    border-radius: 5px;
+    font-size: 12px;
+    text-decoration: none;
+    transition: all 0.5s ease 0s;
+    margin-left: auto
+}
+
+@media (max-width: 767px) {
+    .izd-item p {
+        font-size: 10px;
+        padding: 0;
+        margin-right: -7px
+    }
+
+    .izd-item span, .link-izd {
+        font-size: 10px;
+        padding: 5px 10px;
+        margin: 0 10px;
+    }
+
+    .link-izd {
+
+        margin-left: -5px
+    }
+
+    .flex-block {
+        padding-right: 10px
+    }
 }

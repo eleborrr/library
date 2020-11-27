@@ -1,148 +1,164 @@
-.topfix{
-	background-color: #FEC4A4;
-	width:100%;
-	height: 50px;
+.topfix {
+    background-color: #FEC4A4;
+    width: 100%;
+    height: 50px;
 }
 
-body{
-	padding: 0;
-	margin:0;
-	font-family: Comfortaa, cursive;
+body {
+    padding: 0;
+    margin: 0;
+    font-family: Comfortaa, cursive;
 }
 
-.body-content{
-	width:100%;
-	min-height: 100vh;
-	height: 100%;
-	display: flex
-
-}
-
-.fixed-side{
-
-	padding: 0;
-	margin: 0;
-	height: 100%;
-	min-height: 100vh;
-	width: 40%;
-	background-color: #FEC4A4;
-	display: flex;
-	/*border:1px solid black;*/
-	flex-direction: column;
-	text-align: left;
-	padding-left: 10%;
-	box-sizing: border-box;}
-.normal-side{
-	width:60%;
-	display: flex
-}
-
-.fixed-side h1{
-	font-size: 55px;
-	padding: 0;
-	margin: 0;
-	color: white;
-	font-weight: 500;
-	margin-top: 80px;
-	margin-left: auto;
-	margin-bottom: 40px
-
-}
-.fixed-side h1::after{
-	content: 'тека';
-	font-size: 55px;
-	position: absolute;
-	color: #584B4B
-
-}
-.fixed-side a.link-menu{
-	text-align: left;
-	align-self: left;
-	margin: 20px;
-	margin-left: 60%;
-	color: #fff;
-	text-decoration: none;
-	font-weight: 700;
-	/*margin-left: 50%;*/
-
-
-}
-.text-des{
-	margin-top: 100px;
-	font-size: 15px;
-	max-width: 250px;
-	float: right;
-	color: #584B4B;
-	margin-bottom: 40px
-}
-.borders{
-	/*border:1px solid black;*/
-	width:100%;
-	height:100%;
-	max-width: 600px;
-	float:left;
-}
-.books-side{
-	margin-top: 80px;
-
-}
-.owner.red{
-	float: right;
-}
-
-.code{
-	color: #584B4B;
-	font-size: 10px;
-	padding: 10px 0px;
-	border-radius: 5px;
-	border:1px dotted #584B4B;
-	width:200px;
-	float: right;
-	margin: 0;
-	margin-right: 30px;
-	text-align: center;
-}
-.block-code{
-		display:none;
-		width:100%;float: right;
-	}
-
-	.block-abs-code{
-		position: absolute;
-		right: 0;
-		top:150px;
-	}
-	.block-abs-code p{
-		width:150px;
-	}
-@media(max-width: 767px){
-	.fixed-side h1{
-		font-size:35px;
-	}
-	.fixed-side h1::after{
-		font-size: 35px
-	}
-	.fixed-side a.link-menu{
-		margin-left: 40%;
-	}
-
-	.text-des{
-		font-size: 10px;
-		max-width: 180px;
-		margin-top: 93px;
-	}
-	.link-getback, .owner.red{
-		max-width: 130px;
-		float: left
-	}
+.body-content {
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    display: flex
 
 }
 
-@media(max-width: 1300px){
-	.block-code{
-		display: block
-	}
-	.block-abs-code{
-		display: none;
-	}
+.fixed-side {
+
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    min-height: 100vh;
+    width: 40%;
+    background-color: #FEC4A4;
+    display: flex;
+    /*border:1px solid black;*/
+    flex-direction: column;
+    text-align: left;
+    padding-left: 10%;
+    box-sizing: border-box;
+}
+
+.normal-side {
+    width: 60%;
+    display: flex
+}
+
+.fixed-side h1 {
+    font-size: 55px;
+    padding: 0;
+    margin: 0;
+    color: white;
+    font-weight: 500;
+    margin-top: 80px;
+    margin-left: auto;
+    margin-bottom: 40px
+
+}
+
+.fixed-side h1::after {
+    content: 'тека';
+    font-size: 55px;
+    position: absolute;
+    color: #584B4B
+
+}
+
+.fixed-side a.link-menu {
+    text-align: left;
+    align-self: left;
+    margin: 20px;
+    margin-left: 60%;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    /*margin-left: 50%;*/
+
+
+}
+
+.text-des {
+    margin-top: 100px;
+    font-size: 15px;
+    max-width: 250px;
+    float: right;
+    color: #584B4B;
+    margin-bottom: 40px
+}
+
+.borders {
+    /*border:1px solid black;*/
+    width: 100%;
+    height: 100%;
+    max-width: 600px;
+    float: left;
+}
+
+.books-side {
+    margin-top: 80px;
+
+}
+
+.owner.red {
+    float: right;
+}
+
+.code {
+    color: #584B4B;
+    font-size: 10px;
+    padding: 10px 0px;
+    border-radius: 5px;
+    border: 1px dotted #584B4B;
+    width: 200px;
+    float: right;
+    margin: 0;
+    margin-right: 30px;
+    text-align: center;
+}
+
+.block-code {
+    display: none;
+    width: 100%;
+    float: right;
+}
+
+.block-abs-code {
+    position: absolute;
+    right: 0;
+    top: 150px;
+}
+
+.block-abs-code p {
+    width: 150px;
+}
+
+@media (max-width: 767px) {
+    .fixed-side h1 {
+        font-size: 35px;
+    }
+
+    .fixed-side h1::after {
+        font-size: 35px
+    }
+
+    .fixed-side a.link-menu {
+        margin-left: 40%;
+    }
+
+    .text-des {
+        font-size: 10px;
+        max-width: 180px;
+        margin-top: 93px;
+    }
+
+    .link-getback, .owner.red {
+        max-width: 130px;
+        float: left
+    }
+
+}
+
+@media (max-width: 1300px) {
+    .block-code {
+        display: block
+    }
+
+    .block-abs-code {
+        display: none;
+    }
 }

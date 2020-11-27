@@ -1,8 +1,8 @@
 {% extends "base-table.html" %}
 {% block url %}
-    {% if current_user.role_id == 2 %}
+    {% if current_user.role_id == 1 %}
         <a href='/library/my_books' class="link-menu abs">Мои книги</a>
-    {% elif current_user.role_id == 1 %}
+    {% elif current_user.role_id == 2 %}
         <a href='/library/students' class="link-menu abs">Ученики</a>
     {% endif %}
 {% endblock %}
@@ -10,7 +10,7 @@
     <div class="block-code" style="margin-bottom: 20px">
         <p class="code">Код библиотеки: {{ library_code }}</p>
     </div>
-    <div class="books-side" style="margin-top: 80px">
+    <div class="books-side" style="margin-top: 160px">
         <div>
             <form method="post" action="">
                 {{ form.hidden_tag() }}
@@ -72,7 +72,7 @@
                     </p>
                 {% endfor %}
 
-                {{ form.submit()}}
+                {{ form.submit() }}
                 {% for error in form.owner_surname.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}

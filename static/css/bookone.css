@@ -1,123 +1,135 @@
-.body-cont{
-	font-family: Comfortaa, cursive;
-	padding: 20px
+.body-cont {
+    font-family: Comfortaa, cursive;
+    padding: 20px
 }
 
-a{
-	text-decoration: none;
-	color: #000;
-}
-a:hover{
-	text-decoration: none;
-	color: #000;
-}
-.logotext{
-	font-size:28px;
-	color: #584B4B;
-	font-weight: 700;
+a {
+    text-decoration: none;
+    color: #000;
 }
 
-.book{
-	background-color: #FEC4A4;
-	opacity: 0.9;
-	max-width: 400px;
-	height: 60vh;
-	margin: auto;
-	margin-top: 100px;
-	border-radius: 5px;
-	padding: 15px;
-	box-sizing: border-box;
+a:hover {
+    text-decoration: none;
+    color: #000;
 }
 
-.top-flex{
-	/*border: 1px solid black;*/
-	width:100%;
-	height: 150px;
-	display: flex;
-}
-.img-book{
-	width:150px;
-	height: 100%;
-	overflow: hidden;
-	border-radius: 5px
-}
-.img-book img{
-	max-width: 100%;
-}
-.names{
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
-}
-.names p, .names a{
-	font-size: 13px;
-	padding-left: 20px;
-	/*padding-bottom:10px;*/
-	/*color: #584B4B;*/
-}
-.names a{
-	color: #000;
-	background-color: #F87070;
-	text-align: center;
-	padding: 8px 10px;
-	display: block;
-	text-decoration: none;
-	border-radius: 5px;
-	margin-left: 20px
+.logotext {
+    font-size: 28px;
+    color: #584B4B;
+    font-weight: 700;
 }
 
-.down-flex{
-display: flex;
-}
-.left-flex{
-	width:55%;
-	padding-top: 20px
-
-}
-.right-flex{
-	width: 45%;
-	padding-left: 20px;
-	padding-top: 20px
+.book {
+    background-color: #FEC4A4;
+    opacity: 0.9;
+    max-width: 400px;
+    height: 60vh;
+    margin: auto;
+    margin-top: 100px;
+    border-radius: 5px;
+    padding: 15px;
+    box-sizing: border-box;
 }
 
-.left-flex a{
-	width:100%;
-	border-radius: 5px;
-	display: block;
-	font-size: 12px;
-	padding: 10px 15px;
-	background-color: #B2A3DF;
-	box-sizing: border-box;
-	text-align: center;
-	margin-bottom: 15px;
-	transition: all 0.3s ease 0s;
-}
-.left-flex a.del{
-	background-color: #F87070;
-}
-.left-flex a.green{
-	background-color: #BEF37B;
+.top-flex {
+    /*border: 1px solid black;*/
+    width: 100%;
+    height: 150px;
+    display: flex;
 }
 
-.left-flex a:hover{
-	background-color: transparent;
-	border: 1px solid #584B4B;
+.img-book {
+    width: 150px;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 5px
+}
+
+.img-book img {
+    max-width: 100%;
+}
+
+.names {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.names p, .names a {
+    font-size: 13px;
+    padding-left: 20px;
+    /*padding-bottom:10px;*/
+    /*color: #584B4B;*/
+}
+
+.names a {
+    color: #000;
+    background-color: #F87070;
+    text-align: center;
+    padding: 8px 10px;
+    display: block;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-left: 20px
+}
+
+.down-flex {
+    display: flex;
+}
+
+.left-flex {
+    width: 55%;
+    padding-top: 20px
 
 }
 
-.qrcode{
-	width:100%;
-	border-radius: 5px;
-	display: block;
-	font-size: 12px;
-	border: 2px solid #B2A3DF;
-	box-sizing: border-box;
-	text-align: center;
-	margin-bottom: 15px;
-	transition: all 0.3s ease 0s;
-	padding: 26px 10px;
-	font-weight: 700;
+.right-flex {
+    width: 45%;
+    padding-left: 20px;
+    padding-top: 20px
 }
-.qrcode:hover{
-	background-color: #B2A3DF
+
+.left-flex a {
+    width: 100%;
+    border-radius: 5px;
+    display: block;
+    font-size: 12px;
+    padding: 10px 15px;
+    background-color: #B2A3DF;
+    box-sizing: border-box;
+    text-align: center;
+    margin-bottom: 15px;
+    transition: all 0.3s ease 0s;
+}
+
+.left-flex a.del {
+    background-color: #F87070;
+}
+
+.left-flex a.green {
+    background-color: #BEF37B;
+}
+
+.left-flex a:hover {
+    background-color: transparent;
+    border: 1px solid #584B4B;
+
+}
+
+.qrcode {
+    width: 100%;
+    border-radius: 5px;
+    display: block;
+    font-size: 12px;
+    border: 2px solid #B2A3DF;
+    box-sizing: border-box;
+    text-align: center;
+    margin-bottom: 15px;
+    transition: all 0.3s ease 0s;
+    padding: 26px 10px;
+    font-weight: 700;
+}
+
+.qrcode:hover {
+    background-color: #B2A3DF
 }

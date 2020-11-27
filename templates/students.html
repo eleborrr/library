@@ -1,74 +1,74 @@
 {% extends "base-table.html" %}
 
 {% block codeinblock %}
-					<p class="code">Код библиотеки: {{ library_code }}</p>
-{%endblock%}
+    <p class="code">Код библиотеки: {{ library_code }}</p>
+{% endblock %}
 {% block url %}
-    {%  if current_user.role_id == 1 %}
+    {% if current_user.role_id == 1 %}
         <a href='/library/students' class="link-menu abs">Мои книги</a>
     {% elif current_user.role_id == 2 %}
         <a href='/library/students' class="link-menu abs">Ученики</a>
     {% endif %}
 {% endblock %}
 {% block contents %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/lybrary-table.css')}}">
-<div class="flex-block" style="margin-left: 0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/lybrary-table.css') }}">
+    <div class="flex-block" style="margin-left: 0">
 
-			<div class="flex-second" style="width:100%;margin-left: -20px">
-				<div>
-					<form method="post" action="">
-                        {{ form.hidden_tag() }}
-                        {{ form.crsf_token }}
+        <div class="flex-second" style="width:100%;margin-left: -20px">
+            <div>
+                <form method="post" action="">
+                    {{ form.hidden_tag() }}
+                    {{ form.crsf_token }}
 
-                        {{ form.id(placeholder='Her\' vsykaya') }}
-                        {{ form.id.label }}<br>
-                        {% for error in form.id.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
+                    {{ form.id(placeholder='Her\' vsykaya') }}
+                    {{ form.id.label }}<br>
+                    {% for error in form.id.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
 
 
-                        {{ form.surname(placeholder='Her\' vsykaya') }}
-                        {{ form.surname.label }}<br>
-                        {% for error in form.surname.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
+                    {{ form.surname(placeholder='Her\' vsykaya') }}
+                    {{ form.surname.label }}<br>
+                    {% for error in form.surname.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
 
-                        {{ form.class_num(placeholder='Her\' vsykaya') }}
-                        {{ form.class_num.label }}<br>
-                        {% for error in form.class_num.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
+                    {{ form.class_num(placeholder='Her\' vsykaya') }}
+                    {{ form.class_num.label }}<br>
+                    {% for error in form.class_num.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
 
-                        {{ form.class_letter(placeholder='Her\' vsykaya') }}
-                        {{ form.class_letter.label }}<br>
-                        {% for error in form.class_letter.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
+                    {{ form.class_letter(placeholder='Her\' vsykaya') }}
+                    {{ form.class_letter.label }}<br>
+                    {% for error in form.class_letter.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
 
-                        {{ form.submit() }}
-                        {% for error in form.submit.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
-                    </form>
-				</div>
-                {% for student in students %}
-				<div class="izd-item">
-					<a href="/library/students/{{ student.id }}">{{ student.name }}</a>
-					<span >{{ student.cla }}</span>
-					<span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
-					<input type="submit" name="delete-edition" class='link-izd' href='#' value="Удалить">
-				</div>
-                {% endfor %}
-			</div>
-</div>
+                    {{ form.submit() }}
+                    {% for error in form.submit.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </form>
+            </div>
+            {% for student in students %}
+                <div class="izd-item">
+                    <a href="/library/students/{{ student.id }}">{{ student.name }}</a>
+                    <span>{{ student.cla }}</span>
+                    <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
+                    <input type="submit" name="delete-edition" class='link-izd' href='#' value="Удалить">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
