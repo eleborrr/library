@@ -523,19 +523,14 @@ class LibraryView(FlaskView):
             edition.ed_name = form.publisher_name.data
             edition.author = form.author.data
             edition.publication_year = form.publication_year.data
-            filename = str(uuid.uuid4())
+            filename = str(uuid.uuid4()) + '.jpg'
+            try:
+                os.makedirs('/static/img/editions')
+            except FileExistsError:
+                pass
             filedata_ = form.photo.data
-            # filedata_.name = filename + '.jpg'
-            # help(filedata_.save)
-            # filedata_.save(url_for('static', filename='img/editions/' + filename + '.jpg'))
-            filedata_.save(os.path.join(app.config['UPLOAD_FOLDER'] + '/editions', filename + '.jpg'))
-            # try:
-            #     os.makedirs('/static/img/editions')
-            # except FileExistsError:
-            #     pass
-            # with open(url_for('static', filename='img/editions/' + filename + '.jpg'), 'w') as file:
-            #     file.write(filedata)
-            # print(dir(filedata))
+            filedata_.save('static/img/editions/' + filename)
+            edition.photo_name = filename
             session.add(edition)
             session.commit()
             for i in range(int(form.book_counts.data)):
