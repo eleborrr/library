@@ -46,13 +46,13 @@ class RegisterStudentForm(FlaskForm):
 
 
 class CreateEdition(FlaskForm):
-    name = StringField()
-    publisher_name = StringField()
-    author = StringField()
-    publication_year = IntegerField()
-    book_counts = IntegerField()
-    submit = SubmitField()
-    photo = FileField()
+    name = StringField("Название книги")
+    publisher_name = StringField("Издательство")
+    author = StringField("Фамилия автора")
+    publication_year = IntegerField("Год публикации")
+    book_counts = IntegerField("Количество книг")
+    submit = SubmitField("Создать")
+    photo = FileField("Обложка")
     # добавить картинку издания
 
 

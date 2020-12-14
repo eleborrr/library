@@ -148,6 +148,18 @@ def bind_student(user_id):
 def generate_edition_qr(edition_id):
     session = db_session.create_session()
     create_qr_list([x.id for x in session.query(Edition).get(edition_id).books])
+    session.close()
+
+
+def delete_edition(edition_id):
+    session = db_session.create_session()
+    ed = session.query(Edition).get(edition_id)
+    session.commit()
+    session.close()
+    if ed:
+        session.delete(ed)
+        return 0
+    return 1
 
 
 def get_user_by_token(token, session):
@@ -459,21 +471,21 @@ class LibraryView(FlaskView):
         if publication_year:
             query = query.filter(Edition.publication_year == check_int_type(publication_year))
             kwargs['publication_year'] = publication_year
-        form = edition_filter_form(**kwargs)
         result = query.all()
         new_res = []
         for i in result:
             flag = True
             if name:
                 kwargs['name'] = name
-                if not match(i.edition.name, name):
+                if not match(i.name, name):
                     flag = False
             if author:
                 kwargs['author'] = author
-                if not match(i.edition.author, author):
+                if not match(i.author, author):
                     flag = False
             if flag:
                 new_res.append(i)
+        form = edition_filter_form(**kwargs)
         if form.validate_on_submit():
             final = '/library/editions'
             args = []
@@ -683,6 +695,13 @@ class LibraryView(FlaskView):
             return abort(403, description='Пользователь не в вашей библиотеке')
         books = session.query(Book).filter(Book.owner_id == student_id).all()
         return render_template('profile.html', books=books, user=current_user)
+
+    @login_required
+    @route('/delete_edition/<int:id>')
+    def delete_edition(self, id):
+        if current_user.role_id == 2:
+            res = delete_edition(id)
+        return redirect('/library/editions')
 
 
 LibraryView.register(app)

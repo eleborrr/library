@@ -39,7 +39,7 @@
                 <h3>Добавить издание в один клик!</h3>
             </li>
             <li>
-                {{ form.name(placeholder='Бунин') }}
+                {{ form.name(placeholder='Отцы и дети') }}
                 {{ form.name.label }}<br>
                 {% for error in form.name.errors %}
                     <p class="alert alert-danger" role="alert">
@@ -49,7 +49,7 @@
             </li>
 
             <li>
-                {{ form.publisher_name(placeholder='Максим') }}
+                {{ form.publisher_name(placeholder='Просвещение') }}
                 {{ form.publisher_name.label }}<br>
                 {% for error in form.publisher_name.errors %}
                     <p class="alert alert-danger" role="alert">
@@ -58,7 +58,7 @@
                 {% endfor %}
             </li>
             <li>
-                {{ form.author(placeholder='Бунин') }}
+                {{ form.author(placeholder='Тургенев') }}
                 {{ form.author.label() }}<br>
                 {% for error in form.author.errors %}
                     <p class="alert alert-danger" role="alert">
@@ -76,7 +76,7 @@
                 {% endfor %}
             </li>
             <li>
-                {{ form.book_counts(placeholder='23') }}
+                {{ form.book_counts(placeholder='') }}
                 {{ form.book_counts.label }}<br>
                 {% for error in form.book_counts.errors %}
                     <p class="alert alert-danger" role="alert">
