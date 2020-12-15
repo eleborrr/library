@@ -107,3 +107,10 @@ class ChangePasswordForm(FlaskForm):
     new_password = PasswordField('Новый пароль', validators=[DataRequired(), Length(max=128)])
     confirm_new_password = PasswordField('Повторите пароль', validators=[EqualTo('new_password')])
     submit = SubmitField('Сменить пароль')
+
+
+def give_book_form(students):
+    class GiveBookForm(FlaskForm):
+        select_student = SelectField("Выберите, кому дать эту книгу", [(st.surname + ' ' + st.name, st.id) for st in students])
+        submit = SubmitField("Отправить")
+    return GiveBookForm()
