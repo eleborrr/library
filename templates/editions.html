@@ -26,7 +26,7 @@
                     {{ form.hidden_tag() }}
                     {{ form.crsf_token }}
 
-                    {{ form.id(placeholder='Her\' vsykaya') }}
+                    {{ form.id(placeholder='1') }}
                     {{ form.id.label }}<br>
                     {% for error in form.id.errors %}
                         <p class="alert alert-danger" role="alert">
@@ -34,7 +34,7 @@
                         </p>
                     {% endfor %}
 
-                    {{ form.name(placeholder='Her\' vsykaya') }}
+                    {{ form.name(placeholder='Война и мир') }}
                     {{ form.name.label }}<br>
                     {% for error in form.name.errors %}
                         <p class="alert alert-danger" role="alert">
@@ -42,7 +42,7 @@
                         </p>
                     {% endfor %}
 
-                    {{ form.author(placeholder='Her\' vsykaya') }}
+                    {{ form.author(placeholder='Толстой') }}
                     {{ form.author.label }}<br>
                     {% for error in form.author.errors %}
                         <p class="alert alert-danger" role="alert">
@@ -50,7 +50,7 @@
                         </p>
                     {% endfor %}
 
-                    {{ form.publication_year(placeholder='Her\' vsykaya') }}
+                    {{ form.publication_year(placeholder='1865') }}
                     {{ form.publication_year.label }}<br>
                     {% for error in form.publication_year.errors %}
                         <p class="alert alert-danger" role="alert">
