@@ -151,30 +151,21 @@ def generate_edition_qr(edition_id):
     session.close()
 
 
-def delete_edition(edition_id, library_id):
+def delete_edition(edition_id):
     session = db_session.create_session()
     ed = session.query(Edition).get(edition_id)
-    try:
-        if ed:
-            if ed.library_id != library_id:
-                return 1
-            books = session.query(Book).filter(Book.edition_id == edition_id).all()
-            for i in books:
-                session.delete(i)
-            session.delete(ed)
-            return 0
-        return 1
-    finally:
+    if ed:
+        session.delete(ed)
         session.commit()
         session.close()
+        return 0
+    return 1
 
 
-def delete_book(book_id, library_id):
+def delete_book(book_id):
     session = db_session.create_session()
     book = session.query(Book).get(book_id)
     if book:
-        if book.edition.library_id != library_id:
-            return 1
         session.delete(book)
         session.commit()
         session.close()
@@ -754,15 +745,29 @@ class LibraryView(FlaskView):
     @login_required
     @route('/delete_edition/<int:id>')
     def delete_edition(self, id):
-        if current_user.role_id == 2:
-            res = delete_edition(id, current_user.library_id)
+        session = db_session.create_session()
+        if current_user.role_id != 2:
+            return abort(403, description="Эта функция доступна только библиотекарю")
+        ed = session.query(Edition).get(id)
+        if not ed:
+            return abort(404, description="Неизвестная книга")
+        if ed.library_id != current_user.library_id:
+            abort(403, description="Это издание относится к другой библиотеке")
+        delete_edition(id)
         return redirect('/library/editions')
 
     @login_required
     @route('/delete_book/<int:id>')
     def delete_book(self, id):
-        if current_user.role_id == 2:
-            res = delete_book(id, current_user.library_id)
+        session = db_session.create_session()
+        if current_user.role_id != 2:
+            return abort(403, description="Эта функция доступна только библиотекарю")
+        book = session.query(Book).get(id)
+        if not book:
+            return abort(404, description="Неизвестная книга")
+        if book.edition.library_id != current_user.library_id:
+            abort(403, description="Это издание относится к другой библиотеке")
+        delete_book(id)
         return redirect('/library/books')
 
     @login_required
@@ -775,7 +780,30 @@ class LibraryView(FlaskView):
                 if ed.library_id == current_user.library_id:
                     session.close()
                     add_book(edition_id)
+                else:
+                    abort(403, description="Эта книга относится к другой библиотеке")
+            else:
+                abort(404, description="Издание не найдено")
         return redirect(f'/library/editions/{edition_id}')
+
+    @login_required
+    @route('/give_book/<int:book_id>', methods=['GET', 'POST'])
+    def give_book(self, book_id):
+        session = db_session.create_session()
+        book = session.query(User).get(book_id)
+        if not book:
+            return abort(404, description="Неизвестная книга")
+        if current_user.role_id != 2:
+            return abort(403, description="Данная функция доступна только библиотекарю")
+        if book.library_id != current_user.library_id:
+            return abort(403, description="Эта книга не из вашей библиотеки")
+        students = session.query(User).filter(User.role_id == 1, User.library_id == current_user.library_id).all()
+        form = give_book_form(students)
+        if form.validate_on_submit():
+            st_id = form.select_student.data
+            book.owner_id = st_id
+            session.commit()
+        return render_template('give_book.html', form=form)
 
 
 LibraryView.register(app)
