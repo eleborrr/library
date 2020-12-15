@@ -110,12 +110,12 @@ class ChangePasswordForm(FlaskForm):
 
 def give_book_form(students):
     class GiveBookForm(FlaskForm):
-        select_student = SelectField("Выберите, кому дать эту книгу", [(st.surname + ' ' + st.name, st.id) for st in students])
+        select_student = SelectField("Выберите, кому дать эту книгу", choices=[(st.id, st.surname + ' ' + st.name) for st in students])
         submit = SubmitField("Отправить")
     return GiveBookForm()
 
 
 class JoinLibraryForm(FlaskForm):
-    id = StringField("Идентификатор библиотеки")
+    id = StringField("Идентификатор библиотеки", validators=[DataRequired()])
     submit = SubmitField('Присоединиться')
 

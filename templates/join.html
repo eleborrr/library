@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="post">
+    {{ form.hidden_tag() }}
+    {{ form.crsf_token }}
+
+    {{ form.id.label }}
+    {{ form.id() }}
+    {% for error in form.id.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+    {% endfor %}
+
+    {{ form.submit() }}
+</form>
+{{ message }}
+
+</body>
+</html>

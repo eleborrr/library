@@ -139,10 +139,10 @@
 
                 <div class="rightside">
                     {% if book.owner %}
-                        <a href='#' class="link-getback tr">Вернуть в библиотеку</a>
+                        <a href='/library/return_book/{{ book.id }}' class="link-getback tr">Вернуть в библиотеку</a>
                         <a class="owner red">{{ book.owner.name }} {{ book.owner.surname }} владеет книгой</a>
                     {% else %}
-                        <a href='#' class="link-getback tr">Выдать книгу</a>
+                        <a href='/library/give_book/{{ book.id }}' class="link-getback tr">Выдать книгу</a>
                         <a href='#popup_book_{{ book.id }}' class="link-getback tr delete">Удалить из библиотеки</a>
                     {% endif %}
                 </div>
