@@ -39,7 +39,6 @@ class RegisterStudentForm(FlaskForm):
     email = EmailField('Адрес электронной почты', validators=[DataRequired(), Length(max=64)])
     password = PasswordField('Пароль', validators=[DataRequired(), Length(max=128)])
     repeat = PasswordField('Повторите пароль', validators=[DataRequired(), Length(max=128)])
-    library_id = StringField('Идентификатор библиотеки (спросите у библиотекаря)', validators=[DataRequired()])
     class_num = IntegerField('Номер класса, в котором вы учитесь', validators=[DataRequired(),
                                                                                NumberRange(min=1, max=11)])
     submit = SubmitField('Зарегистрироваться')
@@ -114,3 +113,9 @@ def give_book_form(students):
         select_student = SelectField("Выберите, кому дать эту книгу", [(st.surname + ' ' + st.name, st.id) for st in students])
         submit = SubmitField("Отправить")
     return GiveBookForm()
+
+
+class JoinLibraryForm(FlaskForm):
+    id = StringField("Идентификатор библиотеки")
+    submit = SubmitField('Присоединиться')
+

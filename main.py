@@ -256,7 +256,7 @@ def logout():
 @app.before_first_request
 def create_roles():
     session = db_session.create_session()
-    roles = ['Student', 'Librarian']
+    roles = ['Student', 'Librarian', 'StudentWithoutLibrary']
     for i in session.query(Role).all():
         roles.remove(i.name)
     for i in roles:
@@ -311,15 +311,8 @@ def sign_in():
             # обработать и другие символы
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=2, msg2="Недопустимые символы в имени пользователя")
-        for i in session.query(Library).all():
-            if i.check_id(register_form.library_id.data):
-                lib_id = i.id
-                break
-        else:
-            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
-                                   login_form=login_form, tab_num=2, msg2="Неверный идентификатор библиотеки")
         register_student(register_form.name.data, register_form.surname.data, register_form.email.data,
-                         register_form.password.data, lib_id,
+                         register_form.password.data, None,
                          register_form.class_num.data)
         print('ok')
         login_user(ex)
@@ -407,7 +400,6 @@ class LibraryView(FlaskView):
 
         </div>"""
             return Markup(string)
-
         session = db_session.create_session()
         id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
         publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
@@ -803,7 +795,22 @@ class LibraryView(FlaskView):
             st_id = form.select_student.data
             book.owner_id = st_id
             session.commit()
+            session.close()
         return render_template('give_book.html', form=form)
+
+    @login_required
+    @route('/join', methods=['GET', 'POST'])
+    def join(self):
+        if current_user.role_id != 3:
+            return redirect('/library')
+        form = JoinLibraryForm()
+        if form.validate_on_submit():
+            id_ = form.id.data
+            session = db_session.create_session()
+            library = session.query(Library).filter(Library.string_id == id_).first()
+            current_user.library_id = library.id
+            return redirect('/library')
+        return render_template('join.html', form=form)
 
 
 LibraryView.register(app)

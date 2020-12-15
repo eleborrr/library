@@ -15,5 +15,9 @@ class Library(SqlAlchemyBase):
     def generate_id(self):
         return hashlib.shake_128(str(self.id).encode()).hexdigest(5)
 
+    @property
+    def string_id(self):
+        return self.generate_id()
+
     def check_id(self, other):
         return other == self.generate_id()

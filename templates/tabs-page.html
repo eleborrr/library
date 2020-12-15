@@ -161,14 +161,6 @@ margin:40px auto">Выберите, какое действие хотите с�
                                 </p>
                             {% endfor %}
 
-                            {{ register_form.library_id.label }}<br>
-                            {{ register_form.library_id(style="margin-top: 15px; margin-bottom: 25px") }}
-                            {% for error in register_form.library_id.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                            {% endfor %}
-
                             {{ register_form.class_num.label }}<br>
                             {{ register_form.class_num(placeholder="7", style="margin-top: 15px; margin-bottom: 25px") }}
                             {% for error in register_form.class_num.errors %}
