@@ -1,5 +1,7 @@
 {% extends "base-table.html" %}
 {% block title_block %}Список изданий{% endblock %}
+{% block links %}<link rel="stylesheet" type="text/css" href="../static/css/popups.css">
+<link rel="stylesheet" type="text/css" href="../static/css/editionone.css">{% endblock %}
 {% block codeinblock %}
     <p class="code">Код библиотеки: {{ library_code }}</p>
 {% endblock %}
@@ -71,9 +73,14 @@
                     <span>Литература</span>
                     <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
 {#                    <input type="submit" name="delete-edition" class='link-izd' href='/library' value="Удалить">#}
-                    <a class="link-izd" href='/library/delete_edition/{{ edition.id }}'>Удалить</a>
+                    <a class="link-izd" href='#popup_edition_{{ edition.id }}'>Удалить</a>
                 </div>
             {% endfor %}
         </div>
+    </div>
+    <div>
+        {% for edition in editions %}
+            {{ markup(edition.id) }}
+        {% endfor %}
     </div>
 {% endblock %}
