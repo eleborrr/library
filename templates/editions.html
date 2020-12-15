@@ -68,7 +68,7 @@
             </div>
             {% for edition in editions %}
                 <div class="izd-item">
-                    <img src="../static/img/editions{{ editions.avatar_image }}">
+                    <img src="../static/img/editions/{{ edition.photo_name }}">
                     <a href="/library/editions/{{ edition.id }}">{{ edition.name }}</a>
                     <span>Литература</span>
                     <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
