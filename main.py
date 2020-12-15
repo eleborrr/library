@@ -125,7 +125,7 @@ def return_book(book_id):
 def register_student(name, surname, login, password, library_id, class_num):
     session = db_session.create_session()
     ex_user = session.query(User).filter(User.login == login).first()
-    role_id = session.query(Role).filter(Role.name == 'Student').first().id
+    role_id = session.query(Role).filter(Role.name == 'StudentWithoutLibrary').first().id
     if not ex_user:
         us = User(name=name, surname=surname, password=password, role_id=role_id, library_id=library_id,
                   class_num=class_num, login=login)
@@ -256,7 +256,7 @@ def logout():
 @app.before_first_request
 def create_roles():
     session = db_session.create_session()
-    roles = ['Student', 'Librarian']
+    roles = ['Student', 'Librarian', 'StudentWithoutLibrary']
     for i in session.query(Role).all():
         roles.remove(i.name)
     for i in roles:
@@ -311,17 +311,9 @@ def sign_in():
             # обработать и другие символы
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=2, msg2="Недопустимые символы в имени пользователя")
-        for i in session.query(Library).all():
-            if i.check_id(register_form.library_id.data):
-                lib_id = i.id
-                break
-        else:
-            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
-                                   login_form=login_form, tab_num=2, msg2="Неверный идентификатор библиотеки")
         register_student(register_form.name.data, register_form.surname.data, register_form.email.data,
-                         register_form.password.data, lib_id,
+                         register_form.password.data, None,
                          register_form.class_num.data)
-        login_user(ex)
         return redirect('/library')
     if login_form.validate_on_submit():
         us = session.query(User).filter(User.login == login_form.email.data).first()
@@ -406,7 +398,8 @@ class LibraryView(FlaskView):
 
         </div>"""
             return Markup(string)
-
+        if current_user.role_id == 3:
+            return redirect('/library/join')
         session = db_session.create_session()
         id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
         publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
@@ -484,6 +477,8 @@ class LibraryView(FlaskView):
     @route('/editions', methods=['GET', 'POST'])
     @login_required
     def editions(self):
+        if current_user.role_id == 3:
+            return redirect('/library/join')
         def markup(edition_id):
             string = f"""<div class='popup' id='popup_edition_{edition_id}'>
     <a class="popup__area" href='#header'></a>
@@ -558,6 +553,8 @@ class LibraryView(FlaskView):
     @route('/editions/<int:edition_id>', methods=['GET', 'POST'])
     @login_required
     def edition(self, edition_id):
+        if current_user.role_id == 3:
+            return redirect('/library/join')
         session = db_session.create_session()
         edition = session.query(Edition).get(edition_id)
         if not edition:
@@ -576,6 +573,8 @@ class LibraryView(FlaskView):
     @route('/editions/create', methods=['GET', 'POST'])
     @login_required
     def create_edition(self):
+        if current_user.role_id != 2:
+            return redirect('/library')
         session = db_session.create_session()
         form = CreateEdition()
         if form.validate_on_submit():
@@ -606,6 +605,8 @@ class LibraryView(FlaskView):
     @route('/books/<int:book_id>', methods=['GET', 'POST'])
     @login_required
     def book(self, book_id):
+        if current_user.role_id == 3:
+            return redirect('/library/join')
         session = db_session.create_session()
         book = session.query(Book).get(book_id)
         # print(book.owner)
@@ -655,6 +656,8 @@ class LibraryView(FlaskView):
     @route('/students', methods=['GET', 'POST'])
     @login_required
     def students(self):
+        if current_user.role_id == 3:
+            return redirect('/library/join')
         session = db_session.create_session()
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
         if current_user.role_id != librarian_role.id:
@@ -815,12 +818,12 @@ class LibraryView(FlaskView):
     @route('/give_book/<int:book_id>', methods=['GET', 'POST'])
     def give_book(self, book_id):
         session = db_session.create_session()
-        book = session.query(User).get(book_id)
+        book = session.query(Book).get(book_id)
         if not book:
             return abort(404, description="Неизвестная книга")
         if current_user.role_id != 2:
             return abort(403, description="Данная функция доступна только библиотекарю")
-        if book.library_id != current_user.library_id:
+        if book.edition.library_id != current_user.library_id:
             return abort(403, description="Эта книга не из вашей библиотеки")
         students = session.query(User).filter(User.role_id == 1, User.library_id == current_user.library_id).all()
         form = give_book_form(students)
@@ -828,7 +831,52 @@ class LibraryView(FlaskView):
             st_id = form.select_student.data
             book.owner_id = st_id
             session.commit()
+            session.close()
+            return redirect('/library')
         return render_template('give_book.html', form=form)
+
+    @login_required
+    @route('/join', methods=['GET', 'POST'])
+    def join(self):
+        if current_user.role_id != 3:
+            return redirect('/library')
+        form = JoinLibraryForm()
+        if form.validate_on_submit():
+            id_ = form.id.data
+            session = db_session.create_session()
+            library = session.query(Library).all()
+            for i in library:
+                print(i.string_id)
+                if i.string_id == id_:
+                    us = session.query(User).get(current_user.id)
+                    us.library_id = i.id
+                    us.role_id = 1
+                    print(current_user.role_id)
+                    print(current_user.login)
+                    session.commit()
+                    session.close()
+                    break
+            else:
+                return render_template('join.html', form=form, message='Неизвестный идентификатор')
+            return redirect('/library')
+        return render_template('join.html', form=form)
+
+    @login_required
+    @route('/return_book/<int:book_id>')
+    def return_book(self, book_id):
+        session = db_session.create_session()
+        if current_user.role_id != 2:
+            return abort(403, description="Данная функция доступна лишь библиотекарю")
+        book = session.query(Book).get(book_id)
+        if not book:
+            return abort(404, description="Такой книги нет в библиотеке")
+        if current_user.library_id != book.edition.library_id:
+            return abort(403, description="Эта книга находится не в вашей библиотеке")
+        book.owner_id = None
+        session.commit()
+        session.close()
+        return redirect('/library')
+
 
 
 LibraryView.register(app)
