@@ -79,10 +79,14 @@
             <div><h3> Точно удалить? </h3></div>
             <form class='form_up' id="create-chat" method="post">
 
-                <input type="submit" name="delete-edition" class="link-delete opas" value="Удалить издание"
-                       style="border: none;cursor: pointer;color: white">
-                <input type="submit" name="delete-edition" class="link-delete opas" value="Вернуться"
-                       style="border: none;cursor: pointer;color: white;background-color: #C1F084">
+{#                <input type="submit" name="delete-edition" class="link-delete opas" value="Удалить издание"#}
+{#                       style="border: none;cursor: pointer;color: white">#}
+                <a class="link-delete opas" href="/library/delete_edition/{{ edition.id }}"
+                   style="border: none;cursor: pointer;color: white">Удалить</a>
+                <a class="link-delete opas" href="/library/editions/{{ edition.id }}"
+                   style="border: none;cursor: pointer;color: white;background-color: #C1F084">Вернуться</a>
+{#                <input type="submit" name="delete-edition" class="link-delete opas" value="Вернуться"#}
+{#                       style="border: none;cursor: pointer;color: white;background-color: #C1F084">#}
             </form>
         </div>
     </div>

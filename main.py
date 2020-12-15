@@ -154,12 +154,17 @@ def generate_edition_qr(edition_id):
 def delete_edition(edition_id):
     session = db_session.create_session()
     ed = session.query(Edition).get(edition_id)
-    session.commit()
-    session.close()
-    if ed:
-        session.delete(ed)
-        return 0
-    return 1
+    try:
+        if ed:
+            books = session.query(Book).filter(Book.edition_id == edition_id).all()
+            for i in books:
+                session.delete(i)
+            session.delete(ed)
+            return 0
+        return 1
+    finally:
+        session.commit()
+        session.close()
 
 
 def get_user_by_token(token, session):
