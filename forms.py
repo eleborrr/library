@@ -45,6 +45,14 @@ class RegisterStudentForm(FlaskForm):
     submit = SubmitField('Зарегистрироваться')
 
 
+class EditLibrary(FlaskForm):
+    name = StringField('Имя', validators=[DataRequired(), Length(max=32)])
+    surname = StringField('Фамилия', validators=[DataRequired(), Length(max=32)])
+    students_join_possibility = BooleanField('Разрешить регистрацию?')
+    library_school_name = StringField('Наименование школы (полное)', validators=[DataRequired(), Length(max=64)])
+    submit = SubmitField('Сохранить')
+
+
 class CreateEdition(FlaskForm):
     name = StringField("Название книги")
     publisher_name = StringField("Издательство")
