@@ -40,11 +40,12 @@
                     {% else %}
                         <input type='submit' class="back" name="give-book" value="Выдать ученику">
                     {% endif %}
+                {# Сделать возврат и выдачу #}
                     <input type='submit' class="back del" name="delete-book" value="Удалить из базы">
                     <input type='submit' class="back green" name="add-in-edition" value="Добавить в издание">
                 </div>
                 <div class="right-flex">
-                    {% if current_user.role_id == 1 and current_user.library_id == book.edition.library_id %}
+                    {% if current_user.role_id == 2 and current_user.library_id == book.edition.library_id %}
                         <input type="submit" class="qrcode" name="print-qr" value="Распечатать QR код">
                     {% endif %}
                 </div>

@@ -19,7 +19,10 @@
     <div class="logo-text"><strong style="font-size: 25px">M | L</strong></div>
 
     <div style="margin:auto;max-width: 1040px;margin-top: 40px">
-        <a href='/library/add_book/{{ edition.id }}' class="link-del green" style="float: right;margin-bottom:50px">Добавить книгу к изданию</a>
+        {% if current_user.role_id == 2 %}
+            <a href='/library/add_book/{{ edition.id }}' class="link-del green" style="float: right;margin-bottom:50px">Добавить
+                книгу к изданию</a>
+        {% endif %}
     </div>
 
     <form method="post">
@@ -31,8 +34,10 @@
                 <div class="descrs">
                     <h3>Название издания: {{ edition.name }}</h3>
                     <p>Количество книг: {{ count_books }}</p>
-                    <input type="submit" name="delete-edition" class="link-delete hiden" value="Удалить издание"
-                           style="border: none;cursor: pointer">
+                    {% if current_user.role_id == 2 %}
+                        <input type="submit" name="delete-edition" class="link-delete hiden" value="Удалить издание"
+                               style="border: none;cursor: pointer">
+                    {% endif %}
                 </div>
                 <div style="margin-left: auto">
                     <a class="link-delete opas"
@@ -57,7 +62,11 @@
                 <div class="descrs bookitem">
                     <h3 style="font-size: 15px">id: {{ book.id }}</h3>
                     {% if book.owner %}
+                    {% if current_user.role_id == 2 %}
                         <a href='/library/books/{{ book.id }}' class="link-del">Книга у {{ book.owner.name }}</a>
+                    {% else %}
+                        <a href='/library/books/{{ book.id }}' class="link-del">Книга занята</a>
+                    {% endif %}
                     {% else %}
                         <a href='/library/books/{{ book.id }}' class="link-del green">Книга свободна</a>
                     {% endif %}
@@ -79,14 +88,14 @@
             <div><h3> Точно удалить? </h3></div>
             <form class='form_up' id="create-chat" method="post">
 
-{#                <input type="submit" name="delete-edition" class="link-delete opas" value="Удалить издание"#}
-{#                       style="border: none;cursor: pointer;color: white">#}
+                {#                <input type="submit" name="delete-edition" class="link-delete opas" value="Удалить издание"#}
+                {#                       style="border: none;cursor: pointer;color: white">#}
                 <a class="link-delete opas" href="/library/delete_edition/{{ edition.id }}"
                    style="border: none;cursor: pointer;color: white">Удалить</a>
                 <a class="link-delete opas" href="/library/editions/{{ edition.id }}"
                    style="border: none;cursor: pointer;color: white;background-color: #C1F084">Вернуться</a>
-{#                <input type="submit" name="delete-edition" class="link-delete opas" value="Вернуться"#}
-{#                       style="border: none;cursor: pointer;color: white;background-color: #C1F084">#}
+                {#                <input type="submit" name="delete-edition" class="link-delete opas" value="Вернуться"#}
+                {#                       style="border: none;cursor: pointer;color: white;background-color: #C1F084">#}
             </form>
         </div>
     </div>

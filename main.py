@@ -543,7 +543,8 @@ class LibraryView(FlaskView):
                 final += '&'.join(args)
             return redirect(final)
         library_code = session.query(Library).get(current_user.library_id).generate_id()
-        return render_template('editions.html', editions=new_res, form=form, library_code=library_code, markup=markup)
+        return render_template('editions.html', editions=new_res, form=form, library_code=library_code, markup=markup,
+                               current_user=current_user)
         #  Эта вкладка доступна всем членам библиотеки
         #  Здесь будет находиться список всех изданий (editions)
         #  Под списком изданий понимается список ссылок на library/edition/{edition_id}
@@ -562,7 +563,8 @@ class LibraryView(FlaskView):
         if edition.library_id != current_user.library_id:
             return abort(403, 'Эта книга приписана к другой библиотеке')
         books = session.query(Book).filter(Book.edition_id == edition_id).all()
-        return render_template('editionone.html', books=books, count_books=len(books), edition=edition, url_for=url_for)
+        return render_template('editionone.html', books=books, count_books=len(books), edition=edition, url_for=url_for,
+                               current_user=current_user)
         # Сдесь будет список книг данного издания с их текущими владельцами
         # У библиотекаря рядом с каждой книгой есть кнопка "Вернуть в библиотеку" или "Одолжить книгу"
         # (Я думаю у библиотекаря должна быть возможность одалживать книгу вручную),

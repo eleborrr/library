@@ -68,12 +68,14 @@
             </div>
             {% for edition in editions %}
                 <div class="izd-item">
-                    <img src="../static/img/editions/{{ edition.photo_name }}">
+                    <img alt="lol" src="../static/img/editions/{{ edition.photo_name }}">
                     <a href="/library/editions/{{ edition.id }}">{{ edition.name }}</a>
                     <span>Литература</span>
                     <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
 {#                    <input type="submit" name="delete-edition" class='link-izd' href='/library' value="Удалить">#}
-                    <a class="link-izd" href='#popup_edition_{{ edition.id }}'>Удалить</a>
+                    {% if current_user.role_id == 2 %}
+                        <a class="link-izd" href='#popup_edition_{{ edition.id }}'>Удалить</a>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
