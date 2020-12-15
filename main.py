@@ -314,7 +314,6 @@ def sign_in():
         register_student(register_form.name.data, register_form.surname.data, register_form.email.data,
                          register_form.password.data, None,
                          register_form.class_num.data)
-        print('ok')
         return redirect('/library')
     if login_form.validate_on_submit():
         us = session.query(User).filter(User.login == login_form.email.data).first()
@@ -726,6 +725,32 @@ class LibraryView(FlaskView):
         #  Здесь библиотекарь видит Фамилию и Имя ученика
         #  И список всех книг, которые у него сейчас находятся
         #  P.S. это не профиль студента (я думаю, профили других людей будут недоступны)
+
+
+    @app.route('/profile', methods=['GET', 'POST'])
+    @login_required
+    def profile_main(self):
+        session = db_session.create_session()
+        user = session.query(User).get(current_user.id)
+        library = session.query(Library).get(current_user.library_id)
+        form = EditLibrary()
+        if user.role != 'Teacher':
+            #ошибку
+            pass
+        else:
+            if form.validate_on_submit():
+                if form.library_school_name.data:
+                    library.school_name = form.library_school_name.data
+                if form.students_join_possibility.data:
+                    # добавить в бд к библиотеке это поле
+                    pass
+                if form.name.data:
+                    user.name = form.name.data
+                if form.surname.data:
+                    user.surname = form.surname.data
+                session.commit()
+            return render_template('library_edit.html')
+
 
     @route('/profile/<int:student_id>', methods=['GET', 'POST'])
     @login_required

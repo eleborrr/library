@@ -26,7 +26,7 @@
         <div class="edition-body">
             <div class="upper-block">
                 <div class="img-book">
-                    <img src="{{ url_for('static', filename='img/' + edition.avatar_image) }}">
+                    <img src="{{ url_for('static', filename='img/editions/' + edition.photo_name) }}">
                 </div>
                 <div class="descrs">
                     <h3>Название издания: {{ edition.name }}</h3>
@@ -52,7 +52,7 @@
         {% for book in books %}
             <div class="book-item">
                 <div class="img-book bookitem">
-                    <img src="{{ url_for('static', filename="img/newaris.png") }}">
+                    <img src="{{ url_for('static', filename="img/editions/" + book.edition.photo_name) }}">
                 </div>
                 <div class="descrs bookitem">
                     <h3 style="font-size: 15px">id: {{ book.id }}</h3>
