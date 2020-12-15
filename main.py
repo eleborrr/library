@@ -880,7 +880,6 @@ class LibraryView(FlaskView):
         return redirect('/library')
 
 
-
 LibraryView.register(app)
 
 if __name__ == '__main__':
