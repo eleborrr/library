@@ -1,5 +1,38 @@
 {% extends "base-table.html" %}
 {% block title_block %}Список книг{% endblock %}
+{% block links %}<link rel="stylesheet" type="text/css" href="../static/css/popups.css">
+    <style>
+    .link-delete, .link-del {
+    display: block;
+    padding: 7px 15px;
+    background-color: #F87070;
+    font-size: 12px;
+    border-radius: 5px;
+    transition: all 0.4s ease 0s;
+    margin-top: 20px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.link-del.green {
+    background-color: #C1F084
+}
+
+.link-delete:hover {
+    padding: 10px 20px
+}
+    @media (max-width: 767px) {
+    .link-delete.hiden {
+        display: block;
+        max-width: 70%
+    }
+
+    .link-delete.opas {
+        display: none;
+    }
+}
+    </style>
+{% endblock %}
 {% block url %}
     {% if current_user.role_id == 1 %}
         <a href='/library/my_books' class="link-menu abs">Мои книги</a>
@@ -110,12 +143,17 @@
                         <a class="owner red">{{ book.owner.name }} {{ book.owner.surname }} владеет книгой</a>
                     {% else %}
                         <a href='#' class="link-getback tr">Выдать книгу</a>
-                        <a href='/library/delete_book/{{ book.id }}' class="link-getback tr delete">Удалить из библиотеки</a>
+                        <a href='#popup_book_{{ book.id }}' class="link-getback tr delete">Удалить из библиотеки</a>
                     {% endif %}
                 </div>
             </div>
         {% endfor %}
 
+    </div>
+    <div>
+        {% for book in books %}
+            {{ markup(book.id) }}
+        {% endfor %}
     </div>
 
 {% endblock %}
