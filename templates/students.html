@@ -20,7 +20,7 @@
                     {{ form.hidden_tag() }}
                     {{ form.crsf_token }}
 
-                    {{ form.id(placeholder='Her\' vsykaya') }}
+                    {{ form.id(placeholder='1') }}
                     {{ form.id.label }}<br>
                     {% for error in form.id.errors %}
                         <p class="alert alert-danger" role="alert">
@@ -29,7 +29,7 @@
                     {% endfor %}
 
 
-                    {{ form.surname(placeholder='Her\' vsykaya') }}
+                    {{ form.surname(placeholder='Иванов') }}
                     {{ form.surname.label }}<br>
                     {% for error in form.surname.errors %}
                         <p class="alert alert-danger" role="alert">
@@ -37,7 +37,7 @@
                         </p>
                     {% endfor %}
 
-                    {{ form.class_num(placeholder='Her\' vsykaya') }}
+                    {{ form.class_num(placeholder='11') }}
                     {{ form.class_num.label }}<br>
                     {% for error in form.class_num.errors %}
                         <p class="alert alert-danger" role="alert">
@@ -45,7 +45,7 @@
                         </p>
                     {% endfor %}
 
-                    {{ form.class_letter(placeholder='Her\' vsykaya') }}
+                    {{ form.class_letter(placeholder='Г') }}
                     {{ form.class_letter.label }}<br>
                     {% for error in form.class_letter.errors %}
                         <p class="alert alert-danger" role="alert">
