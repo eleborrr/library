@@ -474,6 +474,26 @@ class LibraryView(FlaskView):
     @route('/editions', methods=['GET', 'POST'])
     @login_required
     def editions(self):
+        def markup(edition_id):
+            string = f"""<div class='popup' id='popup_edition_{edition_id}'>
+    <a class="popup__area" href='#header'></a>
+    <div class='popup__body'>
+        <div class='popup__content'>
+            <a class='popup__close' href='#header'>X</a>
+            <div><h3> Точно удалить? </h3></div>
+            <form class='form_up' method="post">
+
+                <a class="link-delete opas" href="/library/delete_edition/{ edition_id }"
+                   style="border: none;cursor: pointer;color: white">Удалить</a>
+                <a class="link-delete opas" href="/library/editions"
+                   style="border: none;cursor: pointer;color: white;background-color: #C1F084">Вернуться</a>
+            </form>
+        </div>
+    </div>
+
+</div>"""
+            return Markup(string)
+
         session = db_session.create_session()
         id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
         publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
@@ -518,7 +538,7 @@ class LibraryView(FlaskView):
                 final += '&'.join(args)
             return redirect(final)
         library_code = session.query(Library).get(current_user.library_id).generate_id()
-        return render_template('editions.html', editions=new_res, form=form, library_code=library_code)
+        return render_template('editions.html', editions=new_res, form=form, library_code=library_code, markup=markup)
         #  Эта вкладка доступна всем членам библиотеки
         #  Здесь будет находиться список всех изданий (editions)
         #  Под списком изданий понимается список ссылок на library/edition/{edition_id}
