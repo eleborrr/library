@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, abort, request, url_for, render_template_string
+from flask import Flask, redirect, render_template, abort, request, url_for, render_template_string, Markup
 from data import db_session
 from data.book import Book
 from data.edition import Edition
@@ -151,11 +151,13 @@ def generate_edition_qr(edition_id):
     session.close()
 
 
-def delete_edition(edition_id):
+def delete_edition(edition_id, library_id):
     session = db_session.create_session()
     ed = session.query(Edition).get(edition_id)
     try:
         if ed:
+            if ed.library_id != library_id:
+                return 1
             books = session.query(Book).filter(Book.edition_id == edition_id).all()
             for i in books:
                 session.delete(i)
@@ -165,6 +167,19 @@ def delete_edition(edition_id):
     finally:
         session.commit()
         session.close()
+
+
+def delete_book(book_id, library_id):
+    session = db_session.create_session()
+    book = session.query(Book).get(book_id)
+    if book:
+        if book.edition.library_id != library_id:
+            return 1
+        session.delete(book)
+        session.commit()
+        session.close()
+        return 0
+    return 1
 
 
 def get_user_by_token(token, session):
@@ -700,8 +715,27 @@ class LibraryView(FlaskView):
     @route('/delete_edition/<int:id>')
     def delete_edition(self, id):
         if current_user.role_id == 2:
-            res = delete_edition(id)
+            res = delete_edition(id, current_user.library_id)
         return redirect('/library/editions')
+
+    @login_required
+    @route('/delete_book/<int:id>')
+    def delete_book(self, id):
+        if current_user.role_id == 2:
+            res = delete_book(id, current_user.library_id)
+        return redirect('/library/books')
+
+    @login_required
+    @route('/add_book/<int:edition_id>')
+    def add_book(self, edition_id):
+        if current_user.role_id == 2:
+            session = db_session.create_session()
+            ed = session.query(Edition).get(edition_id)
+            if ed:
+                if ed.library_id == current_user.library_id:
+                    session.close()
+                    add_book(edition_id)
+        return redirect(f'/library/editions/{edition_id}')
 
 
 LibraryView.register(app)

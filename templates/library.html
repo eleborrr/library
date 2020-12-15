@@ -110,7 +110,7 @@
                         <a class="owner red">{{ book.owner.name }} {{ book.owner.surname }} владеет книгой</a>
                     {% else %}
                         <a href='#' class="link-getback tr">Выдать книгу</a>
-                        <a href='#' class="link-getback tr delete">Удалить из библиотеки</a>
+                        <a href='/library/delete_book/{{ book.id }}' class="link-getback tr delete">Удалить из библиотеки</a>
                     {% endif %}
                 </div>
             </div>
