@@ -70,9 +70,8 @@
                     <a href="/library/editions/{{ edition.id }}">{{ edition.name }}</a>
                     <span>Литература</span>
                     <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
-                    {% set string = "/library/delete_edition/" + edition.id.__str__() %}
 {#                    <input type="submit" name="delete-edition" class='link-izd' href='/library' value="Удалить">#}
-                    <a class="link-izd" href='{{ string }}'>Удалить</a>
+                    <a class="link-izd" href='/library/delete_edition/{{ edition.id }}'>Удалить</a>
                 </div>
             {% endfor %}
         </div>
