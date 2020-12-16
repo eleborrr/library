@@ -29,10 +29,14 @@
         max-width: 165px;
         align-content: center;
     }
+    .izd-item{
+        padding: 10px;
+    }
     @media(max-width: 767px) {
     .link-create-edi{
         margin-top: 200px;
     }
+
     }
     </style>
     <div class="block-abs-code">
@@ -47,39 +51,39 @@
                     {{ form.hidden_tag() }}
                     {{ form.crsf_token }}
 
-                    {{ form.id(placeholder='1') }}
-                    {{ form.id.label }}<br>
+                    {{ form.id(placeholder='1', class='int-search') }}
+                    {{ form.id.label(class='text-search') }}<br>
                     {% for error in form.id.errors %}
                         <p class="alert alert-danger" role="alert">
                             {{ error }}
                         </p>
                     {% endfor %}
 
-                    {{ form.name(placeholder='Война и мир') }}
-                    {{ form.name.label }}<br>
+                    {{ form.name(placeholder='Война и мир', class='int-search') }}
+                    {{ form.name.label(class='text-search') }}<br>
                     {% for error in form.name.errors %}
                         <p class="alert alert-danger" role="alert">
                             {{ error }}
                         </p>
                     {% endfor %}
 
-                    {{ form.author(placeholder='Толстой') }}
-                    {{ form.author.label }}<br>
+                    {{ form.author(placeholder='Толстой', class='int-search') }}
+                    {{ form.author.label(class='text-search') }}<br>
                     {% for error in form.author.errors %}
                         <p class="alert alert-danger" role="alert">
                             {{ error }}
                         </p>
                     {% endfor %}
 
-                    {{ form.publication_year(placeholder='1865') }}
-                    {{ form.publication_year.label }}<br>
+                    {{ form.publication_year(placeholder='1865', class='int-search') }}
+                    {{ form.publication_year.label(class='text-search') }}<br>
                     {% for error in form.publication_year.errors %}
                         <p class="alert alert-danger" role="alert">
                             {{ error }}
                         </p>
                     {% endfor %}
 
-                    {{ form.submit() }}
+                    {{ form.submit(class='link-search') }}
                     {% for error in form.submit.errors %}
                         <p class="alert alert-danger" role="alert">
                             {{ error }}
@@ -88,9 +92,9 @@
                 </form>
             </div>
             {% for edition in editions %}
-                <div class="izd-item">
-                    <img alt="" src="../static/img/editions/{{ edition.photo_name }}">
-                    <a href="/library/editions/{{ edition.id }}">{{ edition.name }}</a>
+                <div class="izd-item" style="max-width: 100%">
+                    <img alt="" src="../static/img/editions/{{ edition.photo_name }}" style="max-width: 100px;border-radius: 3px">
+                    <a href="/library/editions/{{ edition.id }}" class="ed-name">{{ edition.name }}</a>
                     <span>Литература</span>
                     <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
 {#                    <input type="submit" name="delete-edition" class='link-izd' href='/library' value="Удалить">#}
