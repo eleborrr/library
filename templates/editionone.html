@@ -18,11 +18,12 @@
 <div class="body-cont" style="margin:auto;max-width: 1040px">
     <div class="logo-text"><a href="/" style="text-decoration: none"><strong style="font-size: 25px">M | L</strong></a></div>
 
-    <div style="margin:auto;max-width: 1040px;margin-top: 40px">
+    <div style="max-width: 1040px;margin-top:40px">
         {% if current_user.role_id == 2 %}
             <a href='/library/add_book/{{ edition.id }}' class="link-del green" style="float: right;margin-bottom:50px">Добавить
                 книгу к изданию</a>
         {% endif %}
+        <a href="/library/editions" class="link-del green" style="float: right;margin-bottom:50px;margin-right:15px">Вернуться</a>
     </div>
 
     <form method="post">

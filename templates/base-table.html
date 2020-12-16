@@ -29,8 +29,10 @@
         <a href='/library/books' class="link-menu">Книги</a>
 
         <a href='/library/editions' class="link-menu">Издания</a>
+        {% if current_user.role_id == 2 %}
         <a href='/library/editions' class="link-menu" style="font-size: 12px; margin-top: 40px">Настройка
             библиотеки</a>
+        {% endif %}
 
     </div>
     <div class="normal-side">

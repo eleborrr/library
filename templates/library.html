@@ -35,7 +35,7 @@
 {% endblock %}
 {% block url %}
     {% if current_user.role_id == 1 %}
-        <a href='/library/my_books' class="link-menu abs">Мои книги</a>
+        <a href='/library/books?owner_id={{ current_user.id }}' class="link-menu abs">Мои книги</a>
     {% elif current_user.role_id == 2 %}
         <a href='/library/students' class="link-menu abs">Ученики</a>
     {% endif %}
@@ -142,13 +142,17 @@
                         {% if current_user.role_id == 2 %}
                             <a href='/library/return_book/{{ book.id }}' class="link-getback tr">Вернуть в библиотеку</a>
                             <a class="owner red">{{ book.owner.name }} {{ book.owner.surname }} владеет книгой</a>
-                        {% else %}
+                        {% elif book.owner.id != current_user.id %}
                             <a class="owner red">Эту книгу взял кто-то другой</a>
+                        {% else %}
+                            <a class="owner red">Эту книгу взяли Вы</a>
                         {% endif %}
                     {% else %}
                         {% if current_user.role_id == 2 %}
                             <a href='/library/give_book/{{ book.id }}' class="link-getback tr">Выдать книгу</a>
                             <a href='#popup_book_{{ book.id }}' class="link-getback tr delete">Удалить из библиотеки</a>
+                        {% else %}
+                            <a class="owner red" style="background-color: #97c67d">Книга свободна</a>
                         {% endif %}
                     {% endif %}
                 </div>

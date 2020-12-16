@@ -430,6 +430,7 @@ class LibraryView(FlaskView):
             kwargs['owner_id'] = owner_id
         result = query.all()
         new_res = []
+        print(result)
         for i in result:
             flag = True
             if name:
@@ -442,7 +443,10 @@ class LibraryView(FlaskView):
                     flag = False
             if owner_surname:
                 kwargs['owner_surname'] = owner_surname
-                if not match(i.owner.surname, owner_surname):
+                try:
+                    if not match(i.owner.surname, owner_surname):
+                        flag = False
+                except AttributeError:
                     flag = False
             if flag:
                 new_res.append(i)

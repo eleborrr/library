@@ -7,7 +7,7 @@
 {% endblock %}
 {% block url %}
     {% if current_user.role_id == 1 %}
-        <a href='/library/students' class="link-menu abs">Мои книги</a>
+        <a href='/library/books?owner_id={{ current_user.id }}' class="link-menu abs">Мои книги</a>
     {% elif current_user.role_id == 2 %}
         <a href='/library/students' class="link-menu abs">Ученики</a>
     {% endif %}
@@ -21,10 +21,13 @@
         margin-left: 40px;
         font-size: calc(10px + 5*(100vw / 1280));
         display: block;
-        color: #4A4141;
+        color: whitesmoke;
         border-radius: 3px;
+        background-color: #97c67d;
         padding: 5px;
         text-decoration: none;
+        max-width: 165px;
+        align-content: center;
     }
     @media(max-width: 767px) {
     .link-create-edi{
@@ -86,7 +89,7 @@
             </div>
             {% for edition in editions %}
                 <div class="izd-item">
-                    <img alt="lol" src="../static/img/editions/{{ edition.photo_name }}">
+                    <img alt="" src="../static/img/editions/{{ edition.photo_name }}">
                     <a href="/library/editions/{{ edition.id }}">{{ edition.name }}</a>
                     <span>Литература</span>
                     <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
