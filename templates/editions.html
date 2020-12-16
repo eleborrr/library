@@ -14,11 +14,29 @@
 {% endblock %}
 {% block contents %}
 
+    <link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
+    <style>
+    a.link-create-edi{
+        margin-top: 155px;
+        margin-left: 40px;
+        font-size: calc(10px + 5*(100vw / 1280));
+        display: block;
+        color: #4A4141;
+        border-radius: 3px;
+        padding: 5px;
+        text-decoration: none;
+    }
+    @media(max-width: 767px) {
+    .link-create-edi{
+        margin-top: 200px;
+    }
+    }
+    </style>
     <div class="block-abs-code">
         <p class="code">Код библиотеки: {{ library_code }}</p>
     </div>
-    <a href="/library/editions/create">Добавить издание</a>
-    <link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
+    <a href="/library/editions/create" class="link-create-edi">Добавить издание</a>
+
     <div class="flex-block" style="margin-left: 0">
         <div class="flex-second" style="width:100%;margin-left: -20px">
             <div>
