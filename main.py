@@ -839,7 +839,7 @@ class LibraryView(FlaskView):
             session.commit()
             session.close()
             return redirect('/library')
-        return render_template('give_book.html', form=form)
+        return render_template('give_book.html', form=form, book=book)
 
     @login_required
     @route('/join', methods=['GET', 'POST'])
@@ -865,7 +865,7 @@ class LibraryView(FlaskView):
             else:
                 return render_template('join.html', form=form, message='Неизвестный идентификатор')
             return redirect('/library')
-        return render_template('join1.html', form=form)
+        return render_template('join.html', form=form)
 
     @login_required
     @route('/return_book/<int:book_id>')
