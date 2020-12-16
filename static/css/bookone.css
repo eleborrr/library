@@ -89,7 +89,7 @@ a:hover {
     padding-top: 20px
 }
 
-.left-flex a {
+.left-flex input {
     width: 100%;
     border-radius: 5px;
     display: block;
@@ -100,20 +100,23 @@ a:hover {
     text-align: center;
     margin-bottom: 15px;
     transition: all 0.3s ease 0s;
+    border:1px solid transparent;
+    cursor: pointer;
+    font-family: Comfortaa, cursive;
 }
 
-.left-flex a.del {
+.left-flex input.del {
     background-color: #F87070;
 }
 
-.left-flex a.green {
+.left-flex input.green {
     background-color: #BEF37B;
 }
 
-.left-flex a:hover {
+.left-flex input:hover {
     background-color: transparent;
     border: 1px solid #584B4B;
-
+    color: #4A4141;
 }
 
 .qrcode {
@@ -128,6 +131,10 @@ a:hover {
     transition: all 0.3s ease 0s;
     padding: 26px 10px;
     font-weight: 700;
+    background-color: transparent;
+    color: #4A4141;
+    font-family: Comfortaa, cursive;
+    cursor: pointer;
 }
 
 .qrcode:hover {
