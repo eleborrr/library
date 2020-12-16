@@ -865,7 +865,7 @@ class LibraryView(FlaskView):
             else:
                 return render_template('join.html', form=form, message='Неизвестный идентификатор')
             return redirect('/library')
-        return render_template('join.html', form=form)
+        return render_template('join1.html', form=form)
 
     @login_required
     @route('/return_book/<int:book_id>')
