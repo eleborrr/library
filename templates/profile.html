@@ -17,9 +17,12 @@
 
 <div class="topfix"></div>
 <div class="body-content">
+    <div class="logo-text" style="display: flex"><a href="/" style="text-decoration: none;color: #fff;font-family: 'Comfortaa', cursive"><strong style="font-size: 25px">M | L</strong></a>
+    <a href="/library/editions" style="margin-left:30px;padding-top:12px;text-decoration: none;color: #fff;font-family: 'Comfortaa', cursive;font-size: 12px">К изданиям</a>
+    </div>
     <div class="topblock">
-        <h1>{{ user.name }} {{ user.surname }}</h1>
-        <a href='#'>Редактировать</a>
+        <h1 style="font-family: 'Comfortaa', cursive">{{ user.name }} {{ user.surname }}</h1>
+        <a href='#' style="font-family: 'Comfortaa', cursive">Редактировать</a>
     </div>
     <div class="downblock">
         {% if current_user.Role == "Student" %}
@@ -37,7 +40,7 @@
         </div>
         <div class="right-books">
             <div class="cont-book">
-                <h5 class="text-my-book">{{ user.name }}. Книги:</h5>
+                <h5 class="text-my-book" style="font-family: 'Comfortaa', cursive">{{ user.name }}. Книги:</h5>
                 {% for book in user.books %}
                     <div class="book-it">
                         <div class="img-it"><img src="../static/img/{{ book.avatar_image }}"></div>
