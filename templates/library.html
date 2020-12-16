@@ -1,6 +1,9 @@
 {% extends "base-table.html" %}
 {% block title_block %}Список книг{% endblock %}
-{% block links %}<link rel="stylesheet" type="text/css" href="../static/css/popups.css">
+
+{% block links %}
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/lybrary-table.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/css/popups.css">
     <style>
     .link-delete, .link-del {
     display: block;
@@ -50,63 +53,63 @@
                 {{ form.hidden_tag() }}
                 {{ form.crsf_token }}
 
-                {{ form.id(placeholder='1') }}
-                {{ form.id.label }}<br>
+                {{ form.id(placeholder='1', class='int-search') }}
+                {{ form.id.label(class='text-search') }}<br>
                 {% for error in form.id.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
                     </p>
                 {% endfor %}
 
-                {{ form.name(placeholder='Война и мир') }}
-                {{ form.name.label }}<br>
+                {{ form.name(placeholder='Война и мир', class='int-search') }}
+                {{ form.name.label(class='text-search') }}<br>
                 {% for error in form.name.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
                     </p>
                 {% endfor %}
 
-                {{ form.author(placeholder='Толстой') }}
-                {{ form.author.label }}<br>
+                {{ form.author(placeholder='Толстой', class='int-search') }}
+                {{ form.author.label(class='text-search') }}<br>
                 {% for error in form.author.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
                     </p>
                 {% endfor %}
 
-                {{ form.publication_year(placeholder='1865') }}
-                {{ form.publication_year.label }}<br>
+                {{ form.publication_year(placeholder='1865', class='int-search') }}
+                {{ form.publication_year.label(class='text-search') }}<br>
                 {% for error in form.publication_year.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
                     </p>
                 {% endfor %}
 
-                {{ form.edition_id(placeholder='1') }}
-                {{ form.edition_id.label }}<br>
+                {{ form.edition_id(placeholder='1', class='int-search') }}
+                {{ form.edition_id.label(class='text-search') }}<br>
                 {% for error in form.edition_id.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
                     </p>
                 {% endfor %}
 
-                {{ form.owner_id(placeholder='1') }}
-                {{ form.owner_id.label }}<br>
+                {{ form.owner_id(placeholder='1', class='int-search') }}
+                {{ form.owner_id.label(class='text-search') }}<br>
                 {% for error in form.owner_id.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
                     </p>
                 {% endfor %}
 
-                {{ form.owner_surname(placeholder='Иванов') }}
-                {{ form.owner_surname.label }}<br>
+                {{ form.owner_surname(placeholder='Иванов', class='int-search') }}
+                {{ form.owner_surname.label(class='text-search') }}<br>
                 {% for error in form.owner_surname.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
                     </p>
                 {% endfor %}
 
-                {{ form.submit() }}
+                {{ form.submit(class='link-search') }}
                 {% for error in form.owner_surname.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
