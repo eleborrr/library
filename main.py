@@ -727,11 +727,12 @@ class LibraryView(FlaskView):
         student_role = session.query(Role).filter(Role.name == 'Student').first()
         if student.role_id != student_role.id:
             return abort(403, description='Этот ученик из другой школы')
+        if student.library_id != current_user.library_id:
+            return abort(403, description='Этот ученик из другой школы')
         return render_template('profile.html', user=student, current_user=current_user)
         #  Здесь библиотекарь видит Фамилию и Имя ученика
         #  И список всех книг, которые у него сейчас находятся
         #  P.S. это не профиль студента (я думаю, профили других людей будут недоступны)
-
 
     @app.route('/profile', methods=['GET', 'POST'])
     @login_required
@@ -739,7 +740,8 @@ class LibraryView(FlaskView):
         session = db_session.create_session()
         user = session.query(User).get(current_user.id)
         library = session.query(Library).get(current_user.library_id)
-        form = EditLibrary()
+        form = edit_library(**{'name': user.name, 'surname': user.surname, 'students_join_possibility': True,
+                               'library_school_name': library.name})
         if user.role != 'Teacher':
             #ошибку
             pass
@@ -755,8 +757,7 @@ class LibraryView(FlaskView):
                 if form.surname.data:
                     user.surname = form.surname.data
                 session.commit()
-            return render_template('library_edit.html')
-
+            return render_template('library_edit.html', form=form)
 
     @route('/profile/<int:student_id>', methods=['GET', 'POST'])
     @login_required

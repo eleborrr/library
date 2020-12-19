@@ -44,12 +44,15 @@ class RegisterStudentForm(FlaskForm):
     submit = SubmitField('Зарегистрироваться')
 
 
-class EditLibrary(FlaskForm):
-    name = StringField('Имя', validators=[DataRequired(), Length(max=32)])
-    surname = StringField('Фамилия', validators=[DataRequired(), Length(max=32)])
-    students_join_possibility = BooleanField('Разрешить регистрацию?')
-    library_school_name = StringField('Наименование школы (полное)', validators=[DataRequired(), Length(max=64)])
-    submit = SubmitField('Сохранить')
+def edit_library(**kwargs):
+    class EditLibrary(FlaskForm):
+        name = StringField('Имя', validators=[DataRequired(), Length(max=32)], default=kwargs.get('name'))
+        surname = StringField('Фамилия', validators=[DataRequired(), Length(max=32)], default=kwargs.get('surname'))
+        students_join_possibility = BooleanField('Разрешить регистрацию', default=kwargs.get('students_join_possibility'))
+        library_school_name = StringField('Наименование школы (полное)', validators=[DataRequired(), Length(max=64)],
+                                          default='library_school_name')
+        submit = SubmitField('Сохранить')
+    return EditLibrary()
 
 
 class CreateEdition(FlaskForm):
