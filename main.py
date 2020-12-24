@@ -1,4 +1,5 @@
-from flask import Flask, redirect, render_template, abort, request, url_for, render_template_string, Markup
+from flask import Flask, redirect, render_template, abort, request, url_for, render_template_string, Markup, \
+    make_response, jsonify
 from data import db_session
 from data.book import Book
 from data.edition import Edition
@@ -15,6 +16,8 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 import uuid
 import os
+import datetime
+import hashlib
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
@@ -374,6 +377,56 @@ def check_int_type(el):
     return el
 
 
+def filter_books(id_, name, author, publication_year, owner_id, owner_surname, edition_id, cur_us):
+    session = db_session.create_session()
+    query = session.query(Book).join(Edition).filter(Edition.library_id == cur_us.library_id)
+    kwargs = {
+        'id': '',
+        'name': '',
+        'author': '',
+        'publication_year': '',
+        'edition_id': '',
+        'owner_id': '',
+        'owner_surname': ''
+    }
+
+    if id_:
+        query = query.filter(Book.id == check_int_type(id_))
+        kwargs['id'] = id_
+    if publication_year:
+        query = query.filter(Edition.publication_year == check_int_type(publication_year))
+        kwargs['publication_year'] = publication_year
+    if edition_id:
+        query = query.filter(Book.edition_id == check_int_type(edition_id))
+        kwargs['edition_id'] = edition_id
+    if owner_id:
+        query = query.filter(Book.owner_id == check_int_type(owner_id))
+        kwargs['owner_id'] = owner_id
+    result = query.all()
+    new_res = []
+    print(result)
+    for i in result:
+        flag = True
+        if name:
+            kwargs['name'] = name
+            if not match(i.edition.name, name):
+                flag = False
+        if author:
+            kwargs['author'] = author
+            if not match(i.edition.author, author):
+                flag = False
+        if owner_surname:
+            kwargs['owner_surname'] = owner_surname
+            try:
+                if not match(i.owner.surname, owner_surname):
+                    flag = False
+            except AttributeError:
+                flag = False
+        if flag:
+            new_res.append(i)
+    return new_res, kwargs
+
+
 class LibraryView(FlaskView):
     @route('/books', methods=['GET', 'POST'])
     @route('/', methods=['GET', 'POST'])
@@ -398,6 +451,7 @@ class LibraryView(FlaskView):
 
         </div>"""
             return Markup(string)
+
         if current_user.role_id == 3:
             return redirect('/library/join')
         session = db_session.create_session()
@@ -405,51 +459,7 @@ class LibraryView(FlaskView):
         publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
             'edition_id'), request.args.get('owner_id'), request.args.get('owner_surname')
 
-        query = session.query(Book).join(Edition).filter(Edition.library_id == current_user.library_id)
-        kwargs = {
-            'id': '',
-            'name': '',
-            'author': '',
-            'publication_year': '',
-            'edition_id': '',
-            'owner_id': '',
-            'owner_surname': ''
-        }
-
-        if id_:
-            query = query.filter(Book.id == check_int_type(id_))
-            kwargs['id'] = id_
-        if publication_year:
-            query = query.filter(Edition.publication_year == check_int_type(publication_year))
-            kwargs['publication_year'] = publication_year
-        if edition_id:
-            query = query.filter(Book.edition_id == check_int_type(edition_id))
-            kwargs['edition_id'] = edition_id
-        if owner_id:
-            query = query.filter(Book.owner_id == check_int_type(owner_id))
-            kwargs['owner_id'] = owner_id
-        result = query.all()
-        new_res = []
-        print(result)
-        for i in result:
-            flag = True
-            if name:
-                kwargs['name'] = name
-                if not match(i.edition.name, name):
-                    flag = False
-            if author:
-                kwargs['author'] = author
-                if not match(i.edition.author, author):
-                    flag = False
-            if owner_surname:
-                kwargs['owner_surname'] = owner_surname
-                try:
-                    if not match(i.owner.surname, owner_surname):
-                        flag = False
-                except AttributeError:
-                    flag = False
-            if flag:
-                new_res.append(i)
+        new_res, kwargs = filter_books(id_, name, author, publication_year, owner_id, owner_surname, edition_id, current_user)
         form = book_filter_form(**kwargs)
         if form.validate_on_submit():
             final = '/library/books'
@@ -483,6 +493,7 @@ class LibraryView(FlaskView):
     def editions(self):
         if current_user.role_id == 3:
             return redirect('/library/join')
+
         def markup(edition_id):
             string = f"""<div class='popup' id='popup_edition_{edition_id}'>
     <a class="popup__area" href='#header'></a>
@@ -492,7 +503,7 @@ class LibraryView(FlaskView):
             <div><h3> Точно удалить? </h3></div>
             <form class='form_up' method="post">
 
-                <a class="link-delete opas" href="/library/delete_edition/{ edition_id }"
+                <a class="link-delete opas" href="/library/delete_edition/{edition_id}"
                    style="border: none;cursor: pointer;color: white">Удалить</a>
                 <a class="link-delete opas" href="/library/editions"
                    style="border: none;cursor: pointer;color: white;background-color: #C1F084">Вернуться</a>
@@ -743,7 +754,7 @@ class LibraryView(FlaskView):
         form = edit_library(**{'name': user.name, 'surname': user.surname, 'students_join_possibility': True,
                                'library_school_name': library.name})
         if user.role != 'Teacher':
-            #ошибку
+            # ошибку
             pass
         else:
             if form.validate_on_submit():
@@ -883,6 +894,22 @@ class LibraryView(FlaskView):
         session.commit()
         session.close()
         return redirect('/library')
+
+
+@app.route('/load/<int:id_>')
+def load(id_):
+    password = hashlib.shake_128((datetime.datetime.now() + datetime.timedelta(minutes=32)).strftime('%Y-%m-%D %H-%M').
+                                 encode()).hexdigest(128)
+    got_pass = request.args.get('p')
+    if got_pass != password:
+        return make_response(jsonify({}, 200))
+    type_request = request.args.get('t')
+    session = db_session.create_session()
+    res = None
+    wallposts = []
+    posts = None
+    quantity = 20
+
 
 
 LibraryView.register(app)
