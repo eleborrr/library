@@ -6,7 +6,7 @@ from data.library import Library
 from data.user import User
 from data.role import Role
 from config import AppConfig
-from generators import create_qr_list
+from generators import create_qrcode, _create_qr_list
 from flask_login import LoginManager, logout_user, login_user, login_required, current_user
 from flask_classy import route, FlaskView
 from forms import *
@@ -147,8 +147,9 @@ def bind_student(user_id):
 
 def generate_edition_qr(edition_id):
     session = db_session.create_session()
-    create_qr_list([x.id for x in session.query(Edition).get(edition_id).books])
+    res = _create_qr_list([(x.generate_id(), x.id) for x in session.query(Edition).get(edition_id).books])[0]
     session.close()
+    return res
 
 
 def delete_edition(edition_id):
@@ -567,8 +568,9 @@ class LibraryView(FlaskView):
         if edition.library_id != current_user.library_id:
             return abort(403, 'Эта книга приписана к другой библиотеке')
         books = session.query(Book).filter(Book.edition_id == edition_id).all()
+        res = generate_edition_qr(edition_id)
         return render_template('editionone.html', books=books, count_books=len(books), edition=edition, url_for=url_for,
-                               current_user=current_user)
+                               current_user=current_user, lists=res)
         # Сдесь будет список книг данного издания с их текущими владельцами
         # У библиотекаря рядом с каждой книгой есть кнопка "Вернуть в библиотеку" или "Одолжить книгу"
         # (Я думаю у библиотекаря должна быть возможность одалживать книгу вручную),
@@ -652,7 +654,8 @@ class LibraryView(FlaskView):
             except Exception:
                 pass
             return redirect('/library/books/' + str(book_id))
-        return render_template('bookone.html', book=book, user=current_user)
+        img = create_qrcode(book.generate_id(), book.id)
+        return render_template('bookone.html', book=book, user=current_user, img=img)
         #  Здесь будут находиться
         #  id книги (именно книги, не издания)
         #  Информация об ИЗДАНИИ (тип название, автор, год издания и тд.)

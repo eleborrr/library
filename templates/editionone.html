@@ -102,6 +102,12 @@
     </div>
 
 </div>
+<div>
+    {% for image in lists %}
+        <img src="data:image/jpeg;base64,{{ image}}" alt="lol"><br>
+        <a href="data:image/jpeg;base64,{{ image}}" download="list_{{ loop.index }}.jpeg">Скачать</a><br>
+    {% endfor %}
+</div>
 
 </body>
 </html>
