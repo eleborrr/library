@@ -377,8 +377,7 @@ def check_int_type(el):
     return el
 
 
-def filter_books(id_, name, author, publication_year, owner_id, owner_surname, edition_id, cur_us):
-    session = db_session.create_session()
+def filter_books(id_, name, author, publication_year, owner_id, owner_surname, edition_id, cur_us, session):
     query = session.query(Book).join(Edition).filter(Edition.library_id == cur_us.library_id)
     kwargs = {
         'id': '',
@@ -427,6 +426,37 @@ def filter_books(id_, name, author, publication_year, owner_id, owner_surname, e
     return new_res, kwargs
 
 
+def filter_editions(id_, publication_year, name, author, cur_us, session):
+    kwargs = {
+        'id': '',
+        'name': '',
+        'author': '',
+        'publication_year': ''
+    }
+    query = session.query(Edition).filter(Edition.library_id == cur_us.library_id)
+    if id_:
+        query = query.filter(Edition.id == check_int_type(id_))
+        kwargs['id'] = id_
+    if publication_year:
+        query = query.filter(Edition.publication_year == check_int_type(publication_year))
+        kwargs['publication_year'] = publication_year
+    result = query.all()
+    new_res = []
+    for i in result:
+        flag = True
+        if name:
+            kwargs['name'] = name
+            if not match(i.name, name):
+                flag = False
+        if author:
+            kwargs['author'] = author
+            if not match(i.author, author):
+                flag = False
+        if flag:
+            new_res.append(i)
+    return new_res, kwargs
+
+
 class LibraryView(FlaskView):
     @route('/books', methods=['GET', 'POST'])
     @route('/', methods=['GET', 'POST'])
@@ -459,7 +489,8 @@ class LibraryView(FlaskView):
         publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
             'edition_id'), request.args.get('owner_id'), request.args.get('owner_surname')
 
-        new_res, kwargs = filter_books(id_, name, author, publication_year, owner_id, owner_surname, edition_id, current_user)
+        new_res, kwargs = filter_books(id_, name, author, publication_year, owner_id, owner_surname, edition_id,
+                                       current_user, session)
         form = book_filter_form(**kwargs)
         if form.validate_on_submit():
             final = '/library/books'
@@ -516,35 +547,8 @@ class LibraryView(FlaskView):
 
         session = db_session.create_session()
         id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
-        publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
-            'edition_id'), request.args.get('owner_id'), request.args.get('owner_surname')
-        kwargs = {
-            'id': '',
-            'name': '',
-            'author': '',
-            'publication_year': ''
-        }
-        query = session.query(Edition).filter(Edition.library_id == current_user.library_id)
-        if id_:
-            query = query.filter(Edition.id == check_int_type(id_))
-            kwargs['id'] = id_
-        if publication_year:
-            query = query.filter(Edition.publication_year == check_int_type(publication_year))
-            kwargs['publication_year'] = publication_year
-        result = query.all()
-        new_res = []
-        for i in result:
-            flag = True
-            if name:
-                kwargs['name'] = name
-                if not match(i.name, name):
-                    flag = False
-            if author:
-                kwargs['author'] = author
-                if not match(i.author, author):
-                    flag = False
-            if flag:
-                new_res.append(i)
+        publication_year = request.args.get('publication_year')
+        new_res, kwargs = filter_editions(id_, publication_year, name, author, current_user, session)
         form = edition_filter_form(**kwargs)
         if form.validate_on_submit():
             final = '/library/editions'
@@ -896,8 +900,8 @@ class LibraryView(FlaskView):
         return redirect('/library')
 
 
-@app.route('/load/<int:id_>')
-def load(id_):
+@app.route('/load/<int:id__>')
+def load(id__):
     password = hashlib.shake_128((datetime.datetime.now() + datetime.timedelta(minutes=32)).strftime('%Y-%m-%D %H-%M').
                                  encode()).hexdigest(128)
     got_pass = request.args.get('p')
@@ -909,7 +913,20 @@ def load(id_):
     wallposts = []
     posts = None
     quantity = 20
+    if type_request == 'books':
+        id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
+        publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
+            'edition_id'), request.args.get('owner_id'), request.args.get('owner_surname')
 
+        wallposts, _ = filter_books(id_, name, author, publication_year, owner_id, owner_surname, edition_id,
+                                    type('Dummy', (object,), {'library_id': id__})(), session)
+    elif type_request == 'editions':
+        id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
+        publication_year = request.args.get('publication_year')
+        wallposts, _ = filter_editions(id_, publication_year, name, author,
+                                       type('Dummy', (object,), {'library_id': id__})(), session)
+
+    posts = len(wallposts)
 
 
 LibraryView.register(app)
