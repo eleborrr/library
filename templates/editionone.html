@@ -16,7 +16,8 @@
 
 <body>
 <div class="body-cont" style="margin:auto;max-width: 1040px">
-    <div class="logo-text"><a href="/" style="text-decoration: none"><strong style="font-size: 25px">M | L</strong></a></div>
+    <div class="logo-text"><a href="/" style="text-decoration: none"><strong style="font-size: 25px">M | L</strong></a>
+    </div>
 
     <div style="max-width: 1040px;margin-top:40px">
         {% if current_user.role_id == 2 %}
@@ -63,11 +64,11 @@
                 <div class="descrs bookitem">
                     <h3 style="font-size: 15px">id: {{ book.id }}</h3>
                     {% if book.owner %}
-                    {% if current_user.role_id == 2 %}
-                        <a href='/library/books/{{ book.id }}' class="link-del">Книга у {{ book.owner.name }}</a>
-                    {% else %}
-                        <a href='/library/books/{{ book.id }}' class="link-del">Книга занята</a>
-                    {% endif %}
+                        {% if current_user.role_id == 2 %}
+                            <a href='/library/books/{{ book.id }}' class="link-del">Книга у {{ book.owner.name }}</a>
+                        {% else %}
+                            <a href='/library/books/{{ book.id }}' class="link-del">Книга занята</a>
+                        {% endif %}
                     {% else %}
                         <a href='/library/books/{{ book.id }}' class="link-del green">Книга свободна</a>
                     {% endif %}
@@ -101,6 +102,14 @@
         </div>
     </div>
 
+</div>
+<div>
+    {% if current_user.role_id == 2 %}
+        {% for image in lists %}
+            <img src="data:image/jpeg;base64,{{ image }}" alt="lol"><br>
+            <a href="data:image/jpeg;base64,{{ image }}" download="list_{{ loop.index }}.jpeg">Скачать</a><br>
+        {% endfor %}
+    {% endif %}
 </div>
 
 </body>

@@ -19,10 +19,10 @@
     <div class="logo-text"><a href="/" style="text-decoration: none"><strong style="font-size: 25px">M | L</strong></a></div>
 
     <div style="max-width: 1040px;margin-top:40px">
-        {% if current_user.role_id == 2 %}
-            <a href='/library/add_book/{{ book.edition.id }}' class="link-del green" style="float: right;margin-bottom:50px">Добавить
-                книгу к изданию</a>
-        {% endif %}
+{#        {% if current_user.role_id == 2 %}#}
+{#            <a href='/library/add_book/{{ book.edition.id }}' class="link-del green" style="float: right;margin-bottom:50px">Добавить#}
+{#                книгу к изданию</a>#}
+{#        {% endif %}#}
         <a href="/library/editions" class="link-del green" style="float: right;margin-bottom:50px;margin-right:15px">Вернуться</a>
     </div>
 
@@ -36,8 +36,8 @@
                     <h3>Название книги: {{ book.edition.name }}</h3>
                     <p>Автор: {{ book.edition.author }}</p>
                     {% if current_user.role_id == 2 %}
-                        <input type="submit" name="delete-edition" class="link-delete hiden" value="Удалить книгу"
-                               style="border: none;cursor: pointer">
+{#                        <input type="submit" name="delete-edition" class="link-delete hiden" value="Удалить книгу"#}
+{#                               style="border: none;cursor: pointer">#}
                     {% endif %}
                 </div>
                 <div style="margin-left: auto">

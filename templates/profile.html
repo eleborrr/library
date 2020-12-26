@@ -54,7 +54,7 @@
         <div class="right-books">
             <div class="cont-book">
                 <h5 class="text-my-book" style="font-family: 'Comfortaa', cursive">{{ user.name }}. Книги:</h5>
-                {% for book in user.books %}
+                {% for book in books %}
                     <div class="book-it">
                         <div class="img-it"><img src="../static/img/{{ book.avatar_image }}"></div>
                         <div class="name-and-go">
