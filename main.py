@@ -685,26 +685,6 @@ class LibraryView(FlaskView):
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
 
-    @route('/students/<int:user_id>', methods=['GET', 'POST'])
-    @login_required
-    def student(self, user_id):
-        session = db_session.create_session()
-        librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
-        if current_user.role_id != librarian_role.id:
-            return abort(403, description='Сюда можно только библиотекарю')
-        student = session.query(User).get(user_id)
-        if not student:
-            return abort(404, description='Данный пользователь не найден')
-        student_role = session.query(Role).filter(Role.name == 'Student').first()
-        if student.role_id != student_role.id:
-            return abort(403, description='Этот ученик из другой школы')
-        if student.library_id != current_user.library_id:
-            return abort(403, description='Этот ученик из другой школы')
-        return render_template('profile.html', user=student, current_user=current_user)
-        #  Здесь библиотекарь видит Фамилию и Имя ученика
-        #  И список всех книг, которые у него сейчас находятся
-        #  P.S. это не профиль студента (я думаю, профили других людей будут недоступны)
-
     @app.route('/profile', methods=['GET', 'POST'])
     @login_required
     def profile_main(self):
