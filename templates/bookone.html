@@ -11,7 +11,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/css/bookone.css">
 </head>
-
+<style>
+    .book{
+        height: 70vh;
+    }
+    .back{
+        padding: 10px;
+        background-color: #9278aa;
+        margin: 0px 0 20px 0;
+        text-align: center;
+        border-radius: 3px;
+        color: white;
+        font-size: 12px;
+        transition: 1s ease 0s;
+        border: 1px solid transparent;
+    }
+    .back:hover{
+        background-color: transparent;
+        border: 1px solid #9278aa;
+    }
+</style>
 <body>
 <div class="body-cont">
     <div class="logo-text"><a href="/" style="text-decoration: none"><strong style="font-size: 25px">M | L</strong></a></div>
@@ -34,7 +53,7 @@
 
         <form id="book-edit" method="post">
             <div class="down-flex">
-                <div class="left-flex">
+                <div class="left-flex" style="display: flex;flex-direction: column">
                     {% if book.owner %}
                         <a class="back" href="/library/return_book/{{ book.id }}">Вернуть книгу</a>
                     {% else %}
@@ -46,16 +65,19 @@
                     {% endif %}
                 </div>
                 <div class="right-flex">
+                    {% if current_user.role_id == 2 %}
+        <img src="data:image/jpeg;base64,{{ img }}" alt="lol" style="max-width: 100%"><br>
+        <a href="data:image/jpeg;base64,{{ img }}" download="qr.jpeg">Скачать</a>
+    {% endif %}
                 </div>
             </div>
         </form>
+    <div>
+
+</div>
     </div>
+
 </div>
-<div>
-    {% if current_user.role_id == 2 %}
-        <img src="data:image/jpeg;base64,{{ img }}" alt="lol"><br>
-        <a href="data:image/jpeg;base64,{{ img }}" download="qr.jpeg">Скачать</a>
-    {% endif %}
-</div>
+
 </body>
 </html>
