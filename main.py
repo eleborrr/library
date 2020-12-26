@@ -610,7 +610,7 @@ class LibraryView(FlaskView):
             return redirect(f'/library/editions/{edition.id}')
         return render_template('create_edition_form.html', form=form, url_for=url_for)
 
-    @route('/books/<int:book_id>', methods=['GET', 'POST'])
+    @route('/books/<int:book_id>', methods=['GET'])
     @login_required
     def book(self, book_id):
         if current_user.role_id == 3:
@@ -622,38 +622,6 @@ class LibraryView(FlaskView):
             return abort(404, description='Книга не найдена')
         if book.edition.library_id != current_user.library_id:
             return abort(403, 'Эта книга приписана к другой библиотеке')
-        if request.method == 'POST':
-            try:
-                if request.form['return-book']:
-                    return_book(book_id)
-            except Exception:
-                pass
-            try:
-                if request.form['give-book']:
-                    pass
-            except Exception:
-                pass
-            try:
-                if request.form['delete-book']:
-                    remove_book(book_id)
-            except Exception:
-                pass
-            try:
-                if request.form['add-in-edition']:
-                    pass
-            except Exception:
-                pass
-            try:
-                if request.form['print-qr']:
-                    pass
-            except Exception:
-                pass
-            try:
-                if request.form['take-book']:
-                    lend_book(current_user.id, book_id)
-            except Exception:
-                pass
-            return redirect('/library/books/' + str(book_id))
         img = create_qrcode(book.generate_id(), book.id)
         return render_template('bookone.html', book=book, user=current_user, img=img)
         #  Здесь будут находиться
@@ -743,18 +711,16 @@ class LibraryView(FlaskView):
         session = db_session.create_session()
         user = session.query(User).get(current_user.id)
         library = session.query(Library).get(current_user.library_id)
-        form = edit_library(**{'name': user.name, 'surname': user.surname, 'students_join_possibility': True,
+        form = edit_library(**{'name': user.name, 'surname': user.surname, 'students_join_possibility': library.opened,
                                'library_school_name': library.name})
-        if user.role != 'Teacher':
-            #ошибку
-            pass
+        if user.role_id == 2:
+            return redirect('/library')
         else:
             if form.validate_on_submit():
                 if form.library_school_name.data:
                     library.school_name = form.library_school_name.data
                 if form.students_join_possibility.data:
-                    # добавить в бд к библиотеке это поле
-                    pass
+                    library.opened = form.students_join_possibility.data
                 if form.name.data:
                     user.name = form.name.data
                 if form.surname.data:
@@ -858,14 +824,18 @@ class LibraryView(FlaskView):
             for i in library:
                 print(i.string_id)
                 if i.string_id == id_:
-                    us = session.query(User).get(current_user.id)
-                    us.library_id = i.id
-                    us.role_id = 1
-                    print(current_user.role_id)
-                    print(current_user.login)
-                    session.commit()
-                    session.close()
-                    break
+                    if i.opened:
+                        us = session.query(User).get(current_user.id)
+                        us.library_id = i.id
+                        us.role_id = 1
+                        print(current_user.role_id)
+                        print(current_user.login)
+                        session.commit()
+                        session.close()
+                        break
+                    else:
+                        return render_template('join.html', form=form,
+                                               message='Доступ к этой библиотеке закрыт, обратитесь к библиотекарю')
             else:
                 return render_template('join.html', form=form, message='Неизвестный идентификатор')
             return redirect('/library')
@@ -886,6 +856,23 @@ class LibraryView(FlaskView):
         session.commit()
         session.close()
         return redirect('/library')
+
+    @login_required
+    @route('/delete_student/<int:student_id>')
+    def delete_student(self, student_id):
+        if current_user.role_id != 2:
+            return abort(403, description='Эта функция достурна лишь библиотекарю')
+        session = db_session.create_session()
+        student = session.query(User).get(student_id)
+        if not student:
+            return abort(404, description='Пользователь не найден')
+        if student.role_id != 1 or student.library_id != current_user.library_id:
+            return abort(403, description='Такого ученика нет в вашей библиотеке')
+        student.role_id = 3
+        student.library_id = None
+        session.commit()
+        return redirect('/library/students')
+
 
 
 LibraryView.register(app)

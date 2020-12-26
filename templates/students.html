@@ -66,7 +66,7 @@
                     <a href="/library/students/{{ student.id }}">{{ student.name }}</a>
                     <span>{{ student.cla }}</span>
                     <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
-                    <input type="submit" name="delete-edition" class='link-izd' href='#' value="Удалить">
+                    <a class='link-izd' href='/library/delete_student/{{ student.id }}'>Удалить</a>
                 </div>
             {% endfor %}
         </div>

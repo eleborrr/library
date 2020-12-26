@@ -137,6 +137,9 @@
                         <p style="padding: 0;margin:0"><strong>Год
                             публикации {{ book.edition.publication_year }}</strong></p>
                     </div>
+                    <div class="nameb">
+                        <a style="padding: 0;margin: 0;color: #3E87CA" href="/library/books/{{ book.id }}"><strong>Подробнее</strong></a>
+                    </div>
 
                 </div>
 
@@ -144,7 +147,7 @@
                     {% if book.owner %}
                         {% if current_user.role_id == 2 %}
                             <a href='/library/return_book/{{ book.id }}' class="link-getback tr">Вернуть в библиотеку</a>
-                            <a class="owner red">{{ book.owner.name }} {{ book.owner.surname }} владеет книгой</a>
+                            <a class="owner red" href="/library/profile/{{ book.owner_id  }}">{{ book.owner.name }} {{ book.owner.surname }} владеет книгой</a>
                         {% elif book.owner.id != current_user.id %}
                             <a class="owner red">Эту книгу взял кто-то другой</a>
                         {% else %}

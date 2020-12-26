@@ -25,7 +25,7 @@
                 <p style="padding-top: 15px;font-size: 15px;"><strong>Название: {{ book.name }}</strong></p>
                 <p style="padding-bottom: 15px">Издание: {{ book.edition.name }}</p>
                 {% if book.owner %}
-                    <a href='#' style="font-size: 12px">Владелец: {{ book.owner.name }}</a>
+                    <a href='/library/profile/{{ book.owner_id }}' style="font-size: 12px">Владелец: {{ book.owner.name }}</a>
                 {% else %}
                     <a href='#' style="font-size: 12px">Владельца нет</a>
                 {% endif %}
@@ -36,26 +36,26 @@
             <div class="down-flex">
                 <div class="left-flex">
                     {% if book.owner %}
-                        <input type='submit' class="back" name="return-book" value="Забрать у владельца">
+                        <a class="back" href="/library/return_book/{{ book.id }}">Вернуть книгу</a>
                     {% else %}
-                        <input type='submit' class="back" name="give-book" value="Выдать ученику">
+                        <a class="back" href="/library/give_book/{{ book.id }}">Выдать книгу</a>
                     {% endif %}
                 {# Сделать возврат и выдачу #}
-                    <input type='submit' class="back del" name="delete-book" value="Удалить из базы">
-                    <input type='submit' class="back green" name="add-in-edition" value="Добавить в издание">
+                    {% if not book.owner %}
+                    <a class="back del" href="/library/delete_book/{{ book.id }}">Удалить из бибилиотеки</a>
+                    {% endif %}
                 </div>
                 <div class="right-flex">
-                    {% if current_user.role_id == 2 and current_user.library_id == book.edition.library_id %}
-                        <input type="submit" class="qrcode" name="print-qr" value="Распечатать QR код">
-                    {% endif %}
                 </div>
             </div>
         </form>
     </div>
 </div>
 <div>
-    <img src="data:image/jpeg;base64,{{ img }}" alt="lol"><br>
-    <a href="data:image/jpeg;base64,{{ img }}" download="qr.jpeg">Скачать</a>
+    {% if current_user.role_id == 2 %}
+        <img src="data:image/jpeg;base64,{{ img }}" alt="lol"><br>
+        <a href="data:image/jpeg;base64,{{ img }}" download="qr.jpeg">Скачать</a>
+    {% endif %}
 </div>
 </body>
 </html>
