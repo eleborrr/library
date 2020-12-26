@@ -44,8 +44,12 @@
     {% endif %}
 {% endblock %}
 {% block contents %}
+
     <div class="block-code" style="margin-bottom: 20px">
-        <p class="code">Код библиотеки: {{ library_code }}</p>
+                    <button onclick="copyToClipboard('#p1')" style="border: none;background-color:
+                    transparent;color: #4A4141;font-weight: normal" class="code"><p class="code" style="margin-top: -10px">Код библиотеки:
+                        {{ library_code }}</p></button>
+
     </div>
     <div class="books-side" style="margin-top: 160px">
         <div>

@@ -1,9 +1,12 @@
 {% extends "base-table.html" %}
 {% block title_block %}Список изданий{% endblock %}
 {% block links %}<link rel="stylesheet" type="text/css" href="../static/css/popups.css">
-<link rel="stylesheet" type="text/css" href="../static/css/editionone.css">{% endblock %}
+<link rel="stylesheet" type="text/css" href="../static/css/editionone.css">
+
+{% endblock %}
 {% block codeinblock %}
-    <p class="code">Код библиотеки: {{ library_code }}</p>
+            <button onclick="copyToClipboard('#p1')" style="border: none;background-color: transparent;color: #4A4141;font-weight: normal" class="code"><p class="code" style="margin-top: -10px">Код библиотеки: {{ library_code }}</p></button>
+
 {% endblock %}
 {% block url %}
     {% if current_user.role_id == 1 %}
@@ -38,10 +41,24 @@
     }
 
     }
+    button{
+        outline: none;
+        cursor: pointer;
+    }
+    .block-abs-code:active, .block-abs-code:focus{
+        border: none;
+    }
+    .block-abs-code::-moz-focus-inner {
+   border: none;
+}
     </style>
-    <div class="block-abs-code">
-        <p class="code">Код библиотеки: {{ library_code }}</p>
-    </div>
+
+    <button onclick="copyToClipboard('#p1')" style="border: none;background-color:
+                    transparent;color: #584B4B;font-weight: 400;font-family: Comfortaa, cursive;font-size: 11px" class="block-abs-code">
+                <p class="code" style="margin-top: -10px">Код библиотеки:
+                    {{ library_code }}</p>
+<p id="p1" style="display: none">{{ library_code }}</p></button>
+
     <a href="/library/editions/create" class="link-create-edi">Добавить издание</a>
 
     <div class="flex-block" style="margin-left: 0">
@@ -110,4 +127,5 @@
             {{ markup(edition.id) }}
         {% endfor %}
     </div>
+
 {% endblock %}
