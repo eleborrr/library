@@ -217,9 +217,18 @@ def load_user(user_id):
 @app.route('/test_send_emails')
 @login_required
 def send_emails():
-    send_email(current_user, 1)
-    send_email(current_user, 2)
+    if app.debug:
+        send_email(current_user, 1)
+        send_email(current_user, 2)
     return 'Отправлено'
+
+
+@app.route('/test_confirm_email')
+@login_required
+def test_confirm_email():
+    if app.debug:
+        current_user.confirmed = True
+    return redirect('/library')
 
 
 @app.route('/confirm_email/<string:token>')
@@ -330,6 +339,19 @@ def sign_in():
                            login_form=login_form, tab_num=3)
 
 
+def confirm_email_decorator(func):
+    def new_func(*args, **kwargs):
+        try:
+            if current_user.confirmed:
+                return func(*args, **kwargs)
+            else:
+                return redirect('/confirm_email')
+        except AttributeError:
+            return func(*args, **kwargs)
+    return new_func
+
+
+@confirm_email_decorator
 @app.route('/borrow_book/<string:code>')
 def borrow_book(code):
     session = db_session.create_session()
@@ -375,9 +397,24 @@ def check_int_type(el):
     return el
 
 
+@app.route('/confirm_email')
+@login_required
+def confirm_email_message():
+    send_email(current_user, 1)
+    return render_template('confirm_email_message.html', current_user=current_user)
+
+
+@app.route('/change_password')
+@login_required
+def change_password_message():
+    send_email(current_user, 2)
+    return render_template('change_password_message.html', current_user=current_user)
+
+
 class LibraryView(FlaskView):
     @route('/books', methods=['GET', 'POST'])
     @route('/', methods=['GET', 'POST'])
+    @confirm_email_decorator
     @login_required
     def index(self):
         def markup(book_id_):
@@ -479,6 +516,7 @@ class LibraryView(FlaskView):
         #  У каждого есть возможность изменить свой профиль
         #  А у библиотекаря так же имя школы
 
+    @confirm_email_decorator
     @route('/editions', methods=['GET', 'POST'])
     @login_required
     def editions(self):
@@ -556,6 +594,7 @@ class LibraryView(FlaskView):
         #  У библиотекаря должна быть кнопка "Добавить книгу" (не "Добавить издание", слишком непонятно),
         #  добавляющее новое издание
 
+    @confirm_email_decorator
     @route('/editions/<int:edition_id>', methods=['GET', 'POST'])
     @login_required
     def edition(self, edition_id):
@@ -578,6 +617,7 @@ class LibraryView(FlaskView):
         # Так же библиотекарю доступна кнопка "Добавить книгу", добавляющая новую книгу этого издания,
         # и кнопка "список qr-кодов"
 
+    @confirm_email_decorator
     @route('/editions/create', methods=['GET', 'POST'])
     @login_required
     def create_edition(self):
@@ -610,6 +650,7 @@ class LibraryView(FlaskView):
             return redirect(f'/library/editions/{edition.id}')
         return render_template('create_edition_form.html', form=form, url_for=url_for)
 
+    @confirm_email_decorator
     @route('/books/<int:book_id>', methods=['GET'])
     @login_required
     def book(self, book_id):
@@ -630,6 +671,7 @@ class LibraryView(FlaskView):
         #  У библиотекаря есть такие же кнопки, как и рядом с каждой книгой в списке,
         #  А так же кнопка "Получить qr-код"
 
+    @confirm_email_decorator
     @route('/students', methods=['GET', 'POST'])
     @login_required
     def students(self):
@@ -685,6 +727,7 @@ class LibraryView(FlaskView):
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
 
+    @confirm_email_decorator
     @route('/profile', methods=['GET', 'POST'])
     @login_required
     def profile_main(self):
@@ -714,6 +757,7 @@ class LibraryView(FlaskView):
                     current_user.surname = student_form.surname.data
             return render_template('library_edit.html', form=student_form, current_user=current_user)
 
+    @confirm_email_decorator
     @route('/profile/<int:student_id>', methods=['GET', 'POST'])
     @login_required
     def profile(self, student_id):
@@ -732,6 +776,7 @@ class LibraryView(FlaskView):
         books = session.query(Book).filter(Book.owner_id == student_id).all()
         return render_template('profile.html', books=books, user=current_user)
 
+    @confirm_email_decorator
     @login_required
     @route('/delete_edition/<int:id>')
     def delete_edition(self, id):
@@ -746,6 +791,7 @@ class LibraryView(FlaskView):
         delete_edition(id)
         return redirect('/library/editions')
 
+    @confirm_email_decorator
     @login_required
     @route('/delete_book/<int:id>')
     def delete_book(self, id):
@@ -760,6 +806,7 @@ class LibraryView(FlaskView):
         delete_book(id)
         return redirect('/library/books')
 
+    @confirm_email_decorator
     @login_required
     @route('/add_book/<int:edition_id>')
     def add_book(self, edition_id):
@@ -776,6 +823,7 @@ class LibraryView(FlaskView):
                 abort(404, description="Издание не найдено")
         return redirect(f'/library/editions/{edition_id}')
 
+    @confirm_email_decorator
     @login_required
     @route('/give_book/<int:book_id>', methods=['GET', 'POST'])
     def give_book(self, book_id):
@@ -797,6 +845,7 @@ class LibraryView(FlaskView):
             return redirect('/library')
         return render_template('give_book.html', form=form, book=book)
 
+    @confirm_email_decorator
     @login_required
     @route('/join', methods=['GET', 'POST'])
     def join(self):
@@ -827,6 +876,7 @@ class LibraryView(FlaskView):
             return redirect('/library')
         return render_template('join.html', form=form)
 
+    @confirm_email_decorator
     @login_required
     @route('/return_book/<int:book_id>')
     def return_book(self, book_id):
@@ -843,6 +893,7 @@ class LibraryView(FlaskView):
         session.close()
         return redirect('/library')
 
+    @confirm_email_decorator
     @login_required
     @route('/delete_student/<int:student_id>')
     def delete_student(self, student_id):
@@ -858,7 +909,6 @@ class LibraryView(FlaskView):
         student.library_id = None
         session.commit()
         return redirect('/library/students')
-
 
 
 LibraryView.register(app)
