@@ -50,7 +50,7 @@ def edit_library(**kwargs):
         surname = StringField('Фамилия', validators=[DataRequired(), Length(max=32)], default=kwargs.get('surname'))
         students_join_possibility = BooleanField('Разрешить регистрацию', default=kwargs.get('students_join_possibility'))
         library_school_name = StringField('Наименование школы (полное)', validators=[DataRequired(), Length(max=64)],
-                                          default='library_school_name')
+                                          default=kwargs.get('library_school_name'))
         submit = SubmitField('Сохранить')
     return EditLibrary()
 
@@ -129,4 +129,12 @@ def give_book_form(students):
 class JoinLibraryForm(FlaskForm):
     id = StringField("Идентификатор библиотеки", validators=[DataRequired()])
     submit = SubmitField('Присоединиться')
+
+
+def edit_student_profile_form(**kwargs):
+    class EditStudentProfileForm(FlaskForm):
+        name = StringField('Ваше имя', default=kwargs['name'])
+        surname = StringField('Ваша фамилия', default=kwargs['surname'])
+        submit = SubmitField('Изменить')
+    return EditStudentProfileForm()
 

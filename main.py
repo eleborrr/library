@@ -685,28 +685,34 @@ class LibraryView(FlaskView):
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
 
-    @app.route('/profile', methods=['GET', 'POST'])
+    @route('/profile', methods=['GET', 'POST'])
     @login_required
     def profile_main(self):
         session = db_session.create_session()
         user = session.query(User).get(current_user.id)
         library = session.query(Library).get(current_user.library_id)
-        form = edit_library(**{'name': user.name, 'surname': user.surname, 'students_join_possibility': library.opened,
-                               'library_school_name': library.name})
+        library_form = edit_library(**{'name': user.name, 'surname': user.surname, 'students_join_possibility': library.opened,
+                               'library_school_name': library.school_name})
+        student_form = edit_student_profile_form(name=current_user.name, surname=current_user.surname)
         if user.role_id == 2:
-            return redirect('/library')
-        else:
-            if form.validate_on_submit():
-                if form.library_school_name.data:
-                    library.school_name = form.library_school_name.data
-                if form.students_join_possibility.data:
-                    library.opened = form.students_join_possibility.data
-                if form.name.data:
-                    user.name = form.name.data
-                if form.surname.data:
-                    user.surname = form.surname.data
+            if library_form.validate_on_submit():
+                if library_form.library_school_name.data:
+                    library.school_name = library_form.library_school_name.data
+                if library_form.students_join_possibility.data:
+                    library.opened = library_form.students_join_possibility.data
+                if library_form.name.data:
+                    user.name = library_form.name.data
+                if library_form.surname.data:
+                    user.surname = library_form.surname.data
                 session.commit()
-            return render_template('library_edit.html', form=form)
+            return render_template('library_edit.html', form=library_form, current_user=current_user)
+        else:
+            if student_form.validate_on_submit():
+                if student_form.name.data:
+                    current_user.name = student_form.name.data
+                if student_form.surname.data:
+                    current_user.surname = student_form.surname.data
+            return render_template('library_edit.html', form=student_form, current_user=current_user)
 
     @route('/profile/<int:student_id>', methods=['GET', 'POST'])
     @login_required

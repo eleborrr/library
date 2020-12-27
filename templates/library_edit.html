@@ -5,41 +5,60 @@
     <title>Title</title>
 </head>
 <body>
+<a href="/logout">Выйти</a>
 <form method="post">
     {{ form.hidden_tag() }}
     {{ form.crsf_token }}
+    {% if current_user.role_id == 2 %}
 
-    {{ form.name.label }}
-    {{ form.name() }}
-    {% for error in form.name.errors %}
-        <p class="alert alert-danger" role="alert">
-            {{ error }}
-        </p>
-    {% endfor %}
+        {{ form.name.label }}
+        {{ form.name() }}
+        {% for error in form.name.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
 
-    {{ form.surname.label }}
-    {{ form.surname() }}
-    {% for error in form.surname.errors %}
-        <p class="alert alert-danger" role="alert">
-            {{ error }}
-        </p>
-    {% endfor %}
+        {{ form.surname.label }}
+        {{ form.surname() }}
+        {% for error in form.surname.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
 
-    {{ form.library_school_name.label }}
-    {{ form.library_school_name() }}
-    {% for error in form.library_school_name.errors %}
-        <p class="alert alert-danger" role="alert">
-            {{ error }}
-        </p>
-    {% endfor %}
+        {{ form.library_school_name.label }}
+        {{ form.library_school_name() }}
+        {% for error in form.library_school_name.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
 
-    {{ form.students_join_possibility.label }}
-    {{ form.students_join_possibility() }}
-    {% for error in form.students_join_possibility.errors %}
-        <p class="alert alert-danger" role="alert">
-            {{ error }}
-        </p>
-    {% endfor %}
+        {{ form.students_join_possibility.label }}
+        {{ form.students_join_possibility() }}
+        {% for error in form.students_join_possibility.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    {% else %}
+        {{ form.name.label }}
+        {{ form.name() }}
+        {% for error in form.name.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+
+        {{ form.surname.label }}
+        {{ form.surname() }}
+        {% for error in form.surname.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    {% endif %}
 
     {{ form.submit() }}
 </form>
