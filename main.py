@@ -509,7 +509,7 @@ class LibraryView(FlaskView):
 
     #
     # без декоратора не открывается страница
-    @route('/editionss', methods=['GET', 'POST'])
+    @route('/editions', methods=['GET', 'POST'], strict_slashes=False)
     @login_required
     def editions(self):
         if current_user.role_id == 3:
@@ -580,7 +580,7 @@ class LibraryView(FlaskView):
             return redirect(final)
         library_code = session.query(Library).get(current_user.library_id).generate_id()
         return render_template('editions.html', editions=new_res, form=form, library_code=library_code, markup=markup,
-                               current_user=current_user)
+                               current_user=current_user, url_for=url_for)
         #  Эта вкладка доступна всем членам библиотеки
         #  Здесь будет находиться список всех изданий (editions)
         #  Под списком изданий понимается список ссылок на library/edition/{edition_id}
@@ -668,7 +668,7 @@ class LibraryView(FlaskView):
         #  А так же кнопка "Получить qr-код"
 
     # @confirm_email_decorator
-    @route('/studentss', methods=['GET', 'POST'])
+    @route('/students', methods=['GET', 'POST'], strict_slashes=False)
     @login_required
     def students(self):
         if current_user.role_id == 3:

@@ -1,11 +1,17 @@
 {% extends "base-table.html" %}
 {% block title_block %}Список изданий{% endblock %}
-{% block links %}<link rel="stylesheet" type="text/css" href="../static/css/popups.css">
-<link rel="stylesheet" type="text/css" href="../static/css/editionone.css">
+{% block links %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/popups.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/editionone.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/library.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/library-page.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/lybrary-table.css') }}">
 
 {% endblock %}
 {% block codeinblock %}
-            <button onclick="copyToClipboard('#p1')" style="border: none;background-color: transparent;color: #4A4141;font-weight: normal" class="code"><p class="code" style="margin-top: -10px">Код библиотеки: {{ library_code }}</p></button>
+    <button onclick="copyToClipboard('#p1')"
+            style="border: none;background-color: transparent;color: #4A4141;font-weight: normal" class="code"><p
+            class="code" style="margin-top: -10px">Код библиотеки: {{ library_code }}</p></button>
 
 {% endblock %}
 {% block url %}
@@ -19,46 +25,52 @@
 
     <link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
     <style>
-    a.link-create-edi {
-        margin-top: 155px;
-        margin-left: 40px;
-        font-size: calc(10px + 5 * (100vw / 1280));
-        display: block;
+        a.link-create-edi {
+            margin-top: 155px;
+            margin-left: 40px;
+            font-size: calc(10px + 5 * (100vw / 1280));
+            display: block;
 
-        border-radius: 3px;
+            border-radius: 3px;
 
-        padding: 5px;
-        text-decoration: none;
-        max-width: 165px;
-        align-content: center;
-        color: #4A4141;
-    }
-    .izd-item{
-        padding: 10px;
-    }
-    @media(max-width: 767px) {
-    .link-create-edi{
-        margin-top: 200px;
-    }
+            padding: 5px;
+            text-decoration: none;
+            max-width: 165px;
+            align-content: center;
+            color: #4A4141;
+        }
 
-    }
-    button{
-        outline: none;
-        cursor: pointer;
-    }
-    .block-abs-code:active, .block-abs-code:focus{
-        border: none;
-    }
-    .block-abs-code::-moz-focus-inner {
-   border: none;
-}
+        .izd-item {
+            padding: 10px;
+        }
+
+        @media (max-width: 767px) {
+            .link-create-edi {
+                margin-top: 200px;
+            }
+
+        }
+
+        button {
+            outline: none;
+            cursor: pointer;
+        }
+
+        .block-abs-code:active, .block-abs-code:focus {
+            border: none;
+        }
+
+        .block-abs-code::-moz-focus-inner {
+            border: none;
+        }
     </style>
 
     <button onclick="copyToClipboard('#p1')" style="border: none;background-color:
-                    transparent;color: #584B4B;font-weight: 400;font-family: Comfortaa, cursive;font-size: 11px" class="block-abs-code">
-                <p class="code" style="margin-top: -10px">Код библиотеки:
-                    {{ library_code }}</p>
-<p id="p1" style="display: none">{{ library_code }}</p></button>
+                    transparent;color: #584B4B;font-weight: 400;font-family: Comfortaa, cursive;font-size: 11px"
+            class="block-abs-code">
+        <p class="code" style="margin-top: -10px">Код библиотеки:
+            {{ library_code }}</p>
+        <p id="p1" style="display: none">{{ library_code }}</p></button>
 
     <a href="/library/editions/create" class="link-create-edi">Добавить издание</a>
 
@@ -111,11 +123,12 @@
             </div>
             {% for edition in editions %}
                 <div class="izd-item" style="max-width: 100%">
-                    <img alt="" src="../static/img/editions/{{ edition.photo_name }}" style="max-width: 100px;border-radius: 3px">
+                    <img alt="" src="../../static/img/editions/{{ edition.photo_name }}"
+                         style="max-width: 100px;border-radius: 3px">
                     <a href="/library/editions/{{ edition.id }}" class="ed-name">{{ edition.name }}</a>
                     <span>Литература</span>
                     <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
-{#                    <input type="submit" name="delete-edition" class='link-izd' href='/library' value="Удалить">#}
+                    {#                    <input type="submit" name="delete-edition" class='link-izd' href='/library' value="Удалить">#}
                     {% if current_user.role_id == 2 %}
                         <a class="link-izd" href='#popup_edition_{{ edition.id }}'>Удалить</a>
                     {% endif %}
