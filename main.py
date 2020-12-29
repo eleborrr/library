@@ -182,7 +182,7 @@ def get_user_by_token(token, session):
 
 @app.errorhandler(401)
 def error_401(er):
-    return redirect('/sign_in#tab_03')
+    return redirect('/sign_in#tab_03'), 401
 
 
 #
@@ -196,7 +196,7 @@ def error_401(er):
 def error_404(er):
     if er.description == 'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.':
         er.description = 'Страница не найдена'
-    return render_template('404.html', msg=er.description, url_for=url_for)
+    return render_template('404.html', msg=er.description, url_for=url_for), 404
 
 
 #
@@ -353,6 +353,11 @@ def confirm_email_decorator(func):
     return new_func
 
 
+@app.route('/fuck')
+def fuck():
+    print(app.url_map)
+    return 'fuck'
+
 # @confirm_email_decorator
 @app.route('/borrow_book/<string:code>', methods=["GET", "POST"])
 def borrow_book(code):
@@ -400,7 +405,6 @@ def change_password_message():
 class LibraryView(FlaskView):
     @route('/books', methods=['GET', 'POST'])
     @route('/', methods=['GET', 'POST'])
-    # @confirm_email_decorator
     @login_required
     def index(self):
         def markup(book_id_):
@@ -505,7 +509,7 @@ class LibraryView(FlaskView):
 
     #
     # без декоратора не открывается страница
-    @route('/editions', methods=['GET', 'POST'])
+    @route('/editionss', methods=['GET', 'POST'])
     @login_required
     def editions(self):
         if current_user.role_id == 3:
@@ -664,7 +668,7 @@ class LibraryView(FlaskView):
         #  А так же кнопка "Получить qr-код"
 
     # @confirm_email_decorator
-    @route('/students', methods=['GET', 'POST'])
+    @route('/studentss', methods=['GET', 'POST'])
     @login_required
     def students(self):
         if current_user.role_id == 3:
@@ -904,8 +908,8 @@ class LibraryView(FlaskView):
         return redirect('/library/students')
 
 
-LibraryView.register(app)
+LibraryView.register(app, '/library')
 
 if __name__ == '__main__':
     # db_session.global_init('db/library.sqlite3')
-    app.run(debug=True)
+    app.run()
