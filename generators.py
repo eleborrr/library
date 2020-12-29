@@ -8,7 +8,7 @@ import base64
 
 
 def _create_qrcode(book_code, id_):
-    img = qrcode.make(f'http://mylibby.ru/borrow_book/{book_code}')
+    img = qrcode.make(f'http://127.0.0.1:5000/borrow_book/{book_code}')
     img = img.resize((165, 165))
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype('static/fonts/qr_font.ttf', 16)
