@@ -25,16 +25,21 @@
 
         <h1>Библио</h1>
         {% block url %}{% endblock %}
+        {% if current_user.role_id == 1 %}
+            <a href='/library/books?owner_id={{ current_user.id }}' class="link-menu abs">Мои книги</a>
+        {% elif current_user.role_id == 2 %}
+            <a href='/library/students' class="link-menu abs">Ученики</a>
+        {% endif %}
 
         <a href='/library/books' class="link-menu">Книги</a>
 
         <a href='/library/editions' class="link-menu">Издания</a>
         {% if current_user.role_id == 2 %}
-        <a href='/library/profile' class="link-menu" style="font-size: 12px; margin-top: 40px">Настройка
-            библиотеки</a>
+            <a href='/library/profile' class="link-menu" style="font-size: 12px; margin-top: 40px">Настройка
+                библиотеки</a>
         {% else %}
             <a href='/library/profile' class="link-menu" style="font-size: 12px; margin-top: 40px">Настройка
-            профиля</a>
+                профиля</a>
         {% endif %}
 
     </div>
@@ -64,13 +69,13 @@
     if (hr.length === 2)
         document.location.href = hr[0];
 
-   function copyToClipboard(element) {
-  var $temp = $("<input>");
-  $("body").append($temp);
-  $temp.val($(element).text()).select();
-  document.execCommand("copy");
-  $temp.remove();
-}
+    function copyToClipboard(element) {
+        var $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val($(element).text()).select();
+        document.execCommand("copy");
+        $temp.remove();
+    }
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 </html>
