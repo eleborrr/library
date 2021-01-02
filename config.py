@@ -13,3 +13,4 @@ class AppConfig:
     MAIL_PASSWORD = 'TestIsCool1'
     MAIL_DEFAULT_SENDER = 'Mr Test'
     UPLOAD_FOLDER = 'static/img'
+    DEBUG = True

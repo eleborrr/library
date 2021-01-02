@@ -30,10 +30,11 @@
         {% elif current_user.role_id == 2 %}
             <a href='/library/students' class="link-menu abs">Ученики</a>
         {% endif %}
-
+        {% if current_user.role_id in [1, 2] %}
         <a href='/library/books' class="link-menu">Книги</a>
 
         <a href='/library/editions' class="link-menu">Издания</a>
+        {% endif %}
         {% if current_user.role_id == 2 %}
             <a href='/library/profile' class="link-menu" style="font-size: 12px; margin-top: 40px">Настройка
                 библиотеки</a>

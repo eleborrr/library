@@ -19,6 +19,7 @@ import os
 app = Flask(__name__)
 login_manager = LoginManager(app)
 app.config.from_object(AppConfig)
+print(app.config['DEBUG'])
 mail = Mail(app)
 
 if __name__ != 'tests.py':
@@ -225,9 +226,13 @@ def send_emails():
 
 @app.route('/test_confirm_email')
 @login_required
-def test_confirm_email():
-    if app.debug:
-        current_user.confirmed = True
+def confirm_email_():
+    print(app.config.get('DEBUG'))
+    session = db_session.create_session()
+    us = session.query(User).get(current_user.id)
+    us.confirmed = 1
+    session.commit()
+    session.close()
     return redirect('/library')
 
 
@@ -353,12 +358,7 @@ def confirm_email_decorator(func):
     return new_func
 
 
-@app.route('/fuck')
-def fuck():
-    print(app.url_map)
-    return 'fuck'
-
-# @confirm_email_decorator
+@confirm_email_decorator
 @app.route('/borrow_book/<string:code>', methods=["GET", "POST"])
 def borrow_book(code):
     session = db_session.create_session()
@@ -406,6 +406,7 @@ class LibraryView(FlaskView):
     @route('/books', methods=['GET', 'POST'])
     @route('/', methods=['GET', 'POST'])
     @login_required
+    @confirm_email_decorator
     def index(self):
         def markup(book_id_):
             string = f"""<div class='popup' id='popup_book_{book_id_}'>
@@ -511,6 +512,7 @@ class LibraryView(FlaskView):
     # без декоратора не открывается страница
     @route('/editions', methods=['GET', 'POST'], strict_slashes=False)
     @login_required
+    @confirm_email_decorator
     def editions(self):
         if current_user.role_id == 3:
             return redirect('/library/join')
@@ -591,6 +593,7 @@ class LibraryView(FlaskView):
     # косяк
     @route('/editions/<int:edition_id>', methods=['GET', 'POST'])
     @login_required
+    @confirm_email_decorator
     def edition(self, edition_id):
         if current_user.role_id == 3:
             return redirect('/library/join')
@@ -615,6 +618,7 @@ class LibraryView(FlaskView):
     # Тут косяк с декоратором
     @route('/editions/create', methods=['GET', 'POST'])
     @login_required
+    @confirm_email_decorator
     def create_edition(self):
         if current_user.role_id != 2:
             return redirect('/library')
@@ -649,6 +653,7 @@ class LibraryView(FlaskView):
     # косяк
     @route('/books/<int:book_id>', methods=['GET'])
     @login_required
+    @confirm_email_decorator
     def book(self, book_id):
         if current_user.role_id == 3:
             return redirect('/library/join')
@@ -667,7 +672,7 @@ class LibraryView(FlaskView):
         #  У библиотекаря есть такие же кнопки, как и рядом с каждой книгой в списке,
         #  А так же кнопка "Получить qr-код"
 
-    # @confirm_email_decorator
+    @confirm_email_decorator
     @route('/students', methods=['GET', 'POST'], strict_slashes=False)
     @login_required
     def students(self):
@@ -723,7 +728,7 @@ class LibraryView(FlaskView):
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
 
-    # @confirm_email_decorator
+    @confirm_email_decorator
     @route('/profile', methods=['GET', 'POST'])
     @login_required
     def profile_main(self):
@@ -754,7 +759,7 @@ class LibraryView(FlaskView):
                     current_user.surname = student_form.surname.data
             return render_template('library_edit.html', form=student_form, current_user=current_user)
 
-    # @confirm_email_decorator
+    @confirm_email_decorator
     @route('/profile/<int:student_id>', methods=['GET', 'POST'])
     @login_required
     def profile(self, student_id):
@@ -773,7 +778,7 @@ class LibraryView(FlaskView):
         books = session.query(Book).filter(Book.owner_id == student_id).all()
         return render_template('profile.html', books=books, user=current_user)
 
-    # @confirm_email_decorator
+    @confirm_email_decorator
     @login_required
     @route('/delete_edition/<int:id>')
     def delete_edition(self, id):
@@ -788,7 +793,7 @@ class LibraryView(FlaskView):
         delete_edition(id)
         return redirect('/library/editions')
 
-    # @confirm_email_decorator
+    @confirm_email_decorator
     @login_required
     @route('/delete_book/<int:id>')
     def delete_book(self, id):
@@ -803,7 +808,7 @@ class LibraryView(FlaskView):
         delete_book(id)
         return redirect('/library/books')
 
-    # @confirm_email_decorator
+    @confirm_email_decorator
     @login_required
     @route('/add_book/<int:edition_id>')
     def add_book(self, edition_id):
@@ -820,7 +825,7 @@ class LibraryView(FlaskView):
                 abort(404, description="Издание не найдено")
         return redirect(f'/library/editions/{edition_id}')
 
-    # @confirm_email_decorator
+    @confirm_email_decorator
     @login_required
     @route('/give_book/<int:book_id>', methods=['GET', 'POST'])
     def give_book(self, book_id):
@@ -842,7 +847,7 @@ class LibraryView(FlaskView):
             return redirect('/library')
         return render_template('give_book.html', form=form, book=book)
 
-    # @confirm_email_decorator
+    @confirm_email_decorator
     @login_required
     @route('/join', methods=['GET', 'POST'])
     def join(self):
@@ -873,7 +878,7 @@ class LibraryView(FlaskView):
             return redirect('/library')
         return render_template('join.html', form=form)
 
-    # @confirm_email_decorator
+    @confirm_email_decorator
     @login_required
     @route('/return_book/<int:book_id>')
     def return_book(self, book_id):
@@ -890,7 +895,7 @@ class LibraryView(FlaskView):
         session.close()
         return redirect('/library')
 
-    # @confirm_email_decorator
+    @confirm_email_decorator
     @login_required
     @route('/delete_student/<int:student_id>')
     def delete_student(self, student_id):
@@ -912,4 +917,5 @@ LibraryView.register(app, '/library')
 
 if __name__ == '__main__':
     # db_session.global_init('db/library.sqlite3')
+    app.config.from_object(AppConfig)
     app.run()
