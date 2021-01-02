@@ -345,20 +345,6 @@ def sign_in():
                            login_form=login_form, tab_num=3)
 
 
-def confirm_email_decorator(func):
-    def new_func(*args, **kwargs):
-        try:
-            if current_user.confirmed:
-                return func(*args, **kwargs)
-            else:
-                return redirect('/confirm_email')
-        except AttributeError:
-            return func(*args, **kwargs)
-
-    return new_func
-
-
-@confirm_email_decorator
 @app.route('/borrow_book/<string:code>', methods=["GET", "POST"])
 def borrow_book(code):
     session = db_session.create_session()
@@ -403,11 +389,12 @@ def change_password_message():
 
 
 class LibraryView(FlaskView):
-    @route('/books', methods=['GET', 'POST'])
+    @route('/books', methods=['GET', 'POST'], strict_slashes=False)
     @route('/', methods=['GET', 'POST'])
     @login_required
-    @confirm_email_decorator
     def index(self):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         def markup(book_id_):
             string = f"""<div class='popup' id='popup_book_{book_id_}'>
             <a class="popup__area" href='#header'></a>
@@ -512,8 +499,9 @@ class LibraryView(FlaskView):
     # без декоратора не открывается страница
     @route('/editions', methods=['GET', 'POST'], strict_slashes=False)
     @login_required
-    @confirm_email_decorator
     def editions(self):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         if current_user.role_id == 3:
             return redirect('/library/join')
 
@@ -593,10 +581,11 @@ class LibraryView(FlaskView):
     # косяк
     @route('/editions/<int:edition_id>', methods=['GET', 'POST'])
     @login_required
-    @confirm_email_decorator
     def edition(self, edition_id):
         if current_user.role_id == 3:
             return redirect('/library/join')
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         edition = session.query(Edition).get(edition_id)
         if not edition:
@@ -618,10 +607,11 @@ class LibraryView(FlaskView):
     # Тут косяк с декоратором
     @route('/editions/create', methods=['GET', 'POST'])
     @login_required
-    @confirm_email_decorator
     def create_edition(self):
         if current_user.role_id != 2:
             return redirect('/library')
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         form = CreateEdition()
         if form.validate_on_submit():
@@ -653,10 +643,11 @@ class LibraryView(FlaskView):
     # косяк
     @route('/books/<int:book_id>', methods=['GET'])
     @login_required
-    @confirm_email_decorator
     def book(self, book_id):
         if current_user.role_id == 3:
             return redirect('/library/join')
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         book = session.query(Book).get(book_id)
         # print(book.owner)
@@ -672,12 +663,13 @@ class LibraryView(FlaskView):
         #  У библиотекаря есть такие же кнопки, как и рядом с каждой книгой в списке,
         #  А так же кнопка "Получить qr-код"
 
-    @confirm_email_decorator
     @route('/students', methods=['GET', 'POST'], strict_slashes=False)
     @login_required
     def students(self):
         if current_user.role_id == 3:
             return redirect('/library/join')
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
         if current_user.role_id != librarian_role.id:
@@ -728,10 +720,11 @@ class LibraryView(FlaskView):
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
 
-    @confirm_email_decorator
     @route('/profile', methods=['GET', 'POST'])
     @login_required
     def profile_main(self):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         user = session.query(User).get(current_user.id)
         library = session.query(Library).get(current_user.library_id)
@@ -759,10 +752,11 @@ class LibraryView(FlaskView):
                     current_user.surname = student_form.surname.data
             return render_template('library_edit.html', form=student_form, current_user=current_user)
 
-    @confirm_email_decorator
     @route('/profile/<int:student_id>', methods=['GET', 'POST'])
     @login_required
     def profile(self, student_id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         student_role = session.query(Role).filter(Role.name == 'Student').first()
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
@@ -778,10 +772,11 @@ class LibraryView(FlaskView):
         books = session.query(Book).filter(Book.owner_id == student_id).all()
         return render_template('profile.html', books=books, user=current_user)
 
-    @confirm_email_decorator
     @login_required
     @route('/delete_edition/<int:id>')
     def delete_edition(self, id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         if current_user.role_id != 2:
             return abort(403, description="Эта функция доступна только библиотекарю")
@@ -793,10 +788,11 @@ class LibraryView(FlaskView):
         delete_edition(id)
         return redirect('/library/editions')
 
-    @confirm_email_decorator
     @login_required
     @route('/delete_book/<int:id>')
     def delete_book(self, id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         if current_user.role_id != 2:
             return abort(403, description="Эта функция доступна только библиотекарю")
@@ -808,10 +804,11 @@ class LibraryView(FlaskView):
         delete_book(id)
         return redirect('/library/books')
 
-    @confirm_email_decorator
     @login_required
     @route('/add_book/<int:edition_id>')
     def add_book(self, edition_id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         if current_user.role_id == 2:
             session = db_session.create_session()
             ed = session.query(Edition).get(edition_id)
@@ -825,10 +822,11 @@ class LibraryView(FlaskView):
                 abort(404, description="Издание не найдено")
         return redirect(f'/library/editions/{edition_id}')
 
-    @confirm_email_decorator
     @login_required
     @route('/give_book/<int:book_id>', methods=['GET', 'POST'])
     def give_book(self, book_id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         book = session.query(Book).get(book_id)
         if not book:
@@ -847,10 +845,11 @@ class LibraryView(FlaskView):
             return redirect('/library')
         return render_template('give_book.html', form=form, book=book)
 
-    @confirm_email_decorator
     @login_required
     @route('/join', methods=['GET', 'POST'])
     def join(self):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         if current_user.role_id != 3:
             return redirect('/library')
         form = JoinLibraryForm()
@@ -878,10 +877,11 @@ class LibraryView(FlaskView):
             return redirect('/library')
         return render_template('join.html', form=form)
 
-    @confirm_email_decorator
     @login_required
     @route('/return_book/<int:book_id>')
     def return_book(self, book_id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         if current_user.role_id != 2:
             return abort(403, description="Данная функция доступна лишь библиотекарю")
@@ -895,10 +895,11 @@ class LibraryView(FlaskView):
         session.close()
         return redirect('/library')
 
-    @confirm_email_decorator
     @login_required
     @route('/delete_student/<int:student_id>')
     def delete_student(self, student_id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         if current_user.role_id != 2:
             return abort(403, description='Эта функция достурна лишь библиотекарю')
         session = db_session.create_session()
