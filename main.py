@@ -272,7 +272,7 @@ def logout():
 @app.before_first_request
 def create_roles():
     session = db_session.create_session()
-    roles = ['Student', 'Librarian', 'StudentWithoutLibrary']
+    roles = ['Student', 'Librarian', 'StudentWithoutLibrary', 'Waiter']
     for i in session.query(Role).all():
         roles.remove(i.name)
     for i in roles:
@@ -863,7 +863,7 @@ class LibraryView(FlaskView):
                     if i.opened:
                         us = session.query(User).get(current_user.id)
                         us.library_id = i.id
-                        us.role_id = 1
+                        us.role_id = 4
                         print(current_user.role_id)
                         print(current_user.login)
                         session.commit()
@@ -912,6 +912,23 @@ class LibraryView(FlaskView):
         student.library_id = None
         session.commit()
         return redirect('/library/students')
+
+    @login_required
+    @route('/wait', methods=['GET', 'POST'])
+    def wait(self):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
+        if current_user.role_id != 4:
+            return redirect('/library')
+        if request.method == 'POST':
+            session = db_session.create_session()
+            us = session.query(User).get(current_user.id)
+            us.library_id = None
+            us.role_id = 3
+            session.commit()
+            session.close()
+            return redirect('/library/join')
+        return render_template('waiting.html')
 
 
 LibraryView.register(app, '/library')

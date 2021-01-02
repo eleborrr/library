@@ -39,8 +39,6 @@ class RegisterStudentForm(FlaskForm):
     email = EmailField('Адрес электронной почты', validators=[DataRequired(), Length(max=64)])
     password = PasswordField('Пароль', validators=[DataRequired(), Length(max=128)])
     repeat = PasswordField('Повторите пароль', validators=[DataRequired(), Length(max=128)])
-    class_num = IntegerField('Номер класса, в котором вы учитесь', validators=[DataRequired(),
-                                                                               NumberRange(min=1, max=11)])
     submit = SubmitField('Зарегистрироваться')
 
 
