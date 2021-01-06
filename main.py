@@ -901,7 +901,7 @@ class LibraryView(FlaskView):
         if not current_user.confirmed:
             return redirect('/confirm_email')
         if current_user.role_id != 2:
-            return abort(403, description='Эта функция достурна лишь библиотекарю')
+            return abort(403, description='Эта функция доступна лишь библиотекарю')
         session = db_session.create_session()
         student = session.query(User).get(student_id)
         if not student:
