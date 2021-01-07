@@ -38,7 +38,6 @@ def confirm_token(token, expiration=3600):
             salt=app.config['SECURITY_PASSWORD_SALT'],
             max_age=expiration
         )
-        print(email)
     except Exception:
         return False
     return email
@@ -69,13 +68,8 @@ def create_library(school_name, **librarian_data):  # login, name, surname, pass
     session.add(lib)
     session.commit()
     role_id = session.query(Role).filter(Role.name == 'Librarian').first().id
-    user = User(**librarian_data, role_id=role_id, library_id=lib.id,
-                class_num=None)
+    user = User(**librarian_data, role_id=role_id, library_id=lib.id)
     session.add(user)
-    try:
-        login_user(user)
-    except Exception:
-        pass
     session.commit()
     session.close()
 
@@ -122,18 +116,13 @@ def return_book(book_id):
     session.close()
 
 
-def register_student(name, surname, login, password, library_id, class_num):
+def register_student(name, surname, login, password, library_id):
     session = db_session.create_session()
-    ex_user = session.query(User).filter(User.login == login).first()
-    role_id = session.query(Role).filter(Role.name == 'StudentWithoutLibrary').first().id
-    if not ex_user:
-        us = User(name=name, surname=surname, password=password, role_id=role_id, library_id=library_id,
-                  class_num=class_num, login=login)
-        session.add(us)
-        try:
-            login_user(us)
-        except Exception:
-            pass
+    role_id = session.query(Role).filter(Role.name == 'Student').first().id
+    us = User(name=name, surname=surname, password=password, role_id=role_id, library_id=library_id,
+              login=login)
+    session.add(us)
+
     session.commit()
     session.close()
 
@@ -178,6 +167,13 @@ def get_user_by_token(token, session):
     email = confirm_token(token)
     user = session.query(User).filter(User.login == email).first()
     return user
+
+
+def validate_student_email(email):
+    allowed = ['edu.tatar.ru']
+    if email.split('@')[1] in allowed:
+        return 1
+    return 0
 
 
 @app.errorhandler(401)
@@ -267,14 +263,13 @@ def logout():
 @app.before_first_request
 def create_roles():
     session = db_session.create_session()
-    roles = ['Student', 'Librarian', 'StudentWithoutLibrary']
+    roles = ['Student', 'Librarian']
     for i in session.query(Role).all():
         roles.remove(i.name)
     for i in roles:
         role = Role()
         role.name = i
         session.add(role)
-    # print(session.query(Library).get(1).generate_id())
     session.commit()
     session.close()
 
@@ -309,7 +304,7 @@ def sign_in():
                        name=library_form.name.data,
                        surname=library_form.surname.data,
                        password=library_form.password.data)
-        return redirect('/library')
+        return redirect('/sign_in#tab_03')
     if register_form.validate_on_submit():
         ex = session.query(User).filter(User.login == register_form.email.data).first()
         if ex:
@@ -322,10 +317,22 @@ def sign_in():
             # обработать и другие символы
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                                    login_form=login_form, tab_num=2, msg2="Недопустимые символы в имени пользователя")
+        for i in session.query(Library).all():
+            if i.string_id == register_form.library.data:
+                id_ = i.id
+                break
+        else:
+            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                                   login_form=login_form, tab_num=2,
+                                   msg2="Указан недействительный идентификатор библиотеки")
+        val = validate_student_email(register_form.email.data)
+        if not val:
+            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+                                   login_form=login_form, tab_num=2,
+                                   msg2="Регистрация должна осуществляться через почту электронного образования")
         register_student(register_form.name.data, register_form.surname.data, register_form.email.data,
-                         register_form.password.data, None,
-                         register_form.class_num.data)
-        return redirect('/library')
+                         register_form.password.data, id_)
+        return redirect('/sign_in#tab_03')
     if login_form.validate_on_submit():
         us = session.query(User).filter(User.login == login_form.email.data).first()
         if not us:
@@ -353,11 +360,6 @@ def confirm_email_decorator(func):
     return new_func
 
 
-@app.route('/fuck')
-def fuck():
-    print(app.url_map)
-    return 'fuck'
-
 # @confirm_email_decorator
 @app.route('/borrow_book/<string:code>', methods=["GET", "POST"])
 def borrow_book(code):
@@ -369,7 +371,6 @@ def borrow_book(code):
     else:
         return abort(404, description='Неверный идентификатор книги')  # Шаблон с сообщением в центре экрана
     form = BorrowBookForm()
-    print(current_user.role_id)
     if form.validate_on_submit() and current_user.is_authenticated:
         if current_user.library_id == cur_book.edition.library_id:
             lend_book(current_user.id, cur_book.id)
@@ -377,7 +378,8 @@ def borrow_book(code):
         else:
             return render_template('message.html',
                                    msg='Эта книга принадлежит другой библиотеке!')  # отнеси ее туда, не будь говнюком
-    return render_template('borrow_book.html', msg='У этой книги нет владельца', form=form, book=cur_book, owner=cur_book.owner, cur_user=current_user)
+    return render_template('borrow_book.html', msg='У этой книги нет владельца', form=form, book=cur_book,
+                           owner=cur_book.owner, cur_user=current_user)
 
 
 def check_int_type(el):
@@ -427,8 +429,6 @@ class LibraryView(FlaskView):
         </div>"""
             return Markup(string)
 
-        if current_user.role_id == 3:
-            return redirect('/library/join')
         session = db_session.create_session()
         id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
         publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
@@ -459,7 +459,6 @@ class LibraryView(FlaskView):
             kwargs['owner_id'] = owner_id
         result = query.all()
         new_res = []
-        print(result)
         for i in result:
             flag = True
             if name:
@@ -512,8 +511,6 @@ class LibraryView(FlaskView):
     @route('/editions', methods=['GET', 'POST'], strict_slashes=False)
     @login_required
     def editions(self):
-        if current_user.role_id == 3:
-            return redirect('/library/join')
 
         def markup(edition_id):
             string = f"""<div class='popup' id='popup_edition_{edition_id}'>
@@ -592,8 +589,6 @@ class LibraryView(FlaskView):
     @route('/editions/<int:edition_id>', methods=['GET', 'POST'])
     @login_required
     def edition(self, edition_id):
-        if current_user.role_id == 3:
-            return redirect('/library/join')
         session = db_session.create_session()
         edition = session.query(Edition).get(edition_id)
         if not edition:
@@ -650,11 +645,8 @@ class LibraryView(FlaskView):
     @route('/books/<int:book_id>', methods=['GET'])
     @login_required
     def book(self, book_id):
-        if current_user.role_id == 3:
-            return redirect('/library/join')
         session = db_session.create_session()
         book = session.query(Book).get(book_id)
-        # print(book.owner)
         if not book:
             return abort(404, description='Книга не найдена')
         if book.edition.library_id != current_user.library_id:
@@ -671,8 +663,6 @@ class LibraryView(FlaskView):
     @route('/students', methods=['GET', 'POST'], strict_slashes=False)
     @login_required
     def students(self):
-        if current_user.role_id == 3:
-            return redirect('/library/join')
         session = db_session.create_session()
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
         if current_user.role_id != librarian_role.id:
@@ -683,20 +673,12 @@ class LibraryView(FlaskView):
         kwargs = {
             'id': '',
             'surname': '',
-            'class_num': '',
-            'class_letter': ''
         }
         query = session.query(User).join(Role).filter(User.library_id == current_user.library_id,
                                                       Role.name == 'Student')
         if id_:
             query = query.filter(User.id == check_int_type(id_))
             kwargs['id'] = id_
-        if class_num:
-            query = query.filter(User.class_num == check_int_type(class_num))
-            kwargs['author'] = class_num
-        if class_letter:
-            query = query.filter(User.class_letter in [class_letter.lower(), class_letter.upper()])
-            kwargs['class_letter'] = class_letter
 
         result = query.all()
         new_res = []
@@ -746,7 +728,8 @@ class LibraryView(FlaskView):
                     user.surname = library_form.surname.data
                 session.commit()
             library_code = session.query(Library).get(current_user.library_id).generate_id()
-            return render_template('library_edit.html', form=library_form, current_user=current_user, library_code=library_code)
+            return render_template('library_edit.html', form=library_form, current_user=current_user,
+                                   library_code=library_code)
         else:
             if student_form.validate_on_submit():
                 if student_form.name.data:
@@ -845,36 +828,6 @@ class LibraryView(FlaskView):
             return redirect('/library')
         return render_template('give_book.html', form=form, book=book)
 
-    # @confirm_email_decorator
-    @login_required
-    @route('/join', methods=['GET', 'POST'])
-    def join(self):
-        if current_user.role_id != 3:
-            return redirect('/library')
-        form = JoinLibraryForm()
-        if form.validate_on_submit():
-            id_ = form.id.data
-            session = db_session.create_session()
-            library = session.query(Library).all()
-            for i in library:
-                print(i.string_id)
-                if i.string_id == id_:
-                    if i.opened:
-                        us = session.query(User).get(current_user.id)
-                        us.library_id = i.id
-                        us.role_id = 1
-                        print(current_user.role_id)
-                        print(current_user.login)
-                        session.commit()
-                        session.close()
-                        break
-                    else:
-                        return render_template('join.html', form=form,
-                                               message='Доступ к этой библиотеке закрыт, обратитесь к библиотекарю')
-            else:
-                return render_template('join.html', form=form, message='Неизвестный идентификатор')
-            return redirect('/library')
-        return render_template('join.html', form=form)
 
     # @confirm_email_decorator
     @login_required
@@ -898,7 +851,7 @@ class LibraryView(FlaskView):
     @route('/delete_student/<int:student_id>')
     def delete_student(self, student_id):
         if current_user.role_id != 2:
-            return abort(403, description='Эта функция достурна лишь библиотекарю')
+            return abort(403, description='Эта функция доступна лишь библиотекарю')
         session = db_session.create_session()
         student = session.query(User).get(student_id)
         if not student:

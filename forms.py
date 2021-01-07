@@ -39,8 +39,7 @@ class RegisterStudentForm(FlaskForm):
     email = EmailField('Адрес электронной почты', validators=[DataRequired(), Length(max=64)])
     password = PasswordField('Пароль', validators=[DataRequired(), Length(max=128)])
     repeat = PasswordField('Повторите пароль', validators=[DataRequired(), Length(max=128)])
-    class_num = IntegerField('Номер класса, в котором вы учитесь', validators=[DataRequired(),
-                                                                               NumberRange(min=1, max=11)])
+    library = StringField('Идентификатор библиотеки', validators=[DataRequired()])
     submit = SubmitField('Зарегистрироваться')
 
 
@@ -106,8 +105,6 @@ def student_filter_form(**kwargs):
     class StudentFilterForm(FlaskForm):
         id = OptionalIntegerField('Номер ученика', default=kwargs['id'])
         surname = StringField('Фамилия ученика', default=kwargs['surname'])
-        class_num = OptionalIntegerField('Номер класса ученика', default=kwargs['class_num'])
-        class_letter = StringField('Литера класса ученика', default=kwargs['class_letter'])
         submit = SubmitField('Искать')
 
     return StudentFilterForm()

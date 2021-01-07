@@ -37,21 +37,6 @@
                         </p>
                     {% endfor %}
 
-                    {{ form.class_num(placeholder='11', class='int-search') }}
-                    {{ form.class_num.label(class='text-search') }}<br>
-                    {% for error in form.class_num.errors %}
-                        <p class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </p>
-                    {% endfor %}
-
-                    {{ form.class_letter(placeholder='Г', class='int-search') }}
-                    {{ form.class_letter.label(class='text-search') }}<br>
-                    {% for error in form.class_letter.errors %}
-                        <p class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </p>
-                    {% endfor %}
 
                     {{ form.submit(class='link-search') }}
                     {% for error in form.submit.errors %}
