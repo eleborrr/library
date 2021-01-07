@@ -374,7 +374,7 @@ def borrow_book(code):
     if form.validate_on_submit() and current_user.is_authenticated:
         if current_user.library_id == cur_book.edition.library_id:
             lend_book(current_user.id, cur_book.id)
-            return redirect('/library/')
+            return redirect('/library')
         else:
             return render_template('message.html',
                                    msg='Эта книга принадлежит другой библиотеке!')  # отнеси ее туда, не будь говнюком
@@ -409,6 +409,8 @@ class LibraryView(FlaskView):
     @route('/', methods=['GET', 'POST'])
     @login_required
     def index(self):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         def markup(book_id_):
             string = f"""<div class='popup' id='popup_book_{book_id_}'>
             <a class="popup__area" href='#header'></a>
@@ -511,7 +513,8 @@ class LibraryView(FlaskView):
     @route('/editions', methods=['GET', 'POST'], strict_slashes=False)
     @login_required
     def editions(self):
-
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         def markup(edition_id):
             string = f"""<div class='popup' id='popup_edition_{edition_id}'>
     <a class="popup__area" href='#header'></a>
@@ -589,6 +592,8 @@ class LibraryView(FlaskView):
     @route('/editions/<int:edition_id>', methods=['GET', 'POST'])
     @login_required
     def edition(self, edition_id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         edition = session.query(Edition).get(edition_id)
         if not edition:
@@ -611,6 +616,8 @@ class LibraryView(FlaskView):
     @route('/editions/create', methods=['GET', 'POST'])
     @login_required
     def create_edition(self):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         if current_user.role_id != 2:
             return redirect('/library')
         session = db_session.create_session()
@@ -645,6 +652,8 @@ class LibraryView(FlaskView):
     @route('/books/<int:book_id>', methods=['GET'])
     @login_required
     def book(self, book_id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         book = session.query(Book).get(book_id)
         if not book:
@@ -663,6 +672,8 @@ class LibraryView(FlaskView):
     @route('/students', methods=['GET', 'POST'], strict_slashes=False)
     @login_required
     def students(self):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
         if current_user.role_id != librarian_role.id:
@@ -709,6 +720,8 @@ class LibraryView(FlaskView):
     @route('/profile', methods=['GET', 'POST'])
     @login_required
     def profile_main(self):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         user = session.query(User).get(current_user.id)
         library = session.query(Library).get(current_user.library_id)
@@ -744,6 +757,8 @@ class LibraryView(FlaskView):
     @route('/profile/<int:student_id>', methods=['GET', 'POST'])
     @login_required
     def profile(self, student_id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         student_role = session.query(Role).filter(Role.name == 'Student').first()
         librarian_role = session.query(Role).filter(Role.name == 'Librarian').first()
@@ -763,6 +778,8 @@ class LibraryView(FlaskView):
     @login_required
     @route('/delete_edition/<int:id>')
     def delete_edition(self, id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         if current_user.role_id != 2:
             return abort(403, description="Эта функция доступна только библиотекарю")
@@ -778,6 +795,8 @@ class LibraryView(FlaskView):
     @login_required
     @route('/delete_book/<int:id>')
     def delete_book(self, id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         if current_user.role_id != 2:
             return abort(403, description="Эта функция доступна только библиотекарю")
@@ -793,6 +812,8 @@ class LibraryView(FlaskView):
     @login_required
     @route('/add_book/<int:edition_id>')
     def add_book(self, edition_id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         if current_user.role_id == 2:
             session = db_session.create_session()
             ed = session.query(Edition).get(edition_id)
@@ -810,6 +831,8 @@ class LibraryView(FlaskView):
     @login_required
     @route('/give_book/<int:book_id>', methods=['GET', 'POST'])
     def give_book(self, book_id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         book = session.query(Book).get(book_id)
         if not book:
@@ -833,6 +856,8 @@ class LibraryView(FlaskView):
     @login_required
     @route('/return_book/<int:book_id>')
     def return_book(self, book_id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         session = db_session.create_session()
         if current_user.role_id != 2:
             return abort(403, description="Данная функция доступна лишь библиотекарю")
@@ -850,6 +875,8 @@ class LibraryView(FlaskView):
     @login_required
     @route('/delete_student/<int:student_id>')
     def delete_student(self, student_id):
+        if not current_user.confirmed:
+            return redirect('/confirm_email')
         if current_user.role_id != 2:
             return abort(403, description='Эта функция доступна лишь библиотекарю')
         session = db_session.create_session()
