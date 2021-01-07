@@ -56,7 +56,7 @@
                 <h5 class="text-my-book" style="font-family: 'Comfortaa', cursive">{{ user.name }}. Книги:</h5>
                 {% for book in books %}
                     <div class="book-it">
-                        <div class="img-it"><img src="../static/img/{{ book.avatar_image }}"></div>
+                        <div class="img-it"><img src='{{ url_for('static', filename='img/editions/' + book.edition.photo_name) }}'></div>
                         <div class="name-and-go">
                             <h3>{{ book.edition.name }}</h3>
                             <a href="/library/books/{{ book.id }}">Зайти</a>

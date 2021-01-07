@@ -745,14 +745,17 @@ class LibraryView(FlaskView):
                 if library_form.surname.data:
                     user.surname = library_form.surname.data
                 session.commit()
-            return render_template('library_edit.html', form=library_form, current_user=current_user)
+            library_code = session.query(Library).get(current_user.library_id).generate_id()
+            return render_template('library_edit.html', form=library_form, current_user=current_user, library_code=library_code)
         else:
             if student_form.validate_on_submit():
                 if student_form.name.data:
                     current_user.name = student_form.name.data
                 if student_form.surname.data:
                     current_user.surname = student_form.surname.data
-            return render_template('library_edit.html', form=student_form, current_user=current_user)
+            library_code = session.query(Library).get(current_user.library_id).generate_id()
+            return render_template('library_edit.html', form=library_form, current_user=current_user,
+                                   library_code=library_code)
 
     # @confirm_email_decorator
     @route('/profile/<int:student_id>', methods=['GET', 'POST'])
