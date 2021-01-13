@@ -96,7 +96,7 @@ def edition_filter_form(**kwargs):
         id = OptionalIntegerField('Номер издания', default=kwargs['id'])
         name = StringField('Название книги', default=kwargs['name'])
         author = StringField('Фамилия автора', default=kwargs['author'])
-        publication_year = OptionalIntegerField('Год публиукации', default=kwargs['publication_year'])
+        publication_year = OptionalIntegerField('Год публикации', default=kwargs['publication_year'])
         submit = SubmitField('Искать')
 
     return EditionFilterForm()

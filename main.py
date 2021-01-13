@@ -353,11 +353,6 @@ def confirm_email_decorator(func):
     return new_func
 
 
-@app.route('/fuck')
-def fuck():
-    print(app.url_map)
-    return 'fuck'
-
 # @confirm_email_decorator
 @app.route('/borrow_book/<string:code>', methods=["GET", "POST"])
 def borrow_book(code):
@@ -587,7 +582,6 @@ class LibraryView(FlaskView):
         #  У библиотекаря должна быть кнопка "Добавить книгу" (не "Добавить издание", слишком непонятно),
         #  добавляющее новое издание
 
-    #
     # косяк
     @route('/editions/<int:edition_id>', methods=['GET', 'POST'])
     @login_required
@@ -723,7 +717,6 @@ class LibraryView(FlaskView):
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
 
-    # @confirm_email_decorator
     @route('/profile', methods=['GET', 'POST'])
     @login_required
     def profile_main(self):
@@ -750,11 +743,12 @@ class LibraryView(FlaskView):
         else:
             if student_form.validate_on_submit():
                 if student_form.name.data:
-                    current_user.name = student_form.name.data
+                    user.name = student_form.name.data
                 if student_form.surname.data:
-                    current_user.surname = student_form.surname.data
+                    user.surname = student_form.surname.data
+                session.commit()
             library_code = session.query(Library).get(current_user.library_id).generate_id()
-            return render_template('library_edit.html', form=library_form, current_user=current_user,
+            return render_template('library_edit.html', form=student_form, current_user=current_user,
                                    library_code=library_code)
 
     # @confirm_email_decorator

@@ -30,11 +30,7 @@
    border: none;
         }
     </style>
-    {% if current_user.role_id == 2 %}
-        <a href='/library/students' class="link-menu abs">Мои книги</a>
-    {% elif current_user.role_id == 1 %}
-        <a href='/library/students' class="link-menu abs">Ученики</a>
-    {% endif %}
+    <a href='/library/students' class="link-menu abs">Ученики</a>
 {% endblock %}
 {% block contents %}
     {% block codeoutblock %}
@@ -55,8 +51,8 @@
                 <h3>Добавить издание в один клик!</h3>
             </li>
             <li>
-                {{ form.name(placeholder='Отцы и дети') }}
-                {{ form.name.label }}<br>
+                {{ form.name(placeholder='Название книги') }}
+                <br>
                 {% for error in form.name.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
@@ -65,8 +61,8 @@
             </li>
 
             <li>
-                {{ form.publisher_name(placeholder='Просвещение') }}
-                {{ form.publisher_name.label }}<br>
+                {{ form.publisher_name(placeholder='Издательство') }}
+                <br>
                 {% for error in form.publisher_name.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
@@ -74,8 +70,8 @@
                 {% endfor %}
             </li>
             <li>
-                {{ form.author(placeholder='Тургенев') }}
-                {{ form.author.label() }}<br>
+                {{ form.author(placeholder='Фамилия автора') }}
+                <br>
                 {% for error in form.author.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
@@ -83,8 +79,8 @@
                 {% endfor %}
             </li>
             <li>
-                {{ form.publication_year(placeholder='2012') }}
-                {{ form.publication_year.label }}<br>
+                {{ form.publication_year(placeholder='Год публикации') }}
+                <br>
                 {% for error in form.publication_year.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
@@ -92,8 +88,8 @@
                 {% endfor %}
             </li>
             <li>
-                {{ form.book_counts(placeholder='') }}
-                {{ form.book_counts.label }}<br>
+                {{ form.book_counts(placeholder='Количество книг') }}
+                <br>
                 {% for error in form.book_counts.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}

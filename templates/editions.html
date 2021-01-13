@@ -66,9 +66,9 @@
         <p class="code" style="margin-top: -10px">Код библиотеки:
             {{ library_code }}</p>
         <p id="p1" style="display: none">{{ library_code }}</p></button>
-
+    {% if current_user.role_id == 2 %}
     <a href="/library/editions/create" class="link-create-edi">Добавить издание</a>
-
+    {% endif %}
     <div class="flex-block" style="margin-left: 0">
         <div class="flex-second" style="width:100%;margin-left: -20px">
             <div>
@@ -76,7 +76,7 @@
                     {{ form.hidden_tag() }}
                     {{ form.crsf_token }}
 
-                    {{ form.id(placeholder='Номер книги', class='int-search') }}
+                    {{ form.id(placeholder='Номер издания', class='int-search') }}
                     <br>
                     {% for error in form.id.errors %}
                         <p class="alert alert-danger" role="alert">
@@ -118,6 +118,7 @@
             </div>
             {% for edition in editions %}
                 <div class="izd-item" style="max-width: 100%">
+                    <a class="ed-name">{{ edition.id }}.  .</a>
                     <img alt="" src="../../static/img/editions/{{ edition.photo_name }}"
                          style="max-width: 100px;border-radius: 3px">
                     <a href="/library/editions/{{ edition.id }}" class="ed-name">{{ edition.name }}</a>
