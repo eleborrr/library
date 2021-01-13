@@ -116,12 +116,22 @@
                     {% endfor %}
                 </form>
             </div>
+        <style>
+            @media (min-width: 900px) {
+            .izd-item{
+                display: block;
+            }
+            .izd-item span, .izd-item a, .izd-item img{
+                float: left;
+                margin: 10px;
+            }}
+        </style>
             {% for edition in editions %}
                 <div class="izd-item" style="max-width: 100%">
-                    <a class="ed-name">{{ edition.id }}.  .</a>
+                    <a class="ed-name" style="margin-right: 5px">{{ edition.id }}</a>
                     <img alt="" src="../../static/img/editions/{{ edition.photo_name }}"
                          style="max-width: 100px;border-radius: 3px">
-                    <a href="/library/editions/{{ edition.id }}" class="ed-name">{{ edition.name }}</a>
+                    <a href="/library/editions/{{ edition.id }}" class="ed-name" style="padding-top: 5px">{{ edition.name }}</a>
                     <span>Литература</span>
                     <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
                     {#                    <input type="submit" name="delete-edition" class='link-izd' href='/library' value="Удалить">#}
