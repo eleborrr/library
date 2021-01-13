@@ -223,7 +223,10 @@ def send_emails():
 @login_required
 def test_confirm_email():
     if app.debug:
-        current_user.confirmed = True
+        session = db_session.create_session()
+        us = session.query(User).get(current_user.id)
+        us.confirmed = 1
+        session.commit()
     return redirect('/library')
 
 
