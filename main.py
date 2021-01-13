@@ -711,8 +711,10 @@ class LibraryView(FlaskView):
                 if library_form.library_school_name.data:
                     library.school_name = library_form.library_school_name.data
                 if library_form.students_join_possibility.data:
-                    print('ok')
-                    library.opened = library_form.students_join_possibility.data
+                    # library.opened = library_form.students_join_possibility.data
+                    library.opened = True
+                else:
+                    library.opened = False
                 if library_form.name.data:
                     user.name = library_form.name.data
                 if library_form.surname.data:
