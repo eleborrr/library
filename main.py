@@ -353,7 +353,6 @@ def confirm_email_decorator(func):
     return new_func
 
 
-# @confirm_email_decorator
 @app.route('/borrow_book/<string:code>', methods=["GET", "POST"])
 def borrow_book(code):
     session = db_session.create_session()
@@ -502,8 +501,6 @@ class LibraryView(FlaskView):
         #  У каждого есть возможность изменить свой профиль
         #  А у библиотекаря так же имя школы
 
-    #
-    # без декоратора не открывается страница
     @route('/editions', methods=['GET', 'POST'], strict_slashes=False)
     @login_required
     def editions(self):
@@ -576,13 +573,7 @@ class LibraryView(FlaskView):
         library_code = session.query(Library).get(current_user.library_id).generate_id()
         return render_template('editions.html', editions=new_res, form=form, library_code=library_code, markup=markup,
                                current_user=current_user, url_for=url_for)
-        #  Эта вкладка доступна всем членам библиотеки
-        #  Здесь будет находиться список всех изданий (editions)
-        #  Под списком изданий понимается список ссылок на library/edition/{edition_id}
-        #  У библиотекаря должна быть кнопка "Добавить книгу" (не "Добавить издание", слишком непонятно),
-        #  добавляющее новое издание
 
-    # косяк
     @route('/editions/<int:edition_id>', methods=['GET', 'POST'])
     @login_required
     def edition(self, edition_id):
@@ -598,15 +589,7 @@ class LibraryView(FlaskView):
         res = generate_edition_qr(edition_id)
         return render_template('editionone.html', books=books, count_books=len(books), edition=edition, url_for=url_for,
                                current_user=current_user, lists=res)
-        # Здесь будет список книг данного издания с их текущими владельцами
-        # У библиотекаря рядом с каждой книгой есть кнопка "Вернуть в библиотеку" или "Одолжить книгу"
-        # (Я думаю у библиотекаря должна быть возможность одалживать книгу вручную),
-        # А так эе кнопка "Удалить" (Вдруг случайно лишнюю создала") P.s кнопка недоступна, если книга не в библиотеке
-        # Так же библиотекарю доступна кнопка "Добавить книгу", добавляющая новую книгу этого издания,
-        # и кнопка "список qr-кодов"
 
-    #
-    # Тут косяк с декоратором
     @route('/editions/create', methods=['GET', 'POST'])
     @login_required
     def create_edition(self):
@@ -639,8 +622,6 @@ class LibraryView(FlaskView):
             return redirect(f'/library/editions/{edition.id}')
         return render_template('create_edition_form.html', form=form, url_for=url_for)
 
-    #
-    # косяк
     @route('/books/<int:book_id>', methods=['GET'])
     @login_required
     def book(self, book_id):
@@ -648,7 +629,6 @@ class LibraryView(FlaskView):
             return redirect('/library/join')
         session = db_session.create_session()
         book = session.query(Book).get(book_id)
-        # print(book.owner)
         if not book:
             return abort(404, description='Книга не найдена')
         if book.edition.library_id != current_user.library_id:
@@ -661,7 +641,6 @@ class LibraryView(FlaskView):
         #  У библиотекаря есть такие же кнопки, как и рядом с каждой книгой в списке,
         #  А так же кнопка "Получить qr-код"
 
-    # @confirm_email_decorator
     @route('/students', methods=['GET', 'POST'], strict_slashes=False)
     @login_required
     def students(self):
@@ -732,6 +711,7 @@ class LibraryView(FlaskView):
                 if library_form.library_school_name.data:
                     library.school_name = library_form.library_school_name.data
                 if library_form.students_join_possibility.data:
+                    print('ok')
                     library.opened = library_form.students_join_possibility.data
                 if library_form.name.data:
                     user.name = library_form.name.data
@@ -751,7 +731,6 @@ class LibraryView(FlaskView):
             return render_template('library_edit.html', form=student_form, current_user=current_user,
                                    library_code=library_code)
 
-    # @confirm_email_decorator
     @route('/profile/<int:student_id>', methods=['GET', 'POST'])
     @login_required
     def profile(self, student_id):
