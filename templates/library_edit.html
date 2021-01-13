@@ -93,7 +93,7 @@
         {% endfor %}
     {% else %}
         {{ form.name.label }}
-        {{ form.name() }}
+        {{ form.name(style='margin-bottom: 20px') }}
         {% for error in form.name.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
@@ -101,7 +101,7 @@
         {% endfor %}<br>
 
         {{ form.surname.label }}
-        {{ form.surname() }}
+        {{ form.surname(style='margin-bottom: 20px') }}
         {% for error in form.surname.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
@@ -109,6 +109,6 @@
         {% endfor %}
     {% endif %}
 
-    {{ form.submit(class='btn-sv') }}
+    {{ form.submit(class='btn-sv', style='cursor:pointer;color:black') }}
     </form>
 {% endblock %}

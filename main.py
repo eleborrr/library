@@ -749,7 +749,7 @@ class LibraryView(FlaskView):
         if current_user.library_id != session.query(User).get(student_id).library_id:
             return abort(403, description='Пользователь не в вашей библиотеке')
         books = session.query(Book).filter(Book.owner_id == student_id).all()
-        return render_template('profile.html', books=books, user=current_user)
+        return render_template('profile-st.html', books=books, user=current_user)
 
     # @confirm_email_decorator
     @login_required
