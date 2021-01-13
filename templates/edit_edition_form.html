@@ -1,0 +1,104 @@
+{% extends "base-table.html" %}
+{% block title_block %}Добавить издание{% endblock %}
+{% block codeinblock %}
+
+        <p class="code" style="margin-top: -10px">Код библиотеки: <button id="userButton" style="border: none;background-color: transparent;color: #4A4141">{{ library_code }}</button></p>
+
+{% endblock %}
+{% block url %}
+    <style>
+        .body-content {
+            align-items: stretch
+        }
+
+        .fixed-side {
+            min-height: 100vh;
+
+            align-self: stretch;
+        }
+
+        .normal-side {
+
+        }
+    </style>
+    {% if current_user.role_id == 2 %}
+        <a href='/library/students' class="link-menu abs">Мои книги</a>
+    {% elif current_user.role_id == 1 %}
+        <a href='/library/students' class="link-menu abs">Ученики</a>
+    {% endif %}
+{% endblock %}
+{% block contents %}
+    {% block codeoutblock %}
+        <div class="block-abs-code">
+        <p class="code">Код библиотеки: {{ library_code }}</p>
+    </div>
+    {% endblock %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="css/library-page.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="css/create_edition.css") }}">
+    <form class="contact_form" action="" method="post" name="contact_form" enctype="multipart/form-data"
+          style="margin-top: 200px;margin-bottom: 90px">
+        {{ form.hidden_tag() }}
+        {{ form.crsf_token }}
+        <ul>
+            <li>
+                <h3>Изменить издание в один клик!</h3>
+            </li>
+            <li>
+                {{ form.name(placeholder='Отцы и дети') }}
+                {{ form.name.label }}<br>
+                {% for error in form.name.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </li>
+
+            <li>
+                {{ form.surname(placeholder='Просвещение') }}
+                {{ form.surname.label }}<br>
+                {% for error in form.surname.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </li>
+            <li>
+                {{ form.students_join_possibility() }}
+                {{ form.students_join_possibility.label() }}<br>
+                {% for error in form.students_join_possibility.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </li>
+            <li>
+                {{ form.library_school_name(placeholder='2012') }}
+                {{ form.library_school_name.label }}<br>
+                {% for error in form.library_school_name.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </li>
+
+
+            {{ form.submit(value='Создать', style='background-color:white') }}
+            {% for error in form.submit.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </ul>
+    </form>
+     <script>
+var button = document.getElementById("userButton");
+button.addEventListener("click", function (popa){
+var copytext = document.createElement("input");
+copytext.value = "090909000";
+document.body.appendChild(copytext);
+copytext.select();
+document.execCommand("copy");
+document.body.removeChild(copytext);
+});
+</script>
+{% endblock %}

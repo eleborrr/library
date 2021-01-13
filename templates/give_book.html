@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+    <title>Отдать книгу {{ book.edition.name }}</title>
+
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="../static/css/bookone.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='../static/css/editionone.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='../static/css/popups.css') }}">
+</head>
+
+<body>
+<div class="body-cont" style="margin:auto;max-width: 1040px">
+    <div class="logo-text"><a href="/" style="text-decoration: none"><strong style="font-size: 25px">M | L</strong></a></div>
+
+    <div style="max-width: 1040px;margin-top:40px">
+{#        {% if current_user.role_id == 2 %}#}
+{#            <a href='/library/add_book/{{ book.edition.id }}' class="link-del green" style="float: right;margin-bottom:50px">Добавить#}
+{#                книгу к изданию</a>#}
+{#        {% endif %}#}
+        <a href="/library/editions" class="link-del green" style="float: right;margin-bottom:50px;margin-right:15px">Вернуться</a>
+    </div>
+
+    <form method="post">
+        <div class="edition-body">
+            <div class="upper-block">
+                <div class="img-book">
+                    <img src="{{ url_for('static', filename='img/editions/' + book.edition.photo_name) }}">
+                </div>
+                <div class="descrs">
+                    <h3>Название книги: {{ book.edition.name }}</h3>
+                    <p>Автор: {{ book.edition.author }}</p>
+                    {% if current_user.role_id == 2 %}
+{#                        <input type="submit" name="delete-edition" class="link-delete hiden" value="Удалить книгу"#}
+{#                               style="border: none;cursor: pointer">#}
+                    {% endif %}
+                </div>
+                <div style="margin-left: auto">
+                    <a class="link-delete opas"
+                       style="border: none;cursor: pointer" href="#popup3">Удалить книгу</a>
+                    {#                    <input type="submit" name="delete-edition" class="link-delete opas" value="Удалить издание"#}
+                    {#                           style="border: none;cursor: pointer" href="#popup3">#}
+                </div>
+            </div>
+        </div>
+    </form>
+<style>
+    .poststud{
+        margin: 40px auto;
+    }
+    .sel-st{
+        width: 200px;
+        margin: 0 10px;
+        padding: 5px 7px;
+        background-color: white;
+        border-radius: 3px;
+        border: 1px solid #4A4141;
+    }
+    .btn-st{
+        background-color: #9278aa;
+        padding: 5px 7px;
+        border: none;
+        cursor: pointer;
+        color: white;
+        border-radius: 3px;
+        font-family: 'Comfortaa', cursive;
+    }
+</style>
+<form method="post" class="poststud">
+    {{ form.hidden_tag() }}
+    {{ form.crsf_token }}
+
+    {{ form.select_student.label }}
+    {{ form.select_student(class='sel-st') }}
+    {% for error in form.select_student.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+    {% endfor %}
+    {{ form.submit(class='btn-st') }}
+</form>
+
+
+</div>
+
+</body>
+</html>

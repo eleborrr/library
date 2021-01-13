@@ -1,0 +1,121 @@
+{% extends "base-table.html" %}
+{% block title_block %}Добавить издание{% endblock %}
+{% block codeinblock %}
+
+            <button onclick="copyToClipboard('#p1')" style="border: none;background-color: transparent;color: #4A4141;font-weight: normal" class="code"><p class="code" style="margin-top: -10px">Код библиотеки: {{ library_code }}</p></button>
+
+
+{% endblock %}
+{% block url %}
+    <style>
+        .body-content {
+            align-items: stretch
+        }
+
+        .fixed-side {
+            min-height: 100vh;
+
+            align-self: stretch;
+        }
+
+        .normal-side {}
+        button{
+        outline: none;
+        cursor: pointer;
+    }
+    .block-abs-code:active, .block-abs-code:focus{
+        border: none;
+    }
+    .block-abs-code::-moz-focus-inner {
+   border: none;
+        }
+    </style>
+    {% if current_user.role_id == 2 %}
+        <a href='/library/students' class="link-menu abs">Мои книги</a>
+    {% elif current_user.role_id == 1 %}
+        <a href='/library/students' class="link-menu abs">Ученики</a>
+    {% endif %}
+{% endblock %}
+{% block contents %}
+    {% block codeoutblock %}
+        <button onclick="copyToClipboard('#p1')" style="border: none;background-color:
+                    transparent;color: #584B4B;font-weight: 400;font-family: Comfortaa, cursive;font-size: 11px" class="block-abs-code">
+                <p class="code" style="margin-top: -10px">Код библиотеки:
+                    {{ library_code }}</p>
+<p id="p1" style="display: none">{{ library_code }}</p></button>
+    {% endblock %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="css/library-page.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="css/create_edition.css") }}">
+    <form class="contact_form" action="" method="post" name="contact_form" enctype="multipart/form-data"
+          style="margin-top: 200px;margin-bottom: 90px">
+        {{ form.hidden_tag() }}
+        {{ form.crsf_token }}
+        <ul>
+            <li>
+                <h3>Добавить издание в один клик!</h3>
+            </li>
+            <li>
+                {{ form.name(placeholder='Отцы и дети') }}
+                {{ form.name.label }}<br>
+                {% for error in form.name.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </li>
+
+            <li>
+                {{ form.publisher_name(placeholder='Просвещение') }}
+                {{ form.publisher_name.label }}<br>
+                {% for error in form.publisher_name.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </li>
+            <li>
+                {{ form.author(placeholder='Тургенев') }}
+                {{ form.author.label() }}<br>
+                {% for error in form.author.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </li>
+            <li>
+                {{ form.publication_year(placeholder='2012') }}
+                {{ form.publication_year.label }}<br>
+                {% for error in form.publication_year.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </li>
+            <li>
+                {{ form.book_counts(placeholder='') }}
+                {{ form.book_counts.label }}<br>
+                {% for error in form.book_counts.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </li>
+            <li>
+                {{ form.photo(placeholder='') }}
+                {{ form.photo.label }}<br>
+                {% for error in form.photo.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </li>
+
+            {{ form.submit(value='Создать', style='background-color:white') }}
+            {% for error in form.submit.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </ul>
+    </form>
+{% endblock %}
