@@ -1,6 +1,11 @@
 {% extends "base-table.html" %}
 {% block title_block %}Список книг{% endblock %}
+{% block codeinblock %}
+    <button onclick="copyToClipboard('#p1')"
+            style="border: none;background-color: transparent;color: #4A4141;font-weight: normal" class="code"><p
+            class="code" style="margin-top: -10px">Код библиотеки: {{ library_code }}</p></button>
 
+{% endblock %}
 {% block links %}
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/lybrary-table.css') }}">
     <link rel="stylesheet" type="text/css" href="../static/css/popups.css">
@@ -34,6 +39,18 @@
         display: none;
     }
 }
+    button {
+            outline: none;
+            cursor: pointer;
+        }
+
+        .block-abs-code:active, .block-abs-code:focus {
+            border: none;
+        }
+
+        .block-abs-code::-moz-focus-inner {
+            border: none;
+        }
     </style>
 {% endblock %}
 {% block url %}
@@ -41,12 +58,12 @@
 {% endblock %}
 {% block contents %}
 
-    <div class="block-code" style="margin-bottom: 20px">
-                    <button onclick="copyToClipboard('#p1')" style="border: none;background-color:
-                    transparent;color: #4A4141;font-weight: normal" class="code"><p class="code" style="margin-top: -10px">Код библиотеки:
-                        {{ library_code }}</p></button>
-
-    </div>
+    <button onclick="copyToClipboard('#p1')" style="border: none;background-color:
+                    transparent;color: #584B4B;font-weight: 400;font-family: Comfortaa, cursive;font-size: 11px"
+            class="block-abs-code">
+        <p class="code" style="margin-top: -10px">Код библиотеки:
+            {{ library_code }}</p>
+        <p id="p1" style="display: none">{{ library_code }}</p></button>
     <div class="books-side" style="margin-top: 160px">
         <div>
             <form method="post" action="">

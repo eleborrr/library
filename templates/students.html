@@ -1,7 +1,10 @@
 {% extends "base-table.html" %}
 {% block title_block %}Список учеников{% endblock %}
 {% block codeinblock %}
-    <p class="code">Код библиотеки: {{ library_code }}</p>
+    <button onclick="copyToClipboard('#p1')"
+            style="border: none;background-color: transparent;color: #4A4141;font-weight: normal" class="code"><p
+            class="code" style="margin-top: -10px">Код библиотеки: {{ library_code }}</p></button>
+
 {% endblock %}
 {% block url %}
 {% endblock %}
@@ -11,7 +14,27 @@
 
 {% endblock %}
 {% block contents %}
+    <style>
+    button {
+            outline: none;
+            cursor: pointer;
+        }
+
+        .block-abs-code:active, .block-abs-code:focus {
+            border: none;
+        }
+
+        .block-abs-code::-moz-focus-inner {
+            border: none;
+        }
+    </style>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/lybrary-table.css') }}">
+    <button onclick="copyToClipboard('#p1')" style="border: none;background-color:
+                    transparent;color: #584B4B;font-weight: 400;font-family: Comfortaa, cursive;font-size: 11px"
+            class="block-abs-code">
+        <p class="code" style="margin-top: -10px">Код библиотеки:
+            {{ library_code }}</p>
+        <p id="p1" style="display: none">{{ library_code }}</p></button>
     <div class="flex-block" style="margin-left: 0">
 
         <div class="flex-second" style="width:100%;margin-left: -20px">
@@ -62,7 +85,7 @@
                 </form>
             </div>
             {% for student in students %}
-                <div class="izd-item">
+                <div class="izd-item" style="padding: 5px">
                     <a href="/library/profile/{{ student.id }}">{{ student.name }}</a>
                     <span>{{ student.cla }}</span>
                     <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>

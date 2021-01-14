@@ -692,7 +692,8 @@ class LibraryView(FlaskView):
                 final += '?'
                 final += '&'.join(args)
             return redirect(final)
-        return render_template('students.html', students=new_res, form=form)
+        library_code = session.query(Library).get(current_user.library_id).generate_id()
+        return render_template('students.html', students=new_res, form=form, library_code=library_code)
         # Здесь будет находиться список всех учащихся, привязанных к данной библиотеке
         # Список учащихся - спичок ссылок на library/students/{student_id}
 
