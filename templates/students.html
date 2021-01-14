@@ -68,13 +68,13 @@
                         </p>
                     {% endfor %}
 
-                    {{ form.class_letter(placeholder='Г', class='int-search') }}
-                    {{ form.class_letter.label(class='text-search') }}<br>
-                    {% for error in form.class_letter.errors %}
-                        <p class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </p>
-                    {% endfor %}
+{#                    {{ form.class_letter(placeholder='Г', class='int-search') }}#}
+{#                    {{ form.class_letter.label(class='text-search') }}<br>#}
+{#                    {% for error in form.class_letter.errors %}#}
+{#                        <p class="alert alert-danger" role="alert">#}
+{#                            {{ error }}#}
+{#                        </p>#}
+{#                    {% endfor %}#}
 
                     {{ form.submit(class='link-search') }}
                     {% for error in form.submit.errors %}
@@ -86,9 +86,9 @@
             </div>
             {% for student in students %}
                 <div class="izd-item" style="padding: 5px">
-                    <a href="/library/profile/{{ student.id }}">{{ student.name }}</a>
-                    <span>{{ student.cla }}</span>
-                    <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
+                    <span style="background-color: #98D9E8;margin-left: 0">{{ student.id }}</span>
+                    <a href="/library/profile/{{ student.id }}">{{ student.surname }} {{ student.name }}</a>
+                    <span>{{ student.class_num }} класс</span>
                     <a class='link-izd' href='/library/delete_student/{{ student.id }}'>Удалить</a>
                 </div>
             {% endfor %}

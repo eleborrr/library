@@ -38,7 +38,6 @@ def confirm_token(token, expiration=3600):
             salt=app.config['SECURITY_PASSWORD_SALT'],
             max_age=expiration
         )
-        print(email)
     except Exception:
         return False
     return email
@@ -155,11 +154,19 @@ def generate_edition_qr(edition_id):
 def delete_edition(edition_id):
     session = db_session.create_session()
     ed = session.query(Edition).get(edition_id)
+    book_owner = False
     if ed:
-        session.delete(ed)
-        session.commit()
-        session.close()
-        return 0
+        for book in ed.books:
+            if book.owner:
+                book_owner = True
+                break
+            session.delete(book)
+            session.commit()
+        if not book_owner:
+            session.delete(ed)
+            session.commit()
+            session.close()
+            return 0
     return 1
 
 
@@ -202,7 +209,7 @@ def error_404(er):
 #
 # @app.errorhandler(500)
 # def error_500(er):
-#     return render_template('разрабы_тупые_криворученки.html', msg=er.message)
+#     return render_template('.html', msg=er.message)
 
 
 @login_manager.user_loader
@@ -313,7 +320,7 @@ def sign_in():
     if register_form.validate_on_submit():
         ex = session.query(User).filter(User.login == register_form.email.data).first()
         if ex:
-            render_template('tabs-page.html', library_form=library_form, register_form=register_form,
+            return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
                             login_form=login_form, tab_num=2, msg2="Этот адрес электронной почты уже занят")
         if register_form.password.data != register_form.repeat.data:
             return render_template('tabs-page.html', library_form=library_form, register_form=register_form,
@@ -363,7 +370,6 @@ def borrow_book(code):
     else:
         return abort(404, description='Неверный идентификатор книги')  # Шаблон с сообщением в центре экрана
     form = BorrowBookForm()
-    print(current_user.role_id)
     if form.validate_on_submit() and current_user.is_authenticated:
         if current_user.library_id == cur_book.edition.library_id:
             lend_book(current_user.id, cur_book.id)
@@ -453,21 +459,20 @@ class LibraryView(FlaskView):
             kwargs['owner_id'] = owner_id
         result = query.all()
         new_res = []
-        print(result)
         for i in result:
             flag = True
             if name:
                 kwargs['name'] = name
-                if not match(i.edition.name, name):
+                if not match(i.edition.name.lower(), name.lower()):
                     flag = False
             if author:
                 kwargs['author'] = author
-                if not match(i.edition.author, author):
+                if not match(i.edition.author.lower(), author.lower()):
                     flag = False
             if owner_surname:
                 kwargs['owner_surname'] = owner_surname
                 try:
-                    if not match(i.owner.surname, owner_surname):
+                    if not match(i.owner.surname.lower(), owner_surname.lower()):
                         flag = False
                 except AttributeError:
                     flag = False
@@ -550,11 +555,11 @@ class LibraryView(FlaskView):
             flag = True
             if name:
                 kwargs['name'] = name
-                if not match(i.name, name):
+                if not match(i.name.lower(), name.lower()):
                     flag = False
             if author:
                 kwargs['author'] = author
-                if not match(i.author, author):
+                if not match(i.author.lower(), author.lower()):
                     flag = False
             if flag:
                 new_res.append(i)
@@ -676,7 +681,7 @@ class LibraryView(FlaskView):
         for i in result:
             if surname:
                 kwargs['surname'] = surname
-                if match(i.surname, surname):
+                if match(i.surname.lower(), surname.lower()):
                     new_res.append(i)
             else:
                 new_res.append(i)
@@ -703,11 +708,10 @@ class LibraryView(FlaskView):
         session = db_session.create_session()
         user = session.query(User).get(current_user.id)
         library = session.query(Library).get(current_user.library_id)
-        library_form = edit_library(
-            **{'name': user.name, 'surname': user.surname, 'students_join_possibility': library.opened,
-               'library_school_name': library.school_name})
-        student_form = edit_student_profile_form(name=current_user.name, surname=current_user.surname)
         if user.role_id == 2:
+            library_form = edit_library(
+                **{'name': user.name, 'surname': user.surname, 'students_join_possibility': library.opened,
+                   'library_school_name': library.school_name})
             if library_form.validate_on_submit():
                 if library_form.library_school_name.data:
                     library.school_name = library_form.library_school_name.data
@@ -724,15 +728,23 @@ class LibraryView(FlaskView):
             library_code = session.query(Library).get(current_user.library_id).generate_id()
             return render_template('library_edit.html', form=library_form, current_user=current_user, library_code=library_code)
         else:
+            student_form = edit_student_profile_form(name=current_user.name, surname=current_user.surname)
             if student_form.validate_on_submit():
                 if student_form.name.data:
                     user.name = student_form.name.data
                 if student_form.surname.data:
                     user.surname = student_form.surname.data
                 session.commit()
-            library_code = session.query(Library).get(current_user.library_id).generate_id()
-            return render_template('library_edit.html', form=student_form, current_user=current_user,
-                                   library_code=library_code)
+            # if True: # через кнопку
+            #     if user.books:
+            #         print('Нельзя, ты книги не сдал, бро')
+            #     else:  #popup с кодом новой библиотеки или кнопка "отвязаться от библиотеки"
+            #         user.library_id = 'NULL'
+            #         user.role_id = 3
+            library_code = ''
+            if user.role_id == 1:
+                library_code = session.query(Library).get(current_user.library_id).generate_id()
+            return render_template('library_edit.html', form=student_form, current_user=current_user, library_code=library_code)
 
     @route('/profile/<int:student_id>', methods=['GET', 'POST'])
     @login_required
@@ -752,7 +764,6 @@ class LibraryView(FlaskView):
         books = session.query(Book).filter(Book.owner_id == student_id).all()
         return render_template('profile-st.html', books=books, user=current_user)
 
-    # @confirm_email_decorator
     @login_required
     @route('/delete_edition/<int:id>')
     def delete_edition(self, id):
@@ -767,7 +778,6 @@ class LibraryView(FlaskView):
         delete_edition(id)
         return redirect('/library/editions')
 
-    # @confirm_email_decorator
     @login_required
     @route('/delete_book/<int:id>')
     def delete_book(self, id):
@@ -782,7 +792,6 @@ class LibraryView(FlaskView):
         delete_book(id)
         return redirect('/library/books')
 
-    # @confirm_email_decorator
     @login_required
     @route('/add_book/<int:edition_id>')
     def add_book(self, edition_id):
@@ -799,7 +808,6 @@ class LibraryView(FlaskView):
                 abort(404, description="Издание не найдено")
         return redirect(f'/library/editions/{edition_id}')
 
-    # @confirm_email_decorator
     @login_required
     @route('/give_book/<int:book_id>', methods=['GET', 'POST'])
     def give_book(self, book_id):
@@ -821,7 +829,6 @@ class LibraryView(FlaskView):
             return redirect('/library')
         return render_template('give_book.html', form=form, book=book)
 
-    # @confirm_email_decorator
     @login_required
     @route('/join', methods=['GET', 'POST'])
     def join(self):
@@ -833,14 +840,11 @@ class LibraryView(FlaskView):
             session = db_session.create_session()
             library = session.query(Library).all()
             for i in library:
-                print(i.string_id)
                 if i.string_id == id_:
                     if i.opened:
                         us = session.query(User).get(current_user.id)
                         us.library_id = i.id
                         us.role_id = 1
-                        print(current_user.role_id)
-                        print(current_user.login)
                         session.commit()
                         session.close()
                         break
@@ -852,7 +856,6 @@ class LibraryView(FlaskView):
             return redirect('/library')
         return render_template('join.html', form=form)
 
-    # @confirm_email_decorator
     @login_required
     @route('/return_book/<int:book_id>')
     def return_book(self, book_id):
@@ -869,7 +872,6 @@ class LibraryView(FlaskView):
         session.close()
         return redirect('/library')
 
-    # @confirm_email_decorator
     @login_required
     @route('/delete_student/<int:student_id>')
     def delete_student(self, student_id):

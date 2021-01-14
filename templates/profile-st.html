@@ -83,13 +83,13 @@
     </form>
 
     <div class="lower-block" style="max-width: 1040px;margin: auto">
-        <input type="text" name="" placeholder="Поиск в издании" class="inpt-srh">
+        <input type="text" name="" placeholder="Поиск книг" class="inpt-srh">
     </div>
 
     <div class="ed-books" style="max-width: 1040px;margin: auto;margin-bottom: 100px">
          {% for book in books %}
                     <div class="book-it">
-                        <div class="img-it"><img src='{{ url_for('static', filename='img/editions/' + book.edition.photo_name) }}'></div>
+                        <div class="img-book"><img src='{{ url_for('static', filename='img/editions/' + book.edition.photo_name) }}'></div>
                         <div class="name-and-go">
                             <h3>{{ book.edition.name }}</h3>
                             <a href="/library/books/{{ book.id }}">Зайти</a>
