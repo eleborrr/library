@@ -44,8 +44,8 @@
                 <img src='{{ url_for('static', filename='img/editions/' + book.edition.photo_name) }}'>
             </div>
             <div class="names">
-                <p style="padding-top: 15px;font-size: 15px;"><strong>Название: {{ book.name }}</strong></p>
-                <p style="padding-bottom: 15px">Издание: {{ book.edition.name }}</p>
+                <p style="padding-top: 15px;font-size: 15px;"><strong>Название: {{ book.edition.name }}</strong></p>
+                <p style="padding-bottom: 15px">Издание: {{ book.edition.ed_name }}</p>
                 {% if book.owner %}
                     {% if current_user.role_id == 2 %}
                         <a href='/library/profile/{{ book.owner_id }}'
