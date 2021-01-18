@@ -51,6 +51,9 @@
         .block-abs-code::-moz-focus-inner {
             border: none;
         }
+        .fixed-side a.link-menu.b{
+            color: #473C3C;
+        }
     </style>
 {% endblock %}
 {% block url %}
@@ -188,5 +191,10 @@
             {{ markup(book.id) }}
         {% endfor %}
     </div>
-
+<script>
+ $(function() {
+    var height = $( '#cont' ).height(); //получаем высоту одного элемента
+    $( '#fixed' ).height(height); //записываем высоту другому элементу
+});
+</script>
 {% endblock %}

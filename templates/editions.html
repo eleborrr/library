@@ -58,6 +58,9 @@
         .block-abs-code::-moz-focus-inner {
             border: none;
         }
+         .fixed-side a.link-menu.i{
+            color: #473C3C;
+        }
     </style>
 
     <button onclick="copyToClipboard('#p1')" style="border: none;background-color:
@@ -147,5 +150,10 @@
             {{ markup(edition.id) }}
         {% endfor %}
     </div>
-
+<script>
+ $(function() {
+    var height = $( '#normal' ).height(); //получаем высоту одного элемента
+    $( '#fixed' ).height(height); //записываем высоту другому элементу
+});
+</script>
 {% endblock %}

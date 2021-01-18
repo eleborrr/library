@@ -17,11 +17,30 @@
 
 {% endblock %}
 
+<style>
 
+
+.body-content
+{
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+    .fixed-side, .normal-side
+    {
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+    }
+</style>
 <div class="topfix"></div>
-<div class="body-content">
+<div class="body-content" id="cont">
 
-    <div class="fixed-side">
+    <div class="fixed-side" id="fixed">
 
         <h1>Библио</h1>
         {% block url %}{% endblock %}
@@ -31,19 +50,19 @@
             <a href='/library/students' class="link-menu abs">Ученики</a>
         {% endif %}
 
-        <a href='/library/books' class="link-menu">Книги</a>
+        <a href='/library/books' class="link-menu b">Книги</a>
 
-        <a href='/library/editions' class="link-menu">Издания</a>
+        <a href='/library/editions' class="link-menu i">Издания</a>
         {% if current_user.role_id == 2 %}
-            <a href='/library/profile' class="link-menu" style="font-size: 12px; margin-top: 40px">Настройка
+            <a href='/library/profile' class="link-menu n" style="font-size: 12px; margin-top: 40px">Настройка
                 библиотеки</a>
         {% else %}
-            <a href='/library/profile' class="link-menu" style="font-size: 12px; margin-top: 40px">Настройка
+            <a href='/library/profile' class="link-menu n" style="font-size: 12px; margin-top: 40px">Настройка
                 профиля</a>
         {% endif %}
         <a href='/logout' class="link-menu">Выйти</a>
     </div>
-    <div class="normal-side">
+    <div class="normal-side" id="normal">
         <div class="borders">
             <p class="text-des">Здесь Вы всегда найдете нужную книгу. Попробуйте!</p>
 
@@ -76,6 +95,11 @@
         document.execCommand("copy");
         $temp.remove();
     }
+
+    $(function() {
+    var height = $( '#normal' ).height(); //получаем высоту одного элемента
+    $( '#fixed' ).height(height); //записываем высоту другому элементу
+});
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 </html>
