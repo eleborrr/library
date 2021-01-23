@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="../static/css/library.css">
     <link rel="stylesheet" type="text/css" href="../static/css/library-page.css">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@600&Raleway:wght@300;400;800&&family=Ubuntu:wght@600&display=swap" rel="stylesheet">
     {% block links %}{% endblock %}
 </head>
 
@@ -18,7 +20,18 @@
 {% endblock %}
 
 <style>
-
+.fixed-side a.link-menu{
+    font-family: 'Montserrat Alternates', sans-serif;;
+            -webkit-text-stroke: 0.4px #CC9475;
+     -webkit-text-fill-color: white;
+    font-size: 18px;
+    font-weight: 600;
+        }
+.fixed-side a.link-menu.ex{
+            color: #473C3C;
+            -webkit-text-fill-color: #473C3C;
+            opacity: 0.9;
+        }
 
 .body-content
 {
@@ -29,12 +42,16 @@
     -webkit-flex-wrap: wrap;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
+    align-items: stretch;
 }
     .fixed-side, .normal-side
     {
         display: -webkit-flex;
         display: -ms-flexbox;
         display: flex;
+    }
+    .fixed-side{
+        background: linear-gradient(180deg, #FEC4A4 60%, #fff 90%);
     }
 </style>
 <div class="topfix"></div>
@@ -54,13 +71,13 @@
 
         <a href='/library/editions' class="link-menu i">Издания</a>
         {% if current_user.role_id == 2 %}
-            <a href='/library/profile' class="link-menu n" style="font-size: 12px; margin-top: 40px">Настройка
+            <a href='/library/profile' class="link-menu n" style="font-size: 18px; margin-top: 40px">Настройка
                 библиотеки</a>
         {% else %}
             <a href='/library/profile' class="link-menu n" style="font-size: 12px; margin-top: 40px">Настройка
                 профиля</a>
         {% endif %}
-        <a href='/logout' class="link-menu">Выйти</a>
+        <a href='/logout' class="link-menu ex">Выйти</a>
     </div>
     <div class="normal-side" id="normal">
         <div class="borders">
@@ -99,6 +116,13 @@
     $(function() {
     var height = $( '#normal' ).height(); //получаем высоту одного элемента
     $( '#fixed' ).height(height); //записываем высоту другому элементу
+        function setHeiHeight() {
+    $('#fixed').css({
+        height: $(window).height() + 'px'
+    });
+}
+setHeiHeight(); // устанавливаем высоту окна при первой загрузке страницы
+$(window).resize( setHeiHeight ); // обновляем при изменении размеров окна
 });
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
