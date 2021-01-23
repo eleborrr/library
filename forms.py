@@ -85,6 +85,7 @@ def book_filter_form(**kwargs):
         edition_id = OptionalIntegerField('Номер издания', default=kwargs['edition_id'])
         owner_id = OptionalIntegerField('Номер владельца', default=kwargs['owner_id'])
         owner_surname = StringField('Фамилия владельца', default=kwargs['owner_surname'])
+        free = BooleanField('Свободные книги', default='false')
         submit = SubmitField('Искать')
 
     return BookFilterForm()

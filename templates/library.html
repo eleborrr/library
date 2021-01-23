@@ -131,6 +131,15 @@
                     </p>
                 {% endfor %}
 
+                {{ form.free.label }}
+                {{ form.free(placeholder='Свободная книга', class='int-search') }}
+                <br>
+                {% for error in form.owner_surname.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
                 {{ form.submit(class='link-search') }}
                 {% for error in form.owner_surname.errors %}
                     <p class="alert alert-danger" role="alert">

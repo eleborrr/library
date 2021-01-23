@@ -431,8 +431,8 @@ class LibraryView(FlaskView):
             return redirect('/library/join')
         session = db_session.create_session()
         id_, name, author = request.args.get('id'), request.args.get('name'), request.args.get('author')
-        publication_year, edition_id, owner_id, owner_surname = request.args.get('publication_year'), request.args.get(
-            'edition_id'), request.args.get('owner_id'), request.args.get('owner_surname')
+        publication_year, edition_id, owner_id, owner_surname, free = request.args.get('publication_year'), request.args.get(
+            'edition_id'), request.args.get('owner_id'), request.args.get('owner_surname'), request.args.get('is_owner')
 
         query = session.query(Book).join(Edition).filter(Edition.library_id == current_user.library_id)
         kwargs = {
@@ -442,7 +442,8 @@ class LibraryView(FlaskView):
             'publication_year': '',
             'edition_id': '',
             'owner_id': '',
-            'owner_surname': ''
+            'owner_surname': '',
+            'free': ''
         }
 
         if id_:
@@ -457,6 +458,9 @@ class LibraryView(FlaskView):
         if owner_id:
             query = query.filter(Book.owner_id == check_int_type(owner_id))
             kwargs['owner_id'] = owner_id
+        if free:
+            query = query.filter(Book.owner)
+            kwargs['free'] = free
         result = query.all()
         new_res = []
         for i in result:
