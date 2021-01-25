@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, abort, request
+from flask import Flask, redirect, render_template, abort, request, render_template_string, Markup
 from data import db_session
 from data.book import Book
 from data.edition import Edition
@@ -9,8 +9,10 @@ from config import AppConfig
 from generators import create_qr_list
 from flask_login import LoginManager, logout_user, login_user, login_required, current_user
 from flask_classy import route, FlaskView
+from flask_mail import Mail, Message
 from forms import *
 from sequence_matcher import SequenceMatcher
+from itsdangerous import URLSafeTimedSerializer
 from data import db_session
 import logging
 from logging.handlers import RotatingFileHandler
@@ -19,6 +21,12 @@ app = Flask(__name__)
 login_manager = LoginManager(app)
 app.config.from_object(AppConfig)
 mail = Mail(app)
+
+
+def generate_token(email):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
+
 
 def confirm_token(token, expiration=3600):
     serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
