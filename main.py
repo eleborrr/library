@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, abort, request, render_template_string, Markup
+from flask import Flask, redirect, render_template, abort, request, url_for, render_template_string, Markup
 from data import db_session
 from data.book import Book
 from data.edition import Edition
@@ -6,16 +6,15 @@ from data.library import Library
 from data.user import User
 from data.role import Role
 from config import AppConfig
-from generators import create_qr_list
+from generators import create_qrcode, _create_qr_list
 from flask_login import LoginManager, logout_user, login_user, login_required, current_user
 from flask_classy import route, FlaskView
-from flask_mail import Mail, Message
 from forms import *
-from sequence_matcher import SequenceMatcher
+from sequence_matcher import match
+from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
-from data import db_session
-import logging
-from logging.handlers import RotatingFileHandler
+import uuid
+import os
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
