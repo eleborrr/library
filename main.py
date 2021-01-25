@@ -15,8 +15,10 @@ from data import db_session
 import logging
 from logging.handlers import RotatingFileHandler
 
-
-
+app = Flask(__name__)
+login_manager = LoginManager(app)
+app.config.from_object(AppConfig)
+mail = Mail(app)
 
 def confirm_token(token, expiration=3600):
     serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
