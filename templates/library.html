@@ -1,7 +1,63 @@
 {% extends "base-table.html" %}
+{% block title_block %}Список книг{% endblock %}
 {% block codeinblock %}
-					<p class="code">Код библиотеки: {{ library_code }}</p>
-{%endblock%}
+    <button onclick="copyToClipboard('#p1')"
+            style="border: none;background-color: transparent;color: #4A4141;font-weight: normal" class="code"><p
+            class="code" style="margin-top: -10px">Код библиотеки: {{ library_code }}</p></button>
+
+{% endblock %}
+{% block links %}
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/lybrary-table.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/css/popups.css">
+    <style>
+    .link-delete, .link-del {
+    display: block;
+    padding: 7px 15px;
+    background-color: #F87070;
+    font-size: 12px;
+    border-radius: 5px;
+    transition: all 0.4s ease 0s;
+    margin-top: 20px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.link-del.green {
+    background-color: #C1F084
+}
+
+.link-delete:hover {
+    padding: 10px 20px
+}
+    @media (max-width: 767px) {
+    .link-delete.hiden {
+        display: block;
+        max-width: 70%
+    }
+
+    .link-delete.opas {
+        display: none;
+    }
+}
+    button {
+            outline: none;
+            cursor: pointer;
+        }
+
+        .block-abs-code:active, .block-abs-code:focus {
+            border: none;
+        }
+
+        .block-abs-code::-moz-focus-inner {
+            border: none;
+        }
+        .fixed-side a.link-menu.b{
+            color: #473C3C;
+            -webkit-text-fill-color: #473C3C;
+            opacity: 0.95;
+        }
+    </style>
+{% endblock %}
 {% block url %}
     {%  if current_user.role_id == 2 %}
         <a href='/library/students' class="link-menu abs">Мои книги</a>
@@ -10,12 +66,91 @@
     {% endif %}
 {% endblock %}
 {% block contents %}
-    <div class="block-code" style="margin-bottom: 20px">
-        <p class="code">Код библиотеки: {{ library_code }}</p>
-    </div>
-    <div class="books-side" style="margin-top: 80px">
-        <div>
-            <input type="text" name=" " class="intpfield" placeholder="Введите название книги">
+
+    <button onclick="copyToClipboard('#p1')" style="border: none;background-color:
+                    transparent;color: #584B4B;font-weight: 400;font-family: Comfortaa, cursive;font-size: 11px"
+            class="block-abs-code">
+        <p class="code" style="margin-top: -10px">Код библиотеки:
+            {{ library_code }}</p>
+        <p id="p1" style="display: none">{{ library_code }}</p></button>
+    <div class="books-side" style="margin-top: 160px">
+        <div style="padding-top: 23px">
+            <form method="post" action="" style="margin-top: 23px">
+                {{ form.hidden_tag() }}
+                {{ form.crsf_token }}
+
+                {{ form.id(placeholder='Номер книги', class='int-search') }}
+                <br>
+                {% for error in form.id.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.name(placeholder='Название книги', class='int-search') }}
+                <br>
+                {% for error in form.name.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.author(placeholder='Фамилия автора', class='int-search') }}
+                <br>
+                {% for error in form.author.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.publication_year(placeholder='Год публикации', class='int-search') }}
+                <br>
+                {% for error in form.publication_year.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.edition_id(placeholder='Номер издания', class='int-search') }}
+                <br>
+                {% for error in form.edition_id.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.owner_id(placeholder='Номер владельца', class='int-search') }}
+                <br>
+                {% for error in form.owner_id.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.owner_surname(placeholder='Фамилия владельца', class='int-search') }}
+                <br>
+                {% for error in form.owner_surname.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.free.label }}
+                {{ form.free(placeholder='Свободная книга', class='int-search') }}
+                <br>
+                {% for error in form.owner_surname.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+                {{ form.submit(class='link-search') }}
+                {% for error in form.owner_surname.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </form>
         </div>
         {% for book in books %}
             <div class="book-item">
@@ -53,5 +188,15 @@
         {% endfor %}
 
     </div>
-
+    <div>
+        {% for book in books %}
+            {{ markup(book.id) }}
+        {% endfor %}
+    </div>
+<script>
+ $(function() {
+    var height = $( '#cont' ).height(); //получаем высоту одного элемента
+    $( '#fixed' ).height(height); //записываем высоту другому элементу
+});
+</script>
 {% endblock %}

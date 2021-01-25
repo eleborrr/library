@@ -8,6 +8,11 @@
 {% endblock %}
 {% block url %}
     <style>
+    .fixed-side a.link-menu.n{
+            color: #473C3C;
+            -webkit-text-fill-color: #473C3C;
+            opacity: 0.95;
+        }
         .body-content {
             align-items: stretch
         }
@@ -43,11 +48,6 @@
         margin-top: 80px;
     }
     </style>
-    {% if current_user.role_id == 2 %}
-        <a href='/library/students' class="link-menu abs">Мои книги</a>
-    {% elif current_user.role_id == 1 %}
-        <a href='/library/students' class="link-menu abs">Ученики</a>
-    {% endif %}
 {% endblock %}
 {% block contents %}
     {% block codeoutblock %}
@@ -98,7 +98,7 @@
         {% endfor %}
     {% else %}
         {{ form.name.label }}
-        {{ form.name() }}
+        {{ form.name(style='margin-bottom: 20px') }}
         {% for error in form.name.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
@@ -106,7 +106,7 @@
         {% endfor %}<br>
 
         {{ form.surname.label }}
-        {{ form.surname() }}
+        {{ form.surname(style='margin-bottom: 20px') }}
         {% for error in form.surname.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
@@ -114,6 +114,6 @@
         {% endfor %}
     {% endif %}
 
-    {{ form.submit(class='btn-sv') }}
+    {{ form.submit(class='btn-sv', style='cursor:pointer;color:black') }}
     </form>
 {% endblock %}

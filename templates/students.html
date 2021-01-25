@@ -1,7 +1,11 @@
 {% extends "base-table.html" %}
 {% block codeinblock %}
+    <button onclick="copyToClipboard('#p1')"
+            style="border: none;background-color: transparent;color: #4A4141;font-weight: normal" class="code"><p
+            class="code" style="margin-top: -10px">Код библиотеки: {{ library_code }}</p></button>
+
+{% endblock %}
 					<p class="code">Код библиотеки: {{ library_code }}</p>
-{%endblock%}
 {% block url %}
     {%  if current_user.role_id == 2 %}
         <a href='/library/students' class="link-menu abs">Мои книги</a>
@@ -10,14 +14,33 @@
     {% endif %}
 {% endblock %}
 {% block contents %}
-<link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
-<div class="flex-block" style="margin-left: 0">
+    <style>
+    .fixed-side a.link-menu.abs{
+            color: #473C3C;
+            -webkit-text-fill-color: #473C3C;
+            opacity: 0.95;
+        }
+    button {
+            outline: none;
+            cursor: pointer;
+        }
 
-			<div class="flex-second" style="width:100%;margin-left: -20px">
-				<div>
-					<form method="post" action="">
-                        {{ form.hidden_tag() }}
-                        {{ form.crsf_token }}
+        .block-abs-code:active, .block-abs-code:focus {
+            border: none;
+        }
+
+        .block-abs-code::-moz-focus-inner {
+            border: none;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/lybrary-table.css') }}">
+    <button onclick="copyToClipboard('#p1')" style="border: none;background-color:
+                    transparent;color: #584B4B;font-weight: 400;font-family: Comfortaa, cursive;font-size: 11px"
+            class="block-abs-code">
+        <p class="code" style="margin-top: -10px">Код библиотеки:
+            {{ library_code }}</p>
+        <p id="p1" style="display: none">{{ library_code }}</p></button>
+    <div class="flex-block" style="margin-left: 0">
 
                         {{ form.id(placeholder='Her\' vsykaya') }}
                         {{ form.id.label }}<br>
@@ -52,30 +75,30 @@
                                 </p>
                         {% endfor %}
 
-                        {{ form.class_letter(placeholder='Her\' vsykaya') }}
-                        {{ form.class_letter.label }}<br>
-                        {% for error in form.class_letter.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
+{#                    {{ form.class_letter(placeholder='Г', class='int-search') }}#}
+{#                    {{ form.class_letter.label(class='text-search') }}<br>#}
+{#                    {% for error in form.class_letter.errors %}#}
+{#                        <p class="alert alert-danger" role="alert">#}
+{#                            {{ error }}#}
+{#                        </p>#}
+{#                    {% endfor %}#}
 
-                        {{ form.submit() }}
-                        {% for error in form.submit.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
-                    </form>
-				</div>
-                {% for student in students %}
-				<div class="izd-item">
-					<a href="/library/profile/{{ student.id }}">{{ student.name }}</a>
-					<span >{{ student.cla }}</span>
-					<span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
-					<input type="submit" name="delete-edition" class='link-izd' href='#' value="Удалить">
-				</div>
-                {% endfor %}
-			</div>
-</div>
+                    {{ form.submit(class='link-search') }}
+                    {% for error in form.submit.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </form>
+            </div>
+            {% for student in students %}
+                <div class="izd-item" style="padding: 5px">
+                    <span style="background-color: #98D9E8;margin-left: 0">{{ student.id }}</span>
+                    <a href="/library/profile/{{ student.id }}">{{ student.surname }} {{ student.name }}</a>
+                    <span>{{ student.class_num }} класс</span>
+                    <a class='link-izd' href='/library/delete_student/{{ student.id }}'>Удалить</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

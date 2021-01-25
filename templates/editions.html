@@ -10,70 +10,145 @@
     {% endif %}
 {% endblock %}
 {% block contents %}
-{% block codeoutblock %}
-					<div class="block-abs-code">
-					<p class="code">Код библиотеки: {{ library_code }}</p>
-				</div>
-						{%endblock%}
-<link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
-<div class="flex-block" style="margin-left: 0">
 
-			<div class="flex-second" style="width:100%;margin-left: -20px">
-				<div>
-					<form method="post" action="">
-                        {{ form.hidden_tag() }}
-                        {{ form.crsf_token }}
+    <link rel="stylesheet" type="text/css" href="../static/css/lybrary-table.css">
+    <style>
+        a.link-create-edi {
+            margin-top: 155px;
+            margin-left: 40px;
+            font-size: calc(10px + 5 * (100vw / 1280));
+            display: block;
 
-                        {{ form.id(placeholder='Her\' vsykaya') }}
-                        {{ form.id.label }}<br>
-                        {% for error in form.id.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
+            border-radius: 3px;
 
+            padding: 5px;
+            text-decoration: none;
+            max-width: 165px;
+            align-content: center;
+            color: #4A4141;
+        }
 
-                        {{ form.name(placeholder='Her\' vsykaya') }}
-                        {{ form.name.label }}<br>
-                        {% for error in form.name.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
+        .izd-item {
+            padding: 10px;
+        }
 
-                        {{ form.author(placeholder='Her\' vsykaya') }}
-                        {{ form.author.label }}<br>
-                        {% for error in form.author.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
+        @media (max-width: 767px) {
+            .link-create-edi {
+                margin-top: 200px;
+            }
 
-                        {{ form.publication_year(placeholder='Her\' vsykaya') }}
-                        {{ form.publication_year.label }}<br>
-                        {% for error in form.publication_year.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
+        }
 
-                        {{ form.submit() }}
-                        {% for error in form.submit.errors %}
-                                <p class="alert alert-danger" role="alert">
-                                    {{ error }}
-                                </p>
-                        {% endfor %}
-                    </form>
-				</div>
-                {% for edition in editions %}
-				<div class="izd-item">
-                    <img src="../static/img/editions{{ editions.avatar_image }}">
-					<a href="/library/editions/{{ edition.id }}">{{ edition.name }}</a>
-					<span >Литература</span>
-					<span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
-					<input type="submit" name="delete-edition" class='link-izd' href='#' value="Удалить">
-				</div>
-                {% endfor %}
-			</div>
-</div>
+        button {
+            outline: none;
+            cursor: pointer;
+        }
+
+        .block-abs-code:active, .block-abs-code:focus {
+            border: none;
+        }
+
+        .block-abs-code::-moz-focus-inner {
+            border: none;
+        }
+         .fixed-side a.link-menu.i{
+            color: #473C3C;
+            -webkit-text-fill-color: #473C3C;
+            opacity: 0.95;
+        }
+    </style>
+
+    <button onclick="copyToClipboard('#p1')" style="border: none;background-color:
+                    transparent;color: #584B4B;font-weight: 400;font-family: Comfortaa, cursive;font-size: 11px"
+            class="block-abs-code">
+        <p class="code" style="margin-top: -10px">Код библиотеки:
+            {{ library_code }}</p>
+        <p id="p1" style="display: none">{{ library_code }}</p></button>
+    {% if current_user.role_id == 2 %}
+    <a href="/library/editions/create" class="link-create-edi">Добавить издание</a>
+    {% endif %}
+    <div class="flex-block" style="margin-left: 0">
+        <div class="flex-second" style="width:100%;margin-left: -20px">
+            <div >
+                <form method="post" action="" >
+                    {{ form.hidden_tag() }}
+                    {{ form.crsf_token }}
+
+                    {{ form.id(placeholder='Номер издания', class='int-search') }}
+                    <br>
+                    {% for error in form.id.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                    {{ form.name(placeholder='Название книги', class='int-search') }}
+                    <br>
+                    {% for error in form.name.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                    {{ form.author(placeholder='Фамилия автора', class='int-search') }}
+                    <br>
+                    {% for error in form.author.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                    {{ form.publication_year(placeholder='Год публикации', class='int-search') }}
+                    <br>
+                    {% for error in form.publication_year.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                    {{ form.submit(class='link-search') }}
+                    {% for error in form.submit.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </form>
+            </div>
+        <style>
+            @media (min-width: 900px) {
+            .izd-item{
+                display: block;
+            }
+            .izd-item span, .izd-item a, .izd-item img{
+                float: left;
+                margin: 10px;
+            }}
+        </style>
+            {% for edition in editions %}
+                <div class="izd-item" style="max-width: 100%">
+                    <a class="ed-name" style="margin-right: 5px">{{ edition.id }}</a>
+                    <img alt="" src="../../static/img/editions/{{ edition.photo_name }}"
+                         style="max-width: 100px;border-radius: 3px">
+                    <a href="/library/editions/{{ edition.id }}" class="ed-name" style="padding-top: 5px">{{ edition.name }}</a>
+                    <span>Литература</span>
+                    <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
+                    {#                    <input type="submit" name="delete-edition" class='link-izd' href='/library' value="Удалить">#}
+                    {% if current_user.role_id == 2 %}
+                        <a class="link-izd" href='#popup_edition_{{ edition.id }}'>Удалить</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div>
+        {% for edition in editions %}
+            {{ markup(edition.id) }}
+        {% endfor %}
+    </div>
+<script>
+ $(function() {
+    var height = $( '#normal' ).height(); //получаем высоту одного элемента
+    $( '#fixed' ).height(height); //записываем высоту другому элементу
+});
+</script>
 {% endblock %}

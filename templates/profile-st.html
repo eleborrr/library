@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+    <title>Профиль {{ user.name }}</title>
+
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="../static/css/bookone.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='../static/css/editionone.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='../static/css/popups.css') }}">
+</head>
+
+<body>
+<style>
+    .btn-white, .link-red{
+        padding: 7px;
+        font-size: 12px;
+        background-color: #9278aa;
+        border-radius: 3px;
+        color: white;
+        transition: 1s ease 0s;
+
+    }
+    .descrs h3{
+        font-size: 27px;
+        margin-bottom: 0;
+        padding-bottom: 10px;
+    }
+</style>
+<div class="body-cont" style="margin:auto;max-width: 1040px">
+    <div class="logo-text"><a href="/" style="text-decoration: none"><strong style="font-size: 25px">M | L</strong></a>
+    </div>
+
+    <div style="max-width: 1040px;margin-top:40px">
+        {% if current_user.role_id == 2 %}
+            <a href='#' class="link-del green" style="float: right;margin-bottom:50px">Редактировать</a>
+        {% endif %}
+        <a href="/library/editions" class="link-del green" style="float: right;margin-bottom:50px;margin-right:15px">Вернуться</a>
+    </div>
+
+    <form method="post">
+        <div class="edition-body">
+            <div class="upper-block">
+                <div class="img-book">
+                    <img src="{{ url_for('static', filename='img/LIBBI3.png') }}">
+                </div>
+                <div class="descrs">
+                    <h3>{{ user.name }} {{ user.surname }}</h3>
+                    {% if current_user.Role == "Student" %}
+            <div class="left-btns">
+            <div style="width:100%;margin-top: 20px">
+                <a href='/library/editions' class="btn-white">Издания школы</a>
+                <a href='#' class="btn-white" style="margin-left: 20px">Книги школы</a></div>
+            <div style="display: flex;width:100%">
+                <a class="link-red" href="#">Просмотреть идентификатор библиотеки</a>
+                <a class="link-red" href="#" style="margin-left: 20px">Изменить название библиотеки</a>
+            </div>
+            </div>
+        {% else %}
+
+        {% endif %}
+        {% if current_user.role_id == 2 %}
+
+            <div class="left-btns" style="margin-left: auto">
+            <div style="width:100%;margin-top: 15px">
+                <a href='/library/editions' class="btn-white">Выдать книгу</a>
+{#                <a href='#' class="btn-white" style="margin-left: 20px">Книги школы</a>#}
+            </div>
+            <div style="display: flex;width:100%;margin-top: 15px">
+{#                <a class="link-red" href="#">Просмотреть идентификатор библиотеки</a>#}
+                <a class="link-red" href="#" style="">Удалить из учеников</a>
+            </div>
+            </div>
+        {% else %}
+                {% endif %}
+
+            </div>
+        </div>
+    </form>
+
+    <div class="lower-block" style="max-width: 1040px;margin: auto">
+        <input type="text" name="" placeholder="Поиск книг" class="inpt-srh">
+    </div>
+
+    <div class="ed-books" style="max-width: 1040px;margin: auto;margin-bottom: 100px">
+         {% for book in books %}
+                    <div class="book-it">
+                        <div class="img-book"><img src='{{ url_for('static', filename='img/editions/' + book.edition.photo_name) }}'></div>
+                        <div class="name-and-go">
+                            <h3>{{ book.edition.name }}</h3>
+                            <a href="/library/books/{{ book.id }}">Зайти</a>
+                        </div>
+                    </div>
+                {% endfor %}<br>
+
+
+    </div>
+<br>
+
+
+</div>
+
+
+
+
+</body>
+</html>

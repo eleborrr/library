@@ -1,34 +1,57 @@
 <!DOCTYPE html>
 
 <html lang="ru">
-	<head>
-		<title>Title</title>
+<head>
+    <title>Книга {{ book.id }}</title>
 
 
+    <meta charset="UTF-8">
 
-		<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/css/bookone.css">
+</head>
+<style>
+    .book {
+        height: 70vh;
+    }
 
-		<meta name="viewport" content="width=device-width">
-		<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="/static/css/bookone.css">
-	</head>
+    .back {
+        padding: 10px;
+        background-color: #9278aa;
+        margin: 0px 0 20px 0;
+        text-align: center;
+        border-radius: 3px;
+        color: white;
+        font-size: 12px;
+        transition: 1s ease 0s;
+        border: 1px solid transparent;
+    }
 
-	<body>
-		<div class="body-cont">
-		<div class="logo-text"><strong style="font-size: 25px">M | L</strong></div>
+    .back:hover {
+        background-color: transparent;
+        border: 1px solid #9278aa;
+    }
+</style>
+<body>
+<div class="body-cont">
+    <div class="logo-text"><a href="/" style="text-decoration: none"><strong style="font-size: 25px">M | L</strong></a>
+    </div>
 
-		<div class="book">
-			<div class="top-flex">
-				<div class="img-book">
-					<img src='img/mars.jpg'>
-				</div>
-				<div class="names">
-					<p style="padding-top: 15px;font-size: 15px;"><strong>Название: {{ book.name }}</strong></p>
-					<p style="padding-bottom: 15px">Издание: {{ book.edition.name }}</p>
-                    {% if book.owner %}
-					<a href='#' style="font-size: 12px">Владелец: {{ book.owner.name }}</a>
-                    {% else %}
-                    <a href='#' style="font-size: 12px">Владельца нет</a>
+    <div class="book">
+        <div class="top-flex">
+            <div class="img-book">
+                <img src='{{ url_for('static', filename='img/editions/' + book.edition.photo_name) }}'>
+            </div>
+            <div class="names">
+                <p style="padding-top: 15px;font-size: 15px;"><strong>Название: {{ book.edition.name }}</strong></p>
+                <p style="padding-bottom: 15px">Издание: {{ book.edition.ed_name }}</p>
+                {% if book.owner %}
+                    {% if current_user.role_id == 2 %}
+                        <a href='/library/profile/{{ book.owner_id }}'
+                        style="font-size: 12px">Владелец: {{ book.owner.name }}</a>
+                    {% elif current_user.role_id == 1 %}
+                        <a class="back">Владелец: {{ book.owner.name }} {{ book.owner.surname }} {{ book.owner.class_num }}</a>
                     {% endif %}
 				</div>
 			</div>
