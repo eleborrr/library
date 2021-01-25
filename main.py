@@ -193,7 +193,7 @@ def error_401(er):
 #
 #
 
-@application.errorhandler(404)
+@app.errorhandler(404)
 def error_404(er):
     if er.description == 'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.':
         er.description = 'Страница не найдена'
@@ -215,13 +215,13 @@ def load_user(user_id):
         session.close()
 
 
-@application.route('/logout')
+@app.route('/logout')
 def logout():
     logout_user()
     return redirect('/')
 
 
-@application.before_first_request
+@app.before_first_request
 def create_roles():
     session = db_session.create_session()
     roles = {'Student', 'Librarian'}
@@ -235,17 +235,17 @@ def create_roles():
     session.close()
 
 
-@application.route("/zhoppa")
+@app.route("/zhoppa")
 def hello():
    return "<h1 style='color:blue'>Hello There!</h1>"
 
    
-@application.route("/")
+@app.route("/")
 def zhoppa():
     return render_template("index.html")
 
     
-@application.route('/sign_in', methods=['GET', 'POST'])
+@app.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
     if current_user.is_authenticated:
         return redirect('/library')
@@ -849,4 +849,4 @@ class LibraryView(FlaskView):
 LibraryView.register(app, '/library')
 
 if __name__ == "__main__":
-   application.run(host='0.0.0.0')
+   app.run(host='0.0.0.0')
