@@ -1,0 +1,120 @@
+Exception on /sign_in [GET]
+Traceback (most recent call last):
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/var/www/u1122647/data/www/libby.ru/hello.py", line 39, in sign_in
+    if current_user.is_authenticated:
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/werkzeug/local.py", line 347, in __getattr__
+    return getattr(self._get_current_object(), name)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/werkzeug/local.py", line 306, in _get_current_object
+    return self.__local()
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask_login/utils.py", line 26, in <lambda>
+    current_user = LocalProxy(lambda: _get_user())
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask_login/utils.py", line 346, in _get_user
+    current_app.login_manager._load_user()
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/werkzeug/local.py", line 347, in __getattr__
+    return getattr(self._get_current_object(), name)
+AttributeError: 'Flask' object has no attribute 'login_manager'
+Exception on / [GET]
+Traceback (most recent call last):
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/var/www/u1122647/data/www/libby.ru/hello.py", line 35, in zhoppa
+    return render_template("index.html")
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/templating.py", line 136, in render_template
+    ctx.app.update_template_context(context)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 838, in update_template_context
+    context.update(func())
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask_login/utils.py", line 379, in _user_context_processor
+    return dict(current_user=_get_user())
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask_login/utils.py", line 346, in _get_user
+    current_app.login_manager._load_user()
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask_login/login_manager.py", line 303, in _load_user
+    "Missing user_loader or request_loader. Refer to "
+Exception: Missing user_loader or request_loader. Refer to http://flask-login.readthedocs.io/#how-it-works for more info.
+Exception on /library/ [GET]
+Traceback (most recent call last):
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask_classy.py", line 200, in proxy
+    response = view(**request.view_args)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask_login/utils.py", line 270, in decorated_view
+    elif not current_user.is_authenticated:
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/werkzeug/local.py", line 347, in __getattr__
+    return getattr(self._get_current_object(), name)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/werkzeug/local.py", line 306, in _get_current_object
+    return self.__local()
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask_login/utils.py", line 26, in <lambda>
+    current_user = LocalProxy(lambda: _get_user())
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask_login/utils.py", line 346, in _get_user
+    current_app.login_manager._load_user()
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask_login/login_manager.py", line 318, in _load_user
+    user = self._user_callback(user_id)
+  File "/var/www/u1122647/data/www/libby.ru/hello.py", line 162, in load_user
+    return User.get(user_id)
+AttributeError: type object 'User' has no attribute 'get'
+Exception on /library/students [GET]
+Traceback (most recent call last):
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask_classy.py", line 200, in proxy
+    response = view(**request.view_args)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask_login/utils.py", line 272, in decorated_view
+    return func(*args, **kwargs)
+  File "/var/www/u1122647/data/www/libby.ru/hello.py", line 510, in students
+    return render_template('students.html', students=new_res, form=form)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/templating.py", line 138, in render_template
+    ctx.app.jinja_env.get_or_select_template(template_name_or_list),
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/jinja2/environment.py", line 930, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/jinja2/environment.py", line 883, in get_template
+    return self._load_template(name, self.make_globals(globals))
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/jinja2/environment.py", line 857, in _load_template
+    template = self.loader.load(self, name, globals)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/jinja2/loaders.py", line 115, in load
+    source, filename, uptodate = self.get_source(environment, name)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/templating.py", line 60, in get_source
+    return self._get_source_fast(environment, template)
+  File "/var/www/u1122647/data/flaskenv/lib/python3.7/site-packages/flask/templating.py", line 89, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: students.html

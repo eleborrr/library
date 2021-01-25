@@ -2,25 +2,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, RadioField, BooleanField, TextAreaField, DateTimeField, \
     DateField, TimeField, FileField, IntegerField, SelectField
 from wtforms.fields.html5 import EmailField, DateTimeLocalField
-from wtforms.validators import DataRequired, Length, NumberRange, EqualTo
+from wtforms.validators import DataRequired, Length, NumberRange
 from flask_wtf.recaptcha import RecaptchaField
 from datetime import datetime
-
-
-class OptionalIntegerField(IntegerField):
-    def process_data(self, value):
-        if not value:
-            value = None
-        IntegerField.process_data(self, value)
-
-    def process_formdata(self, valuelist):
-        if valuelist:
-            try:
-                self.data = int(valuelist[0])
-            except ValueError:
-                self.data = None
-                if valuelist[0]:
-                    raise ValueError(self.gettext('Not a valid integer value'))
 
 
 class CreateLibraryForm(FlaskForm):  # Создает пользователя-библиотекаря и библиотеку
@@ -39,9 +23,11 @@ class RegisterStudentForm(FlaskForm):
     email = EmailField('Адрес электронной почты', validators=[DataRequired(), Length(max=64)])
     password = PasswordField('Пароль', validators=[DataRequired(), Length(max=128)])
     repeat = PasswordField('Повторите пароль', validators=[DataRequired(), Length(max=128)])
-    class_num = IntegerField('Номер класса, в котором вы учитесь', validators=[DataRequired(),
-                                                                               NumberRange(min=1, max=11)])
+    library_id = StringField('Идентификатор библиотеки (спросите у библиотекаря)', validators=[DataRequired(),
+                                                                                               NumberRange(min=1, max=11)])
+    class_num = IntegerField('Номер класса, в котором вы учитесь', validators=[DataRequired()])
     submit = SubmitField('Зарегистрироваться')
+
 
 
 def edit_library(**kwargs):
@@ -64,7 +50,7 @@ class CreateEdition(FlaskForm):
     submit = SubmitField("Создать")
     photo = FileField("Обложка")
 
-
+    
 class LoginForm(FlaskForm):
     email = EmailField('Адрес электронной почты')
     password = PasswordField('Пароль')
@@ -78,12 +64,12 @@ class BorrowBookForm(FlaskForm):
 
 def book_filter_form(**kwargs):
     class BookFilterForm(FlaskForm):
-        id = OptionalIntegerField('Номер книги', default=kwargs['id'])
+        id = IntegerField('Номер книги', default=kwargs['id'])
         name = StringField('Название книги', default=kwargs['name'])
         author = StringField('Фамилия автора', default=kwargs['author'])
-        publication_year = OptionalIntegerField('Год публикации', default=kwargs['publication_year'])
-        edition_id = OptionalIntegerField('Номер издания', default=kwargs['edition_id'])
-        owner_id = OptionalIntegerField('Номер владельца', default=kwargs['owner_id'])
+        publication_year = IntegerField('Год публикации', default=kwargs['publication_year'])
+        edition_id = IntegerField('Номер издания', default=kwargs['edition_id'])
+        owner_id = IntegerField('Номер владельца', default=kwargs['owner_id'])
         owner_surname = StringField('Фамилия владельца', default=kwargs['owner_surname'])
         free = BooleanField('Свободные книги', default=kwargs['free'])
         submit = SubmitField('Искать')
@@ -93,7 +79,7 @@ def book_filter_form(**kwargs):
 
 def edition_filter_form(**kwargs):
     class EditionFilterForm(FlaskForm):
-        id = OptionalIntegerField('Номер издания', default=kwargs['id'])
+        id = StringField('Номер издания', default=kwargs['id'])
         name = StringField('Название книги', default=kwargs['name'])
         author = StringField('Фамилия автора', default=kwargs['author'])
         publication_year = OptionalIntegerField('Год публикации', default=kwargs['publication_year'])
@@ -104,9 +90,10 @@ def edition_filter_form(**kwargs):
 
 def student_filter_form(**kwargs):
     class StudentFilterForm(FlaskForm):
-        id = OptionalIntegerField('Номер ученика', default=kwargs['id'])
+        id = IntegerField('Номер ученика', default=kwargs['id'])
+        name = StringField('Фамилия ученика', default=kwargs['name'])
         surname = StringField('Фамилия ученика', default=kwargs['surname'])
-        class_num = OptionalIntegerField('Номер класса ученика', default=kwargs['class_num'])
+        class_num = IntegerField('Номер класса ученика', default=kwargs['class_num'])
         class_letter = StringField('Литера класса ученика', default=kwargs['class_letter'])
         submit = SubmitField('Искать')
 
@@ -137,4 +124,3 @@ def edit_student_profile_form(**kwargs):
         surname = StringField('Ваша фамилия', default=kwargs['surname'])
         submit = SubmitField('Изменить')
     return EditStudentProfileForm()
-

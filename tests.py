@@ -1,5 +1,4 @@
-from main import create_roles, lend_book, return_book, register_student, create_library, add_edition, add_book, \
-    remove_book
+from main import create_roles, lend_book, return_book, register_student, create_library, add_edition, add_book, remove_book
 from data import db_session, role, user, edition, library, book
 import unittest
 import os
@@ -10,10 +9,6 @@ class AppTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         super(AppTests, cls).setUpClass()
         db_session.global_init('db/tests.sqlite3')
-
-    def setUp(self) -> None:
-        super(AppTests, self).setUp()
-        create_roles()
 
     def test_create_roles(self):
         create_roles()
@@ -59,8 +54,7 @@ class AppTests(unittest.TestCase):
         add_edition(lib.id, 4,
                     name='name',
                     author='author',
-                    publication_year=1984,
-                    ed_name='ed_name')
+                    publication_year=1984)
         ed = session.query(edition.Edition).first()
         self.assertIsNotNone(ed)
         books = session.query(book.Book).all()
@@ -80,8 +74,7 @@ class AppTests(unittest.TestCase):
         add_edition(lib.id, 4,
                     name='name',
                     author='author',
-                    publication_year=1984,
-                    ed_name='ed_name')
+                    publication_year=1984)
         register_student('name', 'surname', 'login', 'password', lib.id, 7)
         register_student('name', 'surname', 'login1', 'password', lib.id, 7)
         user1 = session.query(user.User).get(1)
@@ -115,8 +108,7 @@ class AppTests(unittest.TestCase):
         add_edition(lib.id, 4,
                     name='name',
                     author='author',
-                    publication_year=1984,
-                    ed_name='ed_name')
+                    publication_year=1984)
         register_student('name', 'surname', 'login', 'password', lib.id, 7)
         register_student('name', 'surname', 'login1', 'password', lib.id, 7)
         user1 = session.query(user.User).get(1)
@@ -140,8 +132,7 @@ class AppTests(unittest.TestCase):
         add_edition(lib.id, 4,
                     name='name',
                     author='author',
-                    publication_year=1984,
-                    ed_name='ed_name')
+                    publication_year=1984)
         ed = session.query(edition.Edition).first()
 
         add_book(ed.id)
@@ -162,12 +153,12 @@ class AppTests(unittest.TestCase):
         add_edition(lib.id, 4,
                     name='name',
                     author='author',
-                    publication_year=1984,
-                    ed_name='ed_name')
+                    publication_year=1984)
 
         remove_book(2)
         self.assertEqual(len(session.query(book.Book).all()), 3)
         session.close()
+
 
     def tearDown(self) -> None:
         session = db_session.create_session()

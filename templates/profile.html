@@ -1,72 +1,62 @@
 <!DOCTYPE html>
 
 <html lang="ru">
-<head>
-    <title>Профиль</title>
+	<head>
+		<title>Title</title>
 
 
-    <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width">
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="../static/css/library.css">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/profile.css') }}">
-</head>
+		<meta charset="UTF-8">
 
-<body>
+		<meta name="viewport" content="width=device-width">
+		<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../static/css/library.css">
+		<link rel="stylesheet" type="text/css" href="../static/css/profile.css">
+	</head>
 
-<div class="topfix"></div>
-<div class="body-content">
-    <div class="logo-text" style="display: flex"><a href="/" style="text-decoration: none;color: #fff;font-family: 'Comfortaa', cursive"><strong style="font-size: 25px">M | L</strong></a>
-    <a href="/library/editions" style="margin-left:30px;padding-top:12px;text-decoration: none;color: #fff;font-family: 'Comfortaa', cursive;font-size: 12px">К изданиям</a>
-    </div>
-    <div class="topblock">
-        <h1 style="font-family: 'Comfortaa', cursive">{{ user.name }} {{ user.surname }}</h1>
-        <a href='#' style="font-family: 'Comfortaa', cursive">Редактировать</a>
-    </div>
-    <div class="downblock">
-        {% if current_user.Role == "Student" %}
-            <div class="left-btns">
-            <div style="width:100%">
-                <a href='/library/editions' class="btn-white">Издания школы</a>
-                <a href='#' class="btn-white" style="margin-left: 20px">Книги школы</a></div>
-            <div style="display: flex;width:100%">
-                <a class="link-red" href="#">Просмотреть идентификатор библиотеки</a>
-                <a class="link-red" href="#" style="margin-left: 20px">Изменить название библиотеки</a>
-            </div>
-        {% else %}
+	<body>
 
-        {% endif %}
-        {% if current_user.role_id == 2 %}
-            <div class="left-btns">
-            <div style="width:100%">
-                <a href='/library/editions' class="btn-white">Выдать книгу</a>
-{#                <a href='#' class="btn-white" style="margin-left: 20px">Книги школы</a>#}
-            </div>
-            <div style="display: flex;width:100%">
-{#                <a class="link-red" href="#">Просмотреть идентификатор библиотеки</a>#}
-                <a class="link-red" href="#" style="margin-left: 20px">Удалить из учеников</a>
-            </div>
-        {% else %}
+		<div class="topfix"></div>
+		<div class="body-content">
+				<div class="topblock">
+					<h1>Профиль</h1>
+					<a href='#'>Редактировать</a>
+				</div>
+				<div class="downblock">
+					<div class="left-btns">
+						<div style="width:100%">
+						<a href='/library/editions' class="btn-white">Издания школы</a>
+						<a href='#' class="btn-white" style="margin-left: 20px">Книги школы</a></div>
+						<div style="display: flex;width:100%">
+						<a class="link-red" href="#">Просмотреть идентификатор библиотеки</a>
+						<a class="link-red" href="#" style="margin-left: 20px">Изменить название библиотеки</a>
+					</div>
+					</div>
+					<div class="right-books">
+						<div class="cont-book">
+							<h5 class="text-my-book">{{ user.name }}. Книги:</h5>
 
-        {% endif %}
-        </div>
-        <div class="right-books">
-            <div class="cont-book">
-                <h5 class="text-my-book" style="font-family: 'Comfortaa', cursive">{{ user.name }}. Книги:</h5>
-                {% for book in books %}
-                    <div class="book-it">
-                        <div class="img-it"><img src='{{ url_for('static', filename='img/editions/' + book.edition.photo_name) }}'></div>
-                        <div class="name-and-go">
-                            <h3>{{ book.edition.name }}</h3>
-                            <a href="/library/books/{{ book.id }}">Зайти</a>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+							<div class="book-it">
+								<div class="img-it"><img src="../static/img/mars.jpg"></div>
+								<div class="name-and-go">
+									<h3>Название</h3>
+									<a href="#">Зайти</a>
+								</div>
+							</div>
 
-        </div>
-    </div>
-</div>
-</body>
-</html>
+
+							<div class="book-it">
+								<div class="img-it"><img src="../static/img/mars.jpg"></div>
+								<div class="name-and-go">
+									<h3>Название</h3>
+									<a href="#">Зайти</a>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+		</div>
+	</body>
+	</html>

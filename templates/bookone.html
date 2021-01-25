@@ -53,39 +53,28 @@
                     {% elif current_user.role_id == 1 %}
                         <a class="back">Владелец: {{ book.owner.name }} {{ book.owner.surname }} {{ book.owner.class_num }}</a>
                     {% endif %}
-                {% else %}
-                    <a style="font-size: 12px">Владельца нет</a>
-                {% endif %}
-            </div>
-        </div>
+				</div>
+			</div>
 
-        <form id="book-edit" method="post">
-            <div class="down-flex">
-                <div class="left-flex" style="display: flex;flex-direction: column">
-                    {% if current_user.role_id == 2 %}
-                        {% if book.owner %}
-                            <a class="back" href="/library/return_book/{{ book.id }}">Вернуть книгу</a>
-                        {% else %}
-                            <a class="back" href="/library/give_book/{{ book.id }}">Выдать книгу</a>
-                        {% endif %}
-                        {# Сделать возврат и выдачу #}
-                        {% if not book.owner %}
-                            <a class="back del" href="/library/delete_book/{{ book.id }}">Удалить из бибилиотеки</a>
-                        {% endif %}
-                        </div>
-                        <div class="right-flex">
-                        <img src="data:image/jpeg;base64,{{ img }}" alt="lol" style="max-width: 100%"><br>
-                        <a href="data:image/jpeg;base64,{{ img }}" download="qr.jpeg">Скачать</a>
+            <form id="book-edit" method="post">
+			<div class="down-flex">
+				<div class="left-flex">
+                    {% if book.owner %}
+					<input type='submit' class="back" name="return-book" value="Забрать у владельца">
+                    {% else %}
+					<input type='submit' class="back" name="give-book" value="Выдать ученику">
                     {% endif %}
-                    </div>
-            </div>
-        </form>
-        <div>
-
-        </div>
-    </div>
-
-</div>
-
-</body>
-</html>
+					<input type='submit' class="back del" name="delete-book" value="Удалить из базы">
+					<input type='submit' class="back green" name="add-in-edition" value="Добавить в издание">
+				</div>
+				<div class="right-flex">
+                    {% if current_user.role_id == 1 and current_user.library_id == book.edition.library_id%}
+                    <input type="submit" class="qrcode" name="print-qr" value="Распечатать QR код">
+                    {% endif %}
+				</div>
+			</div>
+            </form>
+		</div>
+	</div>
+	</body>
+	</html>

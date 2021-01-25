@@ -1,154 +1,125 @@
-* {
-    box-sizing: border-box;
-}
+* {box-sizing: border-box;}
 
 .decor {
-    position: relative;
-    max-width: 400px;
-    margin: 50px auto 0;
-    background: white;
-    border-radius: 30px;
-    max-height: 100%
+  position: relative;
+  max-width: 400px;
+  margin: 50px auto 0;
+  background: white;
+  border-radius: 30px;
+  max-height: 100%
 
-    /*overflow-y: auto;*/
-    /*overflow-x: hidden;*/
+  /*overflow-y: auto;*/
+  /*overflow-x: hidden;*/
 
 }
-
 .decor::-webkit-scrollbar {
-    width: 0;
+  width: 0;
 }
-
 .form-left-decoration,
 .form-right-decoration {
-    content: "";
-    position: absolute;
-    width: 50px;
-    height: 20px;
-    /*background: #3E87CA;*/
-    border-radius: 20px;
+  content: "";
+  position: absolute;
+  width: 50px;
+  height: 20px;
+  /*background: #3E87CA;*/
+  border-radius: 20px;
 }
-
 .form-left-decoration {
-    bottom: 60px;
-    left: -30px;
+  bottom: 60px;
+  left: -30px;
 }
-
 .form-right-decoration {
-    top: 60px;
-    right: -30px;
+  top: 60px;
+  right: -30px;
 }
-
 .form-left-decoration:before,
 .form-left-decoration:after,
 .form-right-decoration:before,
 .form-right-decoration:after {
-    content: "";
-    position: absolute;
-    width: 50px;
-    height: 20px;
-    border-radius: 30px;
-    background: white;
+  content: "";
+  position: absolute;
+  width: 50px;
+  height: 20px;
+  border-radius: 30px;
+  background: white;
 }
-
-.form-left-decoration:before {
-    top: -20px;
-}
-
+.form-left-decoration:before {top: -20px;}
 .form-left-decoration:after {
-    top: 20px;
-    left: 10px;
+  top: 20px;
+  left: 10px;
 }
-
 .form-right-decoration:before {
-    top: -20px;
-    right: 0;
+  top: -20px;
+  right: 0;
 }
-
 .form-right-decoration:after {
-    top: 20px;
-    right: 10px;
+  top: 20px;
+  right: 10px;
 }
-
 .circle {
-    position: absolute;
-    bottom: 80px;
-    left: -55px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: white;
+  position: absolute;
+  bottom: 80px;
+  left: -55px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
 }
-
-.form-inner {
-    padding: 50px;
-}
-
+.form-inner {padding: 50px;}
 .form-inner input,
 .form-inner textarea {
-    display: block;
-    width: 100%;
-    padding: 0 20px;
-    margin-bottom: 10px;
-    background: #E9EFF6;
-    line-height: 40px;
-    border-width: 0;
-    border-radius: 20px;
-    font-family: 'Roboto', sans-serif;
+  display: block;
+  width: 100%;
+  padding: 0 20px;
+  margin-bottom: 10px;
+  background: #E9EFF6;
+  line-height: 40px;
+  border-width: 0;
+  border-radius: 20px;
+  font-family: 'Roboto', sans-serif;
 }
-
 .form-inner input[type="submit"] {
-    margin-top: 30px;
-    background: #eb8698;
-    border-bottom: 4px solid grey;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
+  margin-top: 30px;
+  background: #eb8698;
+  border-bottom: 4px solid grey;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
 }
-
-.form-inner textarea {
-    resize: none;
+.form-inner textarea {resize: none;
 
 }
-
 .form-inner h3 {
-    margin-top: 0;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
-    font-size: 24px;
-    color: #707981;
-    margin-bottom: 20px
+  margin-top: 0;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  color: #707981;
+  margin-bottom: 20px
 }
-
-.decor label {
-    font-family: 'Roboto', sans-serif;
-    margin: 0 0 20px 0;
-    color: #707981;
+.decor label{
+font-family: 'Roboto', sans-serif;
+margin: 0 0 20px 0;
+color: #707981;
 }
+input, textarea {outline:none;}
 
-input, textarea {
-    outline: none;
+.repeat-email{
+  text-decoration: none;
+  padding: 7px 10px;
+  border-radius: 5px;
+  border: 2px solid #3E87CA;
+  color: #3E87CA;
+  transition: all 0.2s ease;
 }
-
-.repeat-email {
-    text-decoration: none;
-    padding: 7px 10px;
-    border-radius: 5px;
-    border: 2px solid #3E87CA;
-    color: #3E87CA;
-    transition: all 0.2s ease;
+.form-inner{
+  color: #494343
 }
-
-.form-inner {
-    color: #494343
+.form-inner p{
+  line-height: 25px;
 }
-
-.form-inner p {
-    line-height: 25px;
-}
-
-.repeat-email:hover {
-    padding: 9px 15px;
-    /*background-color: #3E87CA;*/
-    color: white;
+.repeat-email:hover{
+  padding: 9px 15px;
+  /*background-color: #3E87CA;*/
+  color: white;
 }

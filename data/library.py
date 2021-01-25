@@ -11,14 +11,9 @@ class Library(SqlAlchemyBase):
     school_name = Cl(sql.String(64), nullable=False)
     users = orm.relation('User', back_populates='library')
     editions = orm.relation('Edition', back_populates='library')
-    opened = Cl(sql.Boolean, nullable=False, default=True)
 
     def generate_id(self):
         return hashlib.shake_128(str(self.id).encode()).hexdigest(5)
-
-    @property
-    def string_id(self):
-        return self.generate_id()
 
     def check_id(self, other):
         return other == self.generate_id()

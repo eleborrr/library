@@ -1,20 +1,13 @@
 {% extends "base-table.html" %}
-{% block title_block %}Список изданий{% endblock %}
-{% block links %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/popups.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/editionone.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/library.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/library-page.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/lybrary-table.css') }}">
-
-{% endblock %}
 {% block codeinblock %}
-    <button onclick="copyToClipboard('#p1')"
-            style="border: none;background-color: transparent;color: #4A4141;font-weight: normal" class="code"><p
-            class="code" style="margin-top: -10px">Код библиотеки: {{ library_code }}</p></button>
-
-{% endblock %}
+					<p class="code">Код библиотеки: {{ library_code }}</p>
+{%endblock%}
 {% block url %}
+    {%  if current_user.role_id == 2 %}
+        <a href='/library/students' class="link-menu abs">Мои книги</a>
+    {% elif current_user.role_id == 1 %}
+        <a href='/library/students' class="link-menu abs">Ученики</a>
+    {% endif %}
 {% endblock %}
 {% block contents %}
 

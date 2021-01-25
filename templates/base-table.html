@@ -17,7 +17,11 @@
 <body>
 {% block codeoutblock %}
 
-{% endblock %}
+						{%endblock%}
+
+
+		<div class="topfix"></div>
+		<div class="body-content">
 
 <style>
 .fixed-side a.link-menu{
@@ -60,13 +64,8 @@
 
     <div class="fixed-side" id="fixed">
 
-        <h1>Библио</h1>
-        {% block url %}{% endblock %}
-        {% if current_user.role_id == 1 %}
-            <a href='/library/books?owner_id={{ current_user.id }}' class="link-menu abs">Мои книги</a>
-        {% elif current_user.role_id == 2 %}
-            <a href='/library/students' class="link-menu abs">Ученики</a>
-        {% endif %}
+					<a href='/library/editions' class="link-menu">Издания</a>
+				<a href='/library/editions' class="link-menu" style="font-size: 12px; margin-top: 40px">Редактировать профиль</a>
 
         <a href='/library/books' class="link-menu b">Книги</a>
 
@@ -84,27 +83,18 @@
         <div class="borders">
             <p class="text-des">Здесь Вы всегда найдете нужную книгу. Попробуйте!</p>
 
-            <div class="block-code" style="margin-bottom: 20px">
-                {% block codeinblock %}
 
-                {% endblock %}
-            </div>
+				{% block contents %}{% endblock %}
 
 
-            {% block contents %}{% endblock %}
 
 
-        </div>
-    </div>
+			</div>
+			</div>
 
-</div>
+		</div>
 
 
-</body>
-<script>
-    let hr = document.location.href.split('#');
-    if (hr.length === 2)
-        document.location.href = hr[0];
 
     function copyToClipboard(element) {
         var $temp = $("<input>");

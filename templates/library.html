@@ -59,7 +59,11 @@
     </style>
 {% endblock %}
 {% block url %}
-
+    {%  if current_user.role_id == 2 %}
+        <a href='/library/students' class="link-menu abs">Мои книги</a>
+    {% elif current_user.role_id == 1 %}
+        <a href='/library/students' class="link-menu abs">Ученики</a>
+    {% endif %}
 {% endblock %}
 {% block contents %}
 
@@ -168,29 +172,16 @@
                         <p style="padding: 0;margin:0"><strong>Год
                             публикации {{ book.edition.publication_year }}</strong></p>
                     </div>
-                    <div class="nameb">
-                        <a style="padding: 0;margin: 0;color: #3E87CA" href="/library/books/{{ book.id }}"><strong>Подробнее</strong></a>
-                    </div>
 
                 </div>
 
                 <div class="rightside">
                     {% if book.owner %}
-                        {% if current_user.role_id == 2 %}
-                            <a href='/library/return_book/{{ book.id }}' class="link-getback tr">Вернуть в библиотеку</a>
-                            <a class="owner red" href="/library/profile/{{ book.owner_id  }}">{{ book.owner.name }} {{ book.owner.surname }} владеет книгой</a>
-                        {% elif book.owner.id != current_user.id %}
-                            <a class="owner red">Эту книгу взял кто-то другой</a>
-                        {% else %}
-                            <a class="owner red">Эту книгу взяли Вы</a>
-                        {% endif %}
+                        <a href='#' class="link-getback tr">Вернуть в библиотеку</a>
+                        <a class="owner red">{{ book.owner.name }} {{ book.owner.surname }} владеет книгой</a>
                     {% else %}
-                        {% if current_user.role_id == 2 %}
-                            <a href='/library/give_book/{{ book.id }}' class="link-getback tr">Выдать книгу</a>
-                            <a href='#popup_book_{{ book.id }}' class="link-getback tr delete">Удалить из библиотеки</a>
-                        {% else %}
-                            <a class="owner red" style="background-color: #97c67d">Книга свободна</a>
-                        {% endif %}
+                        <a href='#' class="link-getback tr">Выдать книгу</a>
+                        <a href='#' class="link-getback tr delete">Удалить из библиотеки</a>
                     {% endif %}
                 </div>
             </div>

@@ -1,17 +1,17 @@
 {% extends "base-table.html" %}
-{% block title_block %}Список учеников{% endblock %}
 {% block codeinblock %}
     <button onclick="copyToClipboard('#p1')"
             style="border: none;background-color: transparent;color: #4A4141;font-weight: normal" class="code"><p
             class="code" style="margin-top: -10px">Код библиотеки: {{ library_code }}</p></button>
 
 {% endblock %}
+					<p class="code">Код библиотеки: {{ library_code }}</p>
 {% block url %}
-{% endblock %}
-{% block links %}
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/library.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/library-page.css') }}">
-
+    {%  if current_user.role_id == 2 %}
+        <a href='/library/students' class="link-menu abs">Мои книги</a>
+    {% elif current_user.role_id == 1 %}
+        <a href='/library/students' class="link-menu abs">Ученики</a>
+    {% endif %}
 {% endblock %}
 {% block contents %}
     <style>
@@ -42,36 +42,38 @@
         <p id="p1" style="display: none">{{ library_code }}</p></button>
     <div class="flex-block" style="margin-left: 0">
 
-        <div class="flex-second" style="width:100%;margin-left: -20px">
-            <div>
-                <form method="post" action="">
-                    {{ form.hidden_tag() }}
-                    {{ form.crsf_token }}
-
-                    {{ form.id(placeholder='1', class='int-search') }}
-                    {{ form.id.label(class='text-search') }}<br>
-                    {% for error in form.id.errors %}
-                        <p class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </p>
-                    {% endfor %}
+                        {{ form.id(placeholder='Her\' vsykaya') }}
+                        {{ form.id.label }}<br>
+                        {% for error in form.id.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                        {% endfor %}
 
 
-                    {{ form.surname(placeholder='Иванов', class='int-search') }}
-                    {{ form.surname.label(class='text-search') }}<br>
-                    {% for error in form.surname.errors %}
-                        <p class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </p>
-                    {% endfor %}
+                        {{ form.name(placeholder='Her\' vsykaya') }}
+                        {{ form.name.label }}<br>
+                        {% for error in form.name.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                        {% endfor %}
 
-                    {{ form.class_num(placeholder='11', class='int-search') }}
-                    {{ form.class_num.label(class='text-search') }}<br>
-                    {% for error in form.class_num.errors %}
-                        <p class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </p>
-                    {% endfor %}
+                        {{ form.surname(placeholder='Her\' vsykaya') }}
+                        {{ form.surname.label }}<br>
+                        {% for error in form.surname.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                        {% endfor %}
+
+                        {{ form.class_num(placeholder='Her\' vsykaya') }}
+                        {{ form.class_num.label }}<br>
+                        {% for error in form.class_num.errors %}
+                                <p class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </p>
+                        {% endfor %}
 
 {#                    {{ form.class_letter(placeholder='Г', class='int-search') }}#}
 {#                    {{ form.class_letter.label(class='text-search') }}<br>#}

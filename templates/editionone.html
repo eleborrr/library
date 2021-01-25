@@ -2,122 +2,70 @@
 
 <html lang="ru">
 <head>
-    <title>Издание {{ edition.id }}</title>
+    <title>Title</title>
 
 
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width">
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="../static/css/bookone.css") }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='../static/css/editionone.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='../static/css/popups.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/css/bookone.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/editionone.css">
 </head>
 
 <body>
-<div class="body-cont" style="margin:auto;max-width: 1040px">
-    <div class="logo-text"><a href="/" style="text-decoration: none"><strong style="font-size: 25px">M | L</strong></a>
-    </div>
+<div class="body-cont">
+    <div class="logo-text"><strong style="font-size: 25px">M | L</strong></div>
 
-    <div style="max-width: 1040px;margin-top:40px">
-        {% if current_user.role_id == 2 %}
-            <a href='/library/add_book/{{ edition.id }}' class="link-del green" style="float: right;margin-bottom:50px">Добавить
-                книгу к изданию</a>
-        {% endif %}
-        <a href="/library/editions" class="link-del green" style="float: right;margin-bottom:50px;margin-right:15px">Вернуться</a>
+    <div style="margin:auto;max-width: 1040px;margin-top: 40px">
+        <a href='#' class="link-del green" style="float: right;margin-bottom:50px">Добавить издание</a>
     </div>
     <input type="checkbox" checked>Свободные книги
     <form method="post">
         <div class="edition-body">
             <div class="upper-block">
                 <div class="img-book">
-                    <img src="{{ url_for('static', filename='img/editions/' + edition.photo_name) }}">
+                    <img src="../static/img/editions/{{ edition.avatar_image }}">
                 </div>
                 <div class="descrs">
                     <h3>Название издания: {{ edition.name }}</h3>
                     <p>Количество книг: {{ count_books }}</p>
-                    {% if current_user.role_id == 2 %}
-                        <input type="submit" name="delete-edition" class="link-delete hiden" value="Удалить издание"
-                               style="border: none;cursor: pointer">
-                    {% endif %}
+                    <input type="submit" name="delete-edition" class="link-delete hiden" value="Удалить издание">
                 </div>
                 <div style="margin-left: auto">
-                    <a class="link-delete opas"
-                       style="border: none;cursor: pointer" href="#popup3">Удалить издание</a>
-                    {#                    <input type="submit" name="delete-edition" class="link-delete opas" value="Удалить издание"#}
-                    {#                           style="border: none;cursor: pointer" href="#popup3">#}
+                    <input type="submit" name="delete-edition" class="link-delete opas" value="Удалить издание">
                 </div>
             </div>
         </div>
     </form>
 
-    <div class="lower-block" style="max-width: 1040px;margin: auto">
+    <div class="lower-block">
         <input type="text" name="" placeholder="Поиск в издании" class="inpt-srh">
     </div>
 
-    <div class="ed-books" style="max-width: 1040px;margin: auto;margin-bottom: 100px">
+    <div class="ed-books">
         {% for book in books %}
-            <div class="book-item" style="float: left">
-                <div class="img-book bookitem">
-                    <img src="{{ url_for('static', filename="img/editions/" + book.edition.photo_name) }}">
-                </div>
-                <div class="descrs bookitem">
-                    <h3 style="font-size: 15px">id: {{ book.id }}</h3>
-                    {% if book.owner %}
-                        {% if current_user.role_id == 2 %}
-                            <a href='/library/books/{{ book.id }}' class="link-del">Книга у {{ book.owner.name }}</a>
-                        {% else %}
-                            <a href='/library/books/{{ book.id }}' class="link-del">Книга занята</a>
-                        {% endif %}
-                    {% else %}
-                        <a href='/library/books/{{ book.id }}' class="link-del green">Книга свободна</a>
-                    {% endif %}
-                </div>
+        <div class="book-item">
+            <div class="img-book bookitem">
+                <img src="../static/img/editions/newaris.png">
             </div>
-        {% endfor %}<br>
-
-
-    </div>
-<br>
-<div style="width: 100%;height: 10px"><p style="color: transparent">kjskc</p></div>
-    <div style="display: block;width: 100%">
-    {% if current_user.role_id == 2 %}
-        {% for image in lists %}
-
-            <img src="data:image/jpeg;base64,{{ image }}" alt="lol" style="width: 70%"><br>
-            <a href="data:image/jpeg;base64,{{ image }}" download="list_{{ loop.index }}.jpeg"
-               style="display: block;margin-bottom: 100px;width: 100%">Скачать</a><br>
-
-
-        {% endfor %}
-    {% endif %}
-</div>
-
-</div>
-
-
-<div class='popup' id='popup3'>
-    <a class="popup__area" href='#header'></a>
-    <div class='popup__body'>
-        <div class='popup__content'>
-            <a class='popup__close' href='#header'>X</a>
-            <div><h3> Точно удалить? </h3></div>
-            <form class='form_up' id="create-chat" method="post">
-
-                {#                <input type="submit" name="delete-edition" class="link-delete opas" value="Удалить издание"#}
-                {#                       style="border: none;cursor: pointer;color: white">#}
-                <a class="link-delete opas" href="/library/delete_edition/{{ edition.id }}"
-                   style="border: none;cursor: pointer;color: white">Удалить</a>
-                <a class="link-delete opas" href="/library/editions/{{ edition.id }}"
-                   style="border: none;cursor: pointer;color: white;background-color: #C1F084">Вернуться</a>
-                {#                <input type="submit" name="delete-edition" class="link-delete opas" value="Вернуться"#}
-                {#                       style="border: none;cursor: pointer;color: white;background-color: #C1F084">#}
-            </form>
+            <div class="descrs bookitem">
+                <h3 style="font-size: 15px">Название: {{ book.name }}</h3>
+                {% if book.owner %}
+                <a href='#' class="link-del">Книга у {{ book.owner.name }}</a>
+                {% else %}
+                <a href='#' class="link-del green">Книга свободна</a>
+                {% endif %}
+            </div>
         </div>
+        {% endfor %}
+
+
     </div>
 
 </div>
 
 
+</div>
 </body>
 </html>
