@@ -136,8 +136,9 @@
                     <a class="ed-name" style="margin-right: 5px">{{ edition.id }}</a>
                     <img alt="" src="../../static/img/editions/{{ edition.photo_name }}"
                          style="max-width: 100px;border-radius: 3px">
-                    <a href="/library/editions/{{ edition.id }}" class="ed-name" style="padding-top: 5px">{{ edition.name }}</a>
-                    <span>Литература</span>
+                    <a href="/library/editions/{{ edition.id }}" class="ed-name" style="padding-top: 5px">{{ edition.name }} <br> {{ edition.author }}</a><br>
+                    <span style="opacity: 0"></span>
+                    <span style="opacity: 0">Литература</span>
                     <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
                     {#                    <input type="submit" name="delete-edition" class='link-izd' href='/library' value="Удалить">#}
                     {% if current_user.role_id == 2 %}

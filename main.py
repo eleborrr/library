@@ -874,7 +874,7 @@ class LibraryView(FlaskView):
         book.owner_id = None
         session.commit()
         session.close()
-        return redirect('/library')
+        return redirect('/library/books/' + str(book_id))
 
     @login_required
     @route('/delete_student/<int:student_id>')
@@ -897,4 +897,4 @@ LibraryView.register(app, '/library')
 
 if __name__ == '__main__':
     # db_session.global_init('db/library.sqlite3')
-    app.run()
+    app.run(host='0.0.0.0')

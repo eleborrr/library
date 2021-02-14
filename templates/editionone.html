@@ -51,9 +51,9 @@
         </div>
     </form>
 
-    <div class="lower-block" style="max-width: 1040px;margin: auto">
-        <input type="text" name="" placeholder="Поиск в издании" class="inpt-srh">
-    </div>
+{#    <div class="lower-block" style="max-width: 1040px;margin: auto">#}
+{#        <input type="text" name="" placeholder="Поиск в издании" class="inpt-srh">#}
+{#    </div>#}
 
     <div class="ed-books" style="max-width: 1040px;margin: auto;margin-bottom: 100px">
         {% for book in books %}
@@ -65,7 +65,7 @@
                     <h3 style="font-size: 15px">id: {{ book.id }}</h3>
                     {% if book.owner %}
                         {% if current_user.role_id == 2 %}
-                            <a href='/library/books/{{ book.id }}' class="link-del">Книга у {{ book.owner.name }}</a>
+                            <a href='/library/books/{{ book.id }}' class="link-del">Владелец: {{ book.owner.name }}</a>
                         {% else %}
                             <a href='/library/books/{{ book.id }}' class="link-del">Книга занята</a>
                         {% endif %}
