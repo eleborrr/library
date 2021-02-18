@@ -48,6 +48,8 @@
                     {% elif cur_user.library_id != book.edition.library_id %}
                         <a class="link-delete opas"
                            style="border: none;cursor: pointer">Эта книга принадлежит {{ book.edition.library.school_name }}</a>
+                    {% elif book.owner %}
+                        <a class="link-delete opas" style="border: none;cursor: pointer">Эта книга принадлежит: {{ book.owner.surname + ' ' + book.owner.name }}</a>
                     {% elif cur_user.role_id == 1 %}
                         <form method="post" class="poststud">
                             {{ form.hidden_tag() }}
