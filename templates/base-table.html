@@ -52,15 +52,13 @@
         display: flex;
     }
     .fixed-side{
-        background: linear-gradient(180deg, #FEC4A4 60%, #fff 90%);
+        {#background: linear-gradient(180deg, #FEC4A4 60%, #fff 90%);#}
     }
 </style>
 <div class="topfix"></div>
 <div class="body-content" id="cont">
-
-    <div class="fixed-side" id="fixed">
-
-        <h1>Библио</h1>
+    <div class="fixed-side" style="position: fixed;z-index: 9;height: 200%;top: 0">
+    <div style="margin-top: 240px; padding: 10px">
         {% block url %}{% endblock %}
         {% if current_user.role_id == 1 %}
             <a href='/library/books?owner_id={{ current_user.id }}' class="link-menu abs">Мои книги</a>
@@ -72,13 +70,15 @@
 
         <a href='/library/editions' class="link-menu i">Издания</a>
         {% if current_user.role_id == 2 %}
-            <a href='/library/profile' class="link-menu n" style="font-size: 18px; margin-top: 40px">Настройка
-                библиотеки</a>
+            <a href='/library/profile' class="link-menu n" style="font-size: 18px;text-align: right">Настройка библиотеки</a>
         {% else %}
-            <a href='/library/profile' class="link-menu n" style="font-size: 18px; margin-top: 40px">Настройка
-                профиля</a>
+            <a href='/library/profile' class="link-menu n" style="font-size: 18px; margin-top: 40px">Настройка профиля</a>
         {% endif %}
         <a href='/logout' class="link-menu ex">Выйти</a>
+    </div>
+    </div>
+    <div class="fixed-side" id="fixed" style="background: none; height: 20px">
+        <h1>Библио</h1>
     </div>
     <div class="normal-side" id="normal">
         <div class="borders">
