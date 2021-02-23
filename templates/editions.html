@@ -58,11 +58,114 @@
         .block-abs-code::-moz-focus-inner {
             border: none;
         }
-         .fixed-side a.link-menu.i{
+
+        .fixed-side a.link-menu.i {
             color: #473C3C;
             -webkit-text-fill-color: #473C3C;
             opacity: 0.95;
         }
+    </style>
+
+    <style>
+        .external {
+            background-color: #e7e7e7;
+            min-width: 450px;
+            height: 250px;
+            display: inline-flex;
+            border-radius: 4px 4px 30px 4px;
+            margin: 4px;
+        }
+
+        .image {
+            background-color: #bbbbbb;
+            width: 150px;
+            height: 194px;
+            display: inline-block;
+            margin-top: 5%;
+            margin-left: 1.5%;
+            border-top: 2px solid darksalmon;
+            border-left: 2px solid darksalmon;
+            border-bottom: 2px solid darksalmon;
+            border-bottom-left-radius: 7px;
+            border-top-left-radius: 7px;
+        }
+
+        .info-border {
+            display: inline-block;
+            margin-top: 5%;
+            height: 194px;
+            border-top: 2px solid darksalmon;
+            border-right: 2px solid darksalmon;
+            border-bottom: 2px solid darksalmon;
+            border-bottom-right-radius: 7px;
+            border-top-right-radius: 7px;
+            width: max-content;
+            margin-right: 3%;
+        }
+
+        .info {
+            height: 140px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding-left: 3%;
+            width: max-content;
+            margin-right: 10px;
+        }
+
+        .text {
+            margin: 0 0 6px;
+        }
+
+        .table-name {
+            color: #c46844;
+        }
+
+        .image-img {
+            width: 100%;
+            height: 100%;
+        }
+
+        @media (max-width: 770px) {
+            .external {
+                max-width: 250px;
+                min-width: 0;
+                height: max-content;
+                background-color: #e7e7e7;
+                margin: 4px;
+                border-radius: 7px;
+                border: 3px solid darksalmon;
+                display: block;
+                padding: 3px;
+            }
+
+            .image {
+                display: block;
+                border: 0;
+                border-radius: 0;
+                height: 200px;
+                margin: 0 auto;
+            }
+
+            .info-border {
+                width: auto;
+                border: 0;
+                display: block;
+                margin-left: 3%;
+            }
+
+            .info {
+                width: 90%;
+                margin: 0 auto;
+                padding: 0;
+                text-align: justify-all;
+            }
+
+            .text {
+                text-align: justify-all;
+                margin: 0 0 10px;
+            }
+        }
+
     </style>
 
     <button onclick="copyToClipboard('#p1')" style="border: none;background-color:
@@ -72,12 +175,12 @@
             {{ library_code }}</p>
         <p id="p1" style="display: none">{{ library_code }}</p></button>
     {% if current_user.role_id == 2 %}
-    <a href="/library/editions/create" class="link-create-edi">Добавить издание</a>
+        <a href="/library/editions/create" class="link-create-edi">Добавить издание</a>
     {% endif %}
     <div class="flex-block" style="margin-left: 0">
         <div class="flex-second" style="width:100%;margin-left: -20px">
-            <div >
-                <form method="post" action="" >
+            <div>
+                <form method="post" action="">
                     {{ form.hidden_tag() }}
                     {{ form.crsf_token }}
 
@@ -121,29 +224,49 @@
                     {% endfor %}
                 </form>
             </div>
-        <style>
-            @media (min-width: 900px) {
-            .izd-item{
-                display: block;
-            }
-            .izd-item span, .izd-item a, .izd-item img{
-                float: left;
-                margin: 10px;
-            }}
-        </style>
+            <style>
+                @media (min-width: 900px) {
+                    .izd-item {
+                        display: block;
+                    }
+
+                    .izd-item span, .izd-item a, .izd-item img {
+                        float: left;
+                        margin: 10px;
+                    }
+                }
+            </style>
             {% for edition in editions %}
                 <div class="izd-item" style="max-width: 100%">
                     <a class="ed-name" style="margin-right: 5px">{{ edition.id }}</a>
                     <img alt="" src="../../static/img/editions/{{ edition.photo_name }}"
                          style="max-width: 100px;border-radius: 3px">
-                    <a href="/library/editions/{{ edition.id }}" class="ed-name" style="padding-top: 5px">{{ edition.name }} <br> {{ edition.author }}</a><br>
+                    <a href="/library/editions/{{ edition.id }}" class="ed-name"
+                       style="padding-top: 5px">{{ edition.name }} <br> {{ edition.author }}</a><br>
                     <span style="opacity: 0"></span>
                     <span style="opacity: 0">Литература</span>
                     <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
-                    {#                    <input type="submit" name="delete-edition" class='link-izd' href='/library' value="Удалить">#}
+                                        <input type="submit" name="delete-edition" class='link-izd' href='/library' value="Удалить">
                     {% if current_user.role_id == 2 %}
                         <a class="link-izd" href='#popup_edition_{{ edition.id }}'>Удалить</a>
                     {% endif %}
+                </div>
+            {% endfor %}
+            {% for edition in editions %}
+                <div class="external">
+                    <div class="image">
+                        {% set string = edition.photo_name %}
+                        {% set string = 'img/editions/' + string %}
+                        <img class="image-img" src="{{ url_for('static', filename=string) }}" alt="{{ edition.name }}">
+                    </div>
+                    <div class="info-border">
+                        <div class="info">
+                            <p class="text"><a class="table-name">Название</a>: "{{ edition.name }}"</p>
+                            <p class="text"><a class="table-name">Автор</a>: {{ edition.author }}</p>
+                            <p class="text"><a class="table-name">Год публикации</a>: {{ edition.publication_year }}</p>
+                            <a class="text" href="/editions/{{ edition.id }}">Подробнее</a>
+                        </div>
+                    </div>
                 </div>
             {% endfor %}
         </div>
@@ -153,10 +276,10 @@
             {{ markup(edition.id) }}
         {% endfor %}
     </div>
-<script>
- $(function() {
-    var height = $( '#normal' ).height(); //получаем высоту одного элемента
-    $( '#fixed' ).height(height); //записываем высоту другому элементу
-});
-</script>
+    <script>
+        $(function () {
+            var height = $('#normal').height(); //получаем высоту одного элемента
+            $('#fixed').height(height); //записываем высоту другому элементу
+        });
+    </script>
 {% endblock %}
