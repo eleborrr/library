@@ -236,22 +236,22 @@
                     }
                 }
             </style>
-            {% for edition in editions %}
-                <div class="izd-item" style="max-width: 100%">
-                    <a class="ed-name" style="margin-right: 5px">{{ edition.id }}</a>
-                    <img alt="" src="../../static/img/editions/{{ edition.photo_name }}"
-                         style="max-width: 100px;border-radius: 3px">
-                    <a href="/library/editions/{{ edition.id }}" class="ed-name"
-                       style="padding-top: 5px">{{ edition.name }} <br> {{ edition.author }}</a><br>
-                    <span style="opacity: 0"></span>
-                    <span style="opacity: 0">Литература</span>
-                    <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>
-                                        <input type="submit" name="delete-edition" class='link-izd' href='/library' value="Удалить">
-                    {% if current_user.role_id == 2 %}
-                        <a class="link-izd" href='#popup_edition_{{ edition.id }}'>Удалить</a>
-                    {% endif %}
-                </div>
-            {% endfor %}
+{#            {% for edition in editions %}#}
+{#                <div class="izd-item" style="max-width: 100%">#}
+{#                    <a class="ed-name" style="margin-right: 5px">{{ edition.id }}</a>#}
+{#                    <img alt="" src="../../static/img/editions/{{ edition.photo_name }}"#}
+{#                         style="max-width: 100px;border-radius: 3px">#}
+{#                    <a href="/library/editions/{{ edition.id }}" class="ed-name"#}
+{#                       style="padding-top: 5px">{{ edition.name }} <br> {{ edition.author }}</a><br>#}
+{#                    <span style="opacity: 0"></span>#}
+{#                    <span style="opacity: 0">Литература</span>#}
+{#                    <span style="background-color: #98D9E8;margin-left: 0">Учебник</span>#}
+{#                                        <input type="submit" name="delete-edition" class='link-izd' href='/library' value="Удалить">#}
+{#                    {% if current_user.role_id == 2 %}#}
+{#                        <a class="link-izd" href='#popup_edition_{{ edition.id }}'>Удалить</a>#}
+{#                    {% endif %}#}
+{#                </div>#}
+{#            {% endfor %}#}
             {% for edition in editions %}
                 <div class="external">
                     <div class="image">
@@ -264,7 +264,7 @@
                             <p class="text"><a class="table-name">Название</a>: "{{ edition.name }}"</p>
                             <p class="text"><a class="table-name">Автор</a>: {{ edition.author }}</p>
                             <p class="text"><a class="table-name">Год публикации</a>: {{ edition.publication_year }}</p>
-                            <a class="text" href="/editions/{{ edition.id }}">Подробнее</a>
+                            <a class="text" href="/library/editions/{{ edition.id }}">Подробнее</a>
                         </div>
                     </div>
                 </div>

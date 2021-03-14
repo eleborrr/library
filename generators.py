@@ -8,7 +8,7 @@ import base64
 
 
 def _create_qrcode(book_code, id_):
-    img = qrcode.make(f'http://9da87d86f199.ngrok.io/borrow_book/{book_code}')
+    img = qrcode.make(f'http://0af393e513cc.ngrok.io/borrow_book/{book_code}')
     img = img.resize((165, 165))
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype('static/fonts/qr_font.ttf', 16)
